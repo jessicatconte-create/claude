@@ -4,15 +4,16 @@ from data import *
 
 # ------------------------------------------------------------------ 01 capa
 def s01():
+    dot = '<span style="color:#7F95CF">  ·  </span>'
     body = "".join([
-        P("NADIR · DOC CONSULTING", 100, 300, 1200, 18, LB2, bold=True, extra="letter-spacing:3px;"),
-        P("Preço, volume e margem", 100, 340, 1600, 104, WHITE, bold=True, lh=1.05),
+        P("CONFIDENCIAL · PROJETO INTERNO", 100, 76, 600, 15, "#AFC1EE", extra="letter-spacing:1px;"),
+        P("Preço, volume e margem", 100, 423, 1540, 100, WHITE, bold=True, lh=1.06),
         P("Nadir, 4 itens no Atacadão: o que a base mostra, quanto o volume responde ao preço e se uma baixa se paga na margem.",
-          100, 470, 1300, 30, G3, italic=True, lh=1.3),
-        P("Nadir · Copo Americano, Duralex, Opaline e Lasanheira · Atacadão · outubro de 2026", 100, 590, 1500, 22, WHITE),
-        '<div style="position:absolute;left:100px;top:690px;width:1500px;display:flex;flex-direction:row;gap:96px">'
-        + "".join(f'<div style="display:flex;flex-direction:column;gap:6px;border-left:2px solid {LB2};padding:0px 0px 0px 24px">'
-                  f'{p(v, 56, WHITE, bold=True, lh=1.05)}{p(l, 18, LB2, lh=1.3, extra="width:300px;")}</div>'
+          100, 551, 1540, 32, "#C9D6F5", lh=1.3),
+        P(f"Nadir{dot}Copo Americano, Duralex, Opaline e Lasanheira{dot}Atacadão{dot}outubro de 2026", 100, 660, 1500, 20, WHITE, raw=True),
+        '<div style="position:absolute;left:100px;top:760px;width:1500px;display:flex;flex-direction:row;gap:80px">'
+        + "".join(f'<div style="display:flex;flex-direction:column;gap:6px;border-left:2px solid rgba(175,193,238,0.6);padding:0px 0px 0px 22px">'
+                  f'{p(v, 44, WHITE, bold=True, lh=1.05)}{p(l, 16, "#AFC1EE", lh=1.3, extra="width:300px;")}</div>'
                   for v, l in [("4", "itens"), ("278 a 416", "lojas do Atacadão por item"),
                                ("32 a 45", "combinações região × mês com preço de gôndola (PDV) por item")])
         + "</div>",
@@ -28,7 +29,7 @@ def pill(n, t, d):
     circ = (f'<div style="width:44px;height:44px;background:{BLUE};border-radius:50%;display:flex;justify-content:center;'
             f'align-items:center;flex:none">{p(n, 17, WHITE, bold=True, lh=1.0)}</div>')
     txt = f'<div style="display:flex;flex-direction:column;gap:2px">{p(t, 19, INK, bold=True, lh=1.2)}{p(d, 16, G1, lh=1.25)}</div>'
-    return (f'<div style="display:flex;flex-direction:row;align-items:center;gap:16px;background:{PANEL};border-radius:16px;'
+    return (f'<div style="display:flex;flex-direction:row;align-items:center;gap:16px;{CARD};'
             f'padding:9px 18px">{circ}{txt}</div>')
 
 
@@ -122,11 +123,11 @@ def s03():
                         f'{p(l, 15, G1, lh=1.3)}</div>' for v, l in stats)
 
     def card(t, txt):
-        return (f'<div style="width:385px;background:{PANEL};border-radius:16px;padding:16px 20px;display:flex;flex-direction:column;gap:6px">'
+        return (f'<div style="width:385px;{CARD};padding:16px 20px;display:flex;flex-direction:column;gap:6px">'
                 f'{h3(t)}{p(txt, 15, INK, lh=1.35)}</div>')
     body = "".join([
-        P("Onde cada dado está na cadeia da Nadir", 100, 216, 900, 18, INK, bold=True),
-        seals(["COMPROVADA"], 1820, 212),
+        ctitle("Onde cada dado está na cadeia da Nadir"),
+        seals(["COMPROVADA"], 1791, 229),
         sv.render(),
         f'<div style="position:absolute;left:100px;top:782px;width:930px;display:flex;flex-direction:row;gap:10px">{stat_html}</div>',
         P("Margem SAP (margem bruta ÷ Net Net, jun/25 a mai/26): Copo 29,6% · Duralex 64,6% · Opaline 54,2% · Lasanheira 66,8%. "
@@ -153,7 +154,7 @@ def s03():
              "margem é bruta.")
     sub = ("Cada dado mede um elo diferente da cadeia: SAP no sell-in, coleta Involves na gôndola, BASE SO na venda no caixa e Mtrix no "
            "sell-through dos distribuidores; sell-out e sell-through nunca se juntam.")
-    return slide("s03", "Fundamentos", sub, body, F_BASES, "03", notes)
+    return slide("s03", "Fundamentos", sub, body, F_BASES, "03", notes, cards=[(100, 206, 1720, 556)])
 
 
 # ------------------------------------------------------------------ 04 base completa
@@ -162,7 +163,7 @@ def s04():
             ("Opaline", "4", "24", "115", "3.825 (11)"), ("Lasanheira", "1", "3", "15", "2.566 (8)")]
     tbl = mini_table(rows, [100, 52, 76, 70, 110], 16, head=["Item", "P10", "Mediana", "P90", "Pontos × mês (redes)"])
     body = "".join([
-        P("Volume por ponto de venda no mês contra o preço: pontos marcados como sell-out, todas as redes", 100, 216, 1000, 18, INK, bold=True),
+        ctitle("Volume por ponto de venda no mês contra o preço: pontos marcados como sell-out, todas as redes"),
         seals(["COMPROVADA"], 1290, 212),
         placeholder(100, 256, 1190, 700, "Gráfico 1 · Pontos marcados como sell-out por ponto de venda",
                     "Deck faixas - Gráfico 1 v2 - Pontos marcados como sell-out por ponto de venda - 02-10-2026.png",
@@ -185,7 +186,7 @@ def s04():
             "caixa inclui o pequeno comerciante, sem separação; empresa fonte não informada); preço de gôndola (PDV) da coleta Involves quando "
             "há coleta, senão faturamento ÷ peças da BASE SO; sell-through (CD, distribuidores, atacados e Mtrix) fora do gráfico; 407 linhas "
             "com preço fora de 1/3 a 3 vezes a mediana do item fora | Elaboração: DOC Consulting. Período: jan/25 a mai/26.")
-    return slide("s04", "Base completa", sub, body, foot, "04", notes)
+    return slide("s04", "Base completa", sub, body, foot, "04", notes, cards=CHART_CARD)
 
 
 # ------------------------------------------------------------------ 05 atacadao por loja
@@ -213,7 +214,7 @@ def s05():
             ("Lasanheira", "F2 · R$ 49,90", "2", "7", "17"), ("Copo", "F1 · R$ 0,98", "440", "1.698", "5.245")]
     tbl = mini_table(rows, [96, 116, 50, 64, 64], 15, head=["Item", "Faixa", "P10", "Mediana", "P90"])
     body = "".join([
-        P("Volume por loja no mês contra o preço de gôndola (PDV): lojas do Atacadão, venda no caixa, sem o CD", 100, 216, 1000, 18, INK, bold=True),
+        ctitle("Volume por loja no mês contra o preço de gôndola (PDV): lojas do Atacadão, venda no caixa, sem o CD"),
         seals(["COMPROVADA"], 1290, 212),
         placeholder(100, 256, 1190, 700, "Gráfico 2 · Atacadão por loja",
                     "Deck faixas - Gráfico 2 v2 - Atacadão por loja - 02-10-2026.png",
@@ -233,7 +234,7 @@ def s05():
            "4 vezes a média.")
     foot = (f"Fonte: base conciliada, {CAIXA}); preço de gôndola (PDV) da coleta Involves por macrorregião × mês; Mtrix (sell-through) e SAP "
             f"(sell-in) não entram | Elaboração: DOC Consulting. {PER_VP}")
-    return slide("s05", "Atacadão por loja", sub, body, foot, "05", notes)
+    return slide("s05", "Atacadão por loja", sub, body, foot, "05", notes, cards=CHART_CARD)
 
 
 # ------------------------------------------------------------------ 06 regressao direta
@@ -294,7 +295,7 @@ def s06():
                   xlab_sub=["40,1% do volume", "41,1% do volume"]),
         rail([("Reta com todos os pontos", p("Sensibilidade do volume ao preço, log-log, com a faixa de 95% (erro agrupado por região × mês).", 14, G1) + tbl, "info"),
               ("Por que não conclui", p("O preço explica no máximo 19% do volume, e a inclinação carrega região, porte e promoção.", 17), "info"),
-              ("O que decidir", p("Não usar esta inclinação para decidir preço.", 18, bold=True), "decide")], top=252),
+              ("O que decidir", p("Não usar esta inclinação para decidir preço.", 18, bold=True), "decide")]),
     ])
     notes = ("Se traçamos a reta com todos os pontos, ela sai inclinada e o p-valor fica perto de zero. Parece uma resposta, mas não é: o preço "
              "explica no máximo 19% do volume, e a inclinação carrega outras coisas. Em SP o preço é menor e as lojas vendem mais; as lojas "
@@ -310,7 +311,7 @@ def s06():
            "porte de loja e promoção.")
     foot = (f"Fonte: base conciliada, {CAIXA}; porte pelo faturamento da venda no caixa); preço de gôndola (PDV) e marcação de promoção da "
             f"coleta Involves por macrorregião × mês; Mtrix (sell-through) e SAP (sell-in) não entram; cálculo DOC | Elaboração: DOC Consulting. {PER_VP}")
-    return slide("s06", "Regressão direta", sub, body, foot, "06", notes)
+    return slide("s06", "Regressão direta", sub, body, foot, "06", notes, cards=CHART_CARD)
 
 
 # ------------------------------------------------------------------ 07 motores
@@ -351,7 +352,7 @@ def s07():
     r2 = mini_table([("Copo", "0,55"), ("Duralex", "0,41"), ("Opaline", "0,48"), ("Lasanheira", "0,49")], [140, 80], 16,
                     head=["Item", "R²"])
     body = "".join([
-        P("Parte da variação do volume (em log) explicada por loja, mês e resto, por item", 100, 216, 1000, 18, INK, bold=True),
+        ctitle("Parte da variação do volume (em log) explicada por loja, mês e resto, por item"),
         seals(["COMPROVADA"], 1290, 212),
         sv.render(),
         rail([("R² de loja e mês juntos", r2 + p("P-valor: não se aplica (é repartição da variação, não teste de efeito).", 14, G1), "info"),
@@ -366,7 +367,7 @@ def s07():
     foot = (f"Fonte: base conciliada, {CAIXA2}), em logaritmo do volume; preço de gôndola (PDV) e promoção da coleta Involves; Mtrix "
             f"(sell-through) e SAP (sell-in) não entram; Excel v8.1 (02/10/2026), abas Loja, mês e resto e O que explica o volume | Elaboração: "
             f"DOC Consulting. Período: jan/25 a mai/26.")
-    return slide("s07", "Motores do volume", sub, body, foot, "07", notes)
+    return slide("s07", "Motores do volume", sub, body, foot, "07", notes, cards=CHART_CARD)
 
 
 # ------------------------------------------------------------------ 08 causas
@@ -438,12 +439,12 @@ def s08():
         row("NÃO MENSURÁVEL", "Promoção mexe no volume (com o dado atual).", "Outra coisa · 0,0% a 0,2%"),
     ])
     body = "".join([
-        P("O que explica a variação do volume dentro da loja, por fator e item", 100, 216, 1000, 18, INK, bold=True),
+        ctitle("O que explica a variação do volume dentro da loja, por fator e item"),
         seals(["PARCIAL"], 1290, 212),
         sv.render(),
         rail([("Mapa de causas: hipótese, tipo e peso", f'<div style="display:flex;flex-direction:column;gap:9px">{mapa}</div>', "info"),
               ("O que decidir", p("Para medir preço, o preço precisa variar: só um teste controlado cria essa variação.", 17, bold=True), "decide")],
-             top=212, gap=12),
+             gap=12),
     ])
     notes = ("Dentro de cada loja, o que mais pesa no volume não é o preço: é o choque de cada região no mês, a presença do produto na gôndola e, "
              "na Lasanheira, a venda em caixa fechada das unidades -AT. O preço de gôndola (PDV) explica 0,1% do que sobra. E de 72% a 86% do que "
@@ -460,7 +461,7 @@ def s08():
     foot = (f"Fonte: base conciliada, {CAIXA2}); preço de gôndola (PDV), promoção e presença da coleta Involves; Mtrix (sell-through) e SAP "
             f"(sell-in) não entram; Excel v8.1 (02/10/2026), abas O que explica o volume, Base, preço ou outra coisa e Hipóteses e evidências | "
             f"Elaboração: DOC Consulting. Período: jan/25 a mai/26.")
-    return slide("s08", "Causas além do preço", sub, body, foot, "08", notes)
+    return slide("s08", "Causas além do preço", sub, body, foot, "08", notes, cards=CHART_CARD)
 
 
 # ------------------------------------------------------------------ 09 faixas nacionais
@@ -472,7 +473,7 @@ def s09():
     cards = []
     for i, (lab, big, desc) in enumerate(steps):
         x = 100 + i * 442
-        cards.append(f'<div style="position:absolute;left:{x}px;top:232px;width:392px;height:280px;background:{PANEL};border-radius:18px;'
+        cards.append(f'<div style="position:absolute;left:{x}px;top:232px;width:392px;height:280px;{CARD};'
                      f'padding:24px 26px;display:flex;flex-direction:column;gap:10px">{h3(lab)}{p(big, 44, INK, bold=True, lh=1.05)}'
                      f'{p(desc, 17, INK, lh=1.35)}</div>')
         if i < 3:

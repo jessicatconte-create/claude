@@ -64,7 +64,7 @@ def s10():
     tbl = mini_table(rows, [86, 52, 110, 58, 40, 44], 14, head=["Item", "Sensib.", "Faixa de 95%", "p-valor", "R²", "CV"],
                      colors=[INK, INK, INK, G1])
     body = "".join([
-        P("Volume médio por loja nas 10 faixas nacionais de preço, com a reta log-log e a faixa de 95%", 100, 216, 1050, 18, INK, bold=True),
+        ctitle("Volume médio por loja nas 10 faixas nacionais de preço, com a reta log-log e a faixa de 95%"),
         seals(["PARCIAL"], 1290, 212),
         sv.render(),
         rail([("Como ler", p("Sensibilidade do volume ao preço −3,41 = 1% a mais no preço de gôndola (PDV), cerca de 3,4% a menos de volume "
@@ -83,7 +83,7 @@ def s10():
            "pontos ficam, em média, a 25% a 27% da reta.")
     foot = (f"Fonte: base conciliada, {CAIXA}); preço de gôndola (PDV) da coleta Involves por macrorregião × mês; Mtrix (sell-through) e SAP "
             f"(sell-in) não entram; cálculo DOC: reta log-log nas 10 faixas nacionais de preço | Elaboração: DOC Consulting. {PER_VP}")
-    return slide("s10", "Sensibilidade", sub, body, foot, "10", notes)
+    return slide("s10", "Sensibilidade", sub, body, foot, "10", notes, cards=CHART_CARD)
 
 
 # ------------------------------------------------------------------ 11 retas por porte
@@ -134,7 +134,7 @@ def s11():
         return (f'<div style="display:flex;flex-direction:row;gap:16px;align-items:center">{p(v, 40, BLUE, bold=True, lh=1.0, extra="width:110px;")}'
                 f'{p(lab, 15, INK, lh=1.3, extra="width:300px;")}</div>')
     body = "".join([
-        P("Retas log-log por porte de loja contra a reta nacional", 100, 216, 1000, 18, INK, bold=True),
+        ctitle("Retas log-log por porte de loja contra a reta nacional"),
         seals(["COMPROVADA"], 1290, 212),
         sv.render(),
         rail([("Grandes ÷ pequenas, no mesmo preço", big("3,1×", "Duralex, em R$ 9,06: 34,5 contra 11,1 peças por loja-mês")
@@ -155,7 +155,7 @@ def s11():
     foot = (f"Fonte: base conciliada, {CAIXA}; porte pelo faturamento da venda no caixa); preço de gôndola (PDV) da coleta Involves por "
             f"macrorregião × mês; Mtrix (sell-through) e SAP (sell-in) não entram; cálculo DOC das faixas nacionais de preço por porte de loja | "
             f"Elaboração: DOC Consulting. {PER_VP}")
-    return slide("s11", "Retas por recorte", sub, body, foot, "11", notes)
+    return slide("s11", "Retas por recorte", sub, body, foot, "11", notes, cards=CHART_CARD)
 
 
 # ------------------------------------------------------------------ 12 forest
@@ -231,7 +231,7 @@ def s12():
              "<li>Confirmar com teste antes de mudar a tabela.</li></ol>")
     pays = mini_table([("Copo", "0 de 8"), ("Lasanheira", "2 de 8"), ("Opaline", "5 de 8"), ("Duralex", "6 de 8")], [150, 120], 16)
     body = "".join([
-        P("Sensibilidade do volume ao preço por recorte, com a faixa de 95%, contra o empate da baixa de 10%", 100, 210, 1100, 18, INK, bold=True),
+        ctitle("Sensibilidade do volume ao preço por recorte, faixa de 95% e empate da baixa de 10%"),
         seals(["PARCIAL"], 1290, 206),
         sv.render(),
         rail([("Como usar com moderação", rules, "info"),
@@ -251,7 +251,7 @@ def s12():
     foot = (f"{F_MARG}; M5 do Excel v8.1 (02/10/2026), aba Resumo | Elaboração: DOC Consulting. {PER_VPM}").replace(
         "não entra; cálculo DOC", "não entra; cálculo DOC").replace("margem SAP Nadir (sell-in; margem bruta ÷ Net Net);",
                                                                     "margem SAP Nadir (sell-in; margem bruta ÷ Net Net) para o empate;")
-    return slide("s12", "Com moderação", sub, body, foot, "12", notes)
+    return slide("s12", "Com moderação", sub, body, foot, "12", notes, cards=CHART_CARD)
 
 
 # ------------------------------------------------------------------ 13 volume e margem
@@ -289,13 +289,13 @@ def s13():
         sv.circle(sx(vx), sy(0), 6, WHITE, cols[it][0] if it != "Lasanheira" else G1, 2.5)
         sv.text(sx(lx), sy(ly) + 5, tx[it], 15, INK, anc, bold=True)
     sv.text(90, 700, "Repasse integral suposto ao preço de gôndola (PDV). Margem SAP: Copo 29,6%; Duralex 64,6%; Opaline 54,2%; Lasanheira 66,8%.", 13, G1)
-    formula = (f'<div style="background:{WHITE};border-radius:12px;padding:12px 14px">'
+    formula = (f'<div style="background:{PANEL};border-radius:12px;padding:12px 14px">'
                f'{p("Margem total depois ÷ margem total antes = (1 + variação do volume) × (margem % + variação do preço) ÷ margem %", 16, INK, bold=True)}</div>')
     ex = (f'<div style="display:flex;flex-direction:row">{seal_p("EXEMPLO ILUSTRATIVO")}</div>'
           + p("Não é resultado da Nadir: mostra a conta. Preço −10% e volume +15%: Copo −23,9%; Opaline −6,2%; Duralex −2,8%; Lasanheira −2,2%. "
               "Copo: 1,15 × (29,6% − 10%) ÷ 29,6% = 0,761.", 15))
     body = "".join([
-        P("Variação da margem bruta total numa baixa de 10%, conforme o volume sobe", 100, 216, 1000, 18, INK, bold=True),
+        ctitle("Variação da margem bruta total numa baixa de 10%, conforme o volume sobe"),
         seals(["COMPROVADA", "EXEMPLO ILUSTRATIVO"], 1290, 212),
         sv.render(),
         rail([("A conta", formula + ex, "info"),
@@ -315,7 +315,7 @@ def s13():
            "os outros três de +18% a +23%.")
     foot = ("Fonte: margem SAP Nadir (sell-in; margem bruta ÷ Net Net, cascata de margem SAP, Atacadão); cálculo DOC com repasse integral ao preço "
             "de gôndola (PDV); exemplo ilustrativo DOC, sem dado de volume | Elaboração: DOC Consulting. Período: margem SAP de jun/25 a mai/26.")
-    return slide("s13", "Volume e margem", sub, body, foot, "13", notes)
+    return slide("s13", "Volume e margem", sub, body, foot, "13", notes, cards=CHART_CARD)
 
 
 # ------------------------------------------------------------------ 14 bullet
@@ -361,7 +361,7 @@ def s14():
         return (f'<div style="display:flex;flex-direction:row;gap:10px">{p(it, 16, INK, bold=True, extra="width:100px;")}'
                 f'{p(txt, 16, INK, extra="width:320px;")}</div>')
     body = "".join([
-        P("Volume que a baixa de 10% traz contra o volume que ela precisa trazer", 100, 216, 1000, 18, INK, bold=True),
+        ctitle("Volume que a baixa de 10% traz contra o volume que ela precisa trazer"),
         seals(["PARCIAL"], 1290, 212),
         sv.render(),
         rail([("Leitura", f'<div style="display:flex;flex-direction:column;gap:8px">'
@@ -383,7 +383,7 @@ def s14():
     sub = ("Numa baixa de 10%, o Copo traria +6% de volume contra +51% necessários e a Lasanheira empata; Duralex e Opaline passam no agregado, "
            "mas não em todos os recortes.")
     foot = (f"{F_MARG}, com repasse integral; M5 do Excel v8.1 (02/10/2026), aba Resumo | Elaboração: DOC Consulting. {PER_VPM}")
-    return slide("s14", "Volume esperado", sub, body, foot, "14", notes)
+    return slide("s14", "Volume esperado", sub, body, foot, "14", notes, cards=CHART_CARD)
 
 
 # ------------------------------------------------------------------ 15 efeito na margem
@@ -430,7 +430,7 @@ def s15():
     sv.text(0, 690, "Cenários: estimativa nacional e sua faixa de 95%, 8 recortes, M5 e a curva de especificações do estudo (mediana e quartis). Eixo Y: item.", 13, G1)
     curva = mini_table([("Copo", "−1,45"), ("Duralex", "−1,52"), ("Opaline", "+0,33"), ("Lasanheira", "−0,89")], [150, 100], 15)
     body = "".join([
-        P("Variação da margem bruta total numa baixa de preço, em todos os cenários de sensibilidade", 100, 216, 1050, 18, INK, bold=True),
+        ctitle("Variação da margem bruta total numa baixa de preço, em todos os cenários de sensibilidade"),
         seals(["PARCIAL"], 1290, 212),
         sv.render(),
         rail([("Sem repasse, todos perdem", p("Na baixa de 10%, sem repasse ao preço de gôndola (PDV): Copo −33,8%; Opaline −18,5%; Duralex −15,5%; "
@@ -452,7 +452,7 @@ def s15():
     sub = ("Com todos os cenários à vista, o Copo perde margem sempre, a Lasanheira fica perto de zero e Duralex e Opaline ganham no agregado, "
            "mas podem perder.")
     foot = (f"{F_MARG}; M5 e curva de especificações do Excel v8.1 (02/10/2026), abas Resumo e Resumo da curva | Elaboração: DOC Consulting. {PER_VPM}")
-    return slide("s15", "Efeito na margem", sub, body, foot, "15", notes)
+    return slide("s15", "Efeito na margem", sub, body, foot, "15", notes, cards=CHART_CARD)
 
 
 # ------------------------------------------------------------------ 16 decisao
@@ -480,7 +480,7 @@ def s16():
              ("O quê", "Baixa de 5% e de 10% no preço Nadir do Duralex e da Opaline, com repasse ao preço de gôndola (PDV) acordado com o Atacadão e conferido na coleta Involves."),
              ("Medida", "Volume por loja-mês na venda no caixa da BASE SO (marcada como sell-out), com e sem baixa, e margem bruta no SAP (sell-in), sem misturar sell-through."),
              ("Regra de manter ou voltar", "Manter só se o aumento medido, com a faixa de 95% inteira, passar do necessário: Duralex +8,4% (5%) e +18,3% (10%); Opaline +10,2% e +22,6%. Senão, voltar.")]
-    tb = "".join(f'<div style="width:415px;background:{PANEL};border-radius:16px;padding:16px 20px;display:flex;flex-direction:column;gap:6px">'
+    tb = "".join(f'<div style="width:415px;{CARD};padding:16px 20px;display:flex;flex-direction:column;gap:6px">'
                  f'{h3(t)}{p(d, 17, INK, lh=1.35)}</div>' for t, d in tests)
     body = "".join([
         seals(["RECOMENDAÇÃO"], 1820, 190),
@@ -505,27 +505,34 @@ def s16():
 
 # ------------------------------------------------------------------ 17 proximos passos
 def s17():
-    cards = [("1", "Manter a tabela dos 4 itens: nenhuma baixa agora."),
-             ("2", "Incluir no teste de preço por região um braço de baixa de 5% e de 10% para Duralex e Opaline, com grupo de controle e repasse acordado com o Atacadão."),
-             ("3", "Adotar a regra de uso: a sensibilidade nacional só entra em decisão junto da faixa dos recortes, do p-valor e do R².")]
-    ch = "".join(f'<div style="width:540px;background:rgba(255,255,255,0.07);border:1px solid rgba(154,180,232,0.45);border-radius:20px;'
-                 f'padding:32px 34px;display:flex;flex-direction:column;gap:16px">{p(n, 64, LB2, bold=True, lh=1.0)}{p(t, 24, WHITE, lh=1.35)}</div>'
-                 for n, t in cards)
+    cards = [("1", "Manter a tabela dos 4 itens", "Nenhuma baixa agora: no Copo e na Lasanheira a conta não fecha; Duralex e Opaline só depois do teste."),
+             ("2", "Teste de preço com braço de baixa", "Baixa de 5% e de 10% para Duralex e Opaline, por região, com grupo de controle e repasse acordado com o Atacadão."),
+             ("3", "Regra de uso da sensibilidade", "A sensibilidade nacional só entra em decisão junto da faixa dos recortes, do p-valor e do R².")]
+    ch = "".join(f'<div style="height:244px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.35);border-radius:16px;'
+                 f'padding:0px 32px 0px 25px;display:flex;flex-direction:row;align-items:center;gap:22px">'
+                 f'<div style="width:52px;height:52px;flex:none;background:#FFFFFF;border-radius:50%;display:flex;justify-content:center;align-items:center">'
+                 f'{p(n, 24, NAVY, bold=True, lh=1.0)}</div>'
+                 f'<div style="display:flex;flex-direction:column;gap:8px">{p(t, 26, WHITE, bold=True, lh=1.2)}{p(d, 19, "#DCE5FA", lh=1.4)}</div></div>'
+                 for n, t, d in cards)
+    steps = ["Confirmar a empresa fonte da BASE SO.", "Acordar o repasse por região com o Atacadão.",
+             "Manter a coleta Involves sem buracos (como jul e ago/25).", "Resolver a mistura de peça e caixa no preço do Copo."]
+    tl = "".join(f'<div style="display:flex;flex-direction:row;gap:18px;align-items:start">'
+                 f'<div style="width:18px;height:18px;flex:none;background:#FFFFFF;border-radius:50%"></div>'
+                 f'{p(t, 19, "#DCE5FA", lh=1.35)}</div>' for t in steps)
     body = "".join([
-        P("RECOMENDAÇÃO", 100, 150, 400, 14, LB2, bold=True, extra="letter-spacing:2px;"),
-        P("Próximos passos", 100, 180, 1400, 72, WHITE, bold=True, lh=1.1),
-        P("Três aprovações pedidas hoje para transformar a estimativa em decisão.", 100, 272, 1400, 28, G3, italic=True),
-        f'<div style="position:absolute;left:100px;top:370px;width:1720px;display:flex;flex-direction:row;justify-content:space-between;align-items:stretch">{ch}</div>',
-        f'<div style="position:absolute;left:100px;top:780px;width:1720px;border:1px solid {LB2};border-radius:16px;padding:20px 28px">'
-        + p("Antes do teste: confirmar a empresa fonte da BASE SO, acordar o repasse por região, manter a coleta Involves sem buracos e resolver a "
-            "mistura de peça e caixa no preço do Copo. Donos e datas: a validar.", 21, WHITE, lh=1.4) + "</div>",
+        f'<div style="position:absolute;left:100px;top:206px;width:916px;display:flex;flex-direction:column;gap:14px">{ch}</div>',
+        f'<div style="position:absolute;left:1068px;top:276px;width:2px;height:168px;background:rgba(255,255,255,0.35)"></div>',
+        f'<div style="position:absolute;left:1060px;top:206px;width:760px;display:flex;flex-direction:column;gap:30px">'
+        f'<div style="display:flex;flex-direction:row;gap:14px;align-items:center">{p("Antes do teste", 22, WHITE, bold=True)}'
+        f'<p style="font-size:13px;font-weight:700;letter-spacing:1px;color:#9AB4E8;border:1px solid #9AB4E8;border-radius:13px;padding:4px 12px;line-height:1.2">RECOMENDAÇÃO</p></div>'
+        f'{tl}{p("Donos e datas: a validar.", 19, WHITE, bold=True)}</div>',
     ])
     notes = ("Pedimos três aprovações: manter a tabela, colocar Duralex e Opaline no teste com braço de baixa e grupo de controle, e usar a "
              "sensibilidade nacional sempre com a faixa dos recortes ao lado. Antes do teste, quatro ajustes de dado.")
     foot = ("Fonte: base conciliada, BASE SO (venda no caixa das lojas do Atacadão, marcada como sell-out, com consumidor final e pequeno "
             "comerciante sem separação; empresa fonte não informada); coleta Involves de preço de gôndola (PDV); SAP Nadir (sell-in) para a margem; "
             "sell-through (CD e Mtrix) não entra nas contas; cálculo DOC das faixas nacionais de preço | Elaboração: DOC Consulting. " + PER_VPM)
-    return slide("s17", "", "", body, foot, "17", notes, dark=True)
+    return slide("s17", "Próximos passos", "Três aprovações pedidas hoje para transformar a estimativa em decisão.", body, foot, "17", notes, dark=True)
 
 
 SLIDES_B = [s10, s11, s12, s13, s14, s15, s16, s17]

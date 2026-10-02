@@ -5,6 +5,11 @@ from html import escape
 BLUE = "#1A56DB"; INK = "#14171F"; G1 = "#888D97"; G2 = "#9CA3AF"; G3 = "#C7CBD1"; G4 = "#E5E7EB"
 WHITE = "#FFFFFF"; PANEL = "#F4F7FD"; LB1 = "#EAF0FB"; LB2 = "#9AB4E8"; GRID = "#F0F1F3"
 NAVY = "#0A1D5C"
+SUB = "#5B6472"; LINE = "#E5E7EB"; SEP = "#EEF0F2"
+ASSET = {"nadir": "/_blob/1f0f4a495a0000654839f70f11957810", "doc": "/_blob/279361c9884d2ad431a2bc42202e06f5",
+         "nadir_w": "/_blob/79529b06c29897c23273d6375e423b40", "doc_w": "/_blob/e0d737acc7491b6bf7fd27431064f451",
+         "bg": "/_blob/108ab0e00d11d8e08f79171ab6307ed0"}
+CARD = f"background:#FFFFFF;border:1px solid {LINE};border-radius:16px"
 FONT = "Arial, Helvetica, sans-serif"
 MINUS = "−"
 
@@ -53,32 +58,55 @@ SEAL_COLORS = {"COMPROVADA": BLUE, "RECOMENDAÇÃO": BLUE, "PARCIAL": G1, "HIPÓ
 def seal_p(label):
     c = SEAL_COLORS[label]
     return (f'<p style="font-size:13px;font-weight:700;line-height:1.2;color:{c};letter-spacing:1px;'
-            f'text-transform:uppercase;border:1px solid {c};border-radius:6px;padding:5px 10px">{e(label)}</p>')
+            f'text-transform:uppercase;border:1px solid {c};border-radius:13px;padding:4px 12px">{e(label)}</p>')
 
 
 def seals(labels, right_x, top):
     """Pinned row of evidence seals whose right edge sits at right_x."""
     w = 560
+    if right_x == 1290:  # dentro do cartão do gráfico
+        right_x, top = 1249, 229
     inner = "".join(seal_p(l) for l in labels)
     return (f'<div style="position:absolute;left:{right_x - w}px;top:{top}px;width:{w}px;display:flex;'
             f'flex-direction:row;justify-content:end;gap:8px">{inner}</div>')
 
 
 def logo(dark=False):
-    c = WHITE if dark else BLUE
-    return P("DOC", 1620, 64, 200, 40, c, bold=True, align="right", lh=1.0, extra="letter-spacing:3px;")
+    if dark:
+        return (f'<img src="{ASSET["nadir_w"]}" alt="Nadir" style="position:absolute;left:1537px;top:78px;width:75px;height:28px;object-fit:contain">'
+                f'<div style="position:absolute;left:1634px;top:78px;width:1px;height:28px;background:rgba(255,255,255,0.45)"></div>'
+                f'<img src="{ASSET["doc_w"]}" alt="DOC Consulting" style="position:absolute;left:1657px;top:79px;width:163px;height:26px;object-fit:contain">')
+    return (f'<img src="{ASSET["nadir"]}" alt="Nadir" style="position:absolute;left:1515px;top:78px;width:97px;height:26px;object-fit:contain">'
+            f'<div style="position:absolute;left:1634px;top:77px;width:1px;height:28px;background:#D1D5DB"></div>'
+            f'<img src="{ASSET["doc"]}" alt="DOC Consulting" style="position:absolute;left:1657px;top:78px;width:163px;height:26px;object-fit:contain">')
 
 
-def rail(blocks, left=1330, top=222, width=490, gap=14):
-    """blocks: list of (label, inner_html, kind) where kind in {'info','decide'}"""
-    out = []
-    for label, inner, kind in blocks:
-        bg = LB1 if kind == "decide" else PANEL
-        col = INK if kind == "decide" else BLUE
-        out.append(f'<div style="background:{bg};border-radius:16px;padding:18px 22px;display:flex;'
-                   f'flex-direction:column;gap:8px">{h3(label, color=col)}{inner}</div>')
-    return (f'<div style="position:absolute;left:{left}px;top:{top}px;width:{width}px;display:flex;'
-            f'flex-direction:column;gap:{gap}px">{"".join(out)}</div>')
+def card(left, top, width, height):
+    return f'<div style="position:absolute;left:{left}px;top:{top}px;width:{width}px;height:{height}px;{CARD}"></div>'
+
+
+def ctitle(text, sub=None):
+    """Título do gráfico dentro do cartão (padrão DOC: 16 pt bold)."""
+    out = P(text, 129, 226, 1010, 21, INK, bold=True, lh=1.25)
+    if sub:
+        out += P(sub, 129, 254, 950, 16, G1, lh=1.3)
+    return out
+
+
+def rail(blocks, left=1310, top=206, width=510, gap=14):
+    """Cartão 'Leitura executiva': blocos com título em negrito, texto cinza e separadores; o último é 'O que decidir'."""
+    out = [p("LEITURA EXECUTIVA", 16, G2, bold=True, extra="letter-spacing:1px;")]
+    for i, (label, inner, kind) in enumerate(blocks):
+        if i:
+            out.append(f'<div style="height:1px;background:{SEP}"></div>')
+        col = BLUE if kind == "decide" else INK
+        inner = inner.replace(f"color:{INK};", f"color:{SUB};")
+        if kind == "decide":
+            inner = inner.replace("font-weight:700;", "")
+        out.append(f'<div style="display:flex;flex-direction:column;gap:8px">'
+                   f'{p(label, 21, col, bold=True, lh=1.25)}{inner}</div>')
+    return (f'<div style="position:absolute;left:{left}px;top:{top}px;width:{width}px;height:{992 - top}px;{CARD};padding:24px 29px;'
+            f'display:flex;flex-direction:column;gap:{gap}px">{"".join(out)}</div>')
 
 
 def mini_table(rows, widths, size=16, head=None, bold_first=True, colors=None):
@@ -101,6 +129,8 @@ def mini_table(rows, widths, size=16, head=None, bold_first=True, colors=None):
 
 
 def placeholder(left, top, width, height, title, filename, legend):
+    if left == 100 and width == 1190:
+        left, top, width, height = 129, 296, 1120, 664
     return (f'<div style="position:absolute;left:{left}px;top:{top}px;width:{width}px;height:{height}px;'
             f'background:{PANEL};border:2px dashed {LB2};border-radius:16px;display:flex;flex-direction:column;'
             f'justify-content:center;align-items:center;gap:14px;padding:48px">'
@@ -111,27 +141,36 @@ def placeholder(left, top, width, height, title, filename, legend):
             f'</div>')
 
 
-def slide(sid, title, subtitle, body, footer, page, notes, dark=False, transition="fade"):
+def slide(sid, title, subtitle, body, footer, page, notes, dark=False, transition="fade", cards=()):
+    """cards: retângulos brancos com borda desenhados atrás do conteúdo, ex. [(100, 206, 1178, 786)]."""
+    back = "".join(card(*c) for c in cards)
     if dark:
         bg = "linear-gradient(135deg, #050E2A 0%, #0A1D5C 55%, #0E2F8A 100%)"
-        parts = [body]
-        parts.append(logo(dark=True))
-        parts.append(P(footer, 100, 992, 1500, 15, "#9AB4E8", lh=1.3))
-        parts.append(P(f"Página {page}", 1640, 992, 180, 15, "#9AB4E8", align="right", lh=1.3))
+        parts = [f'<img src="{ASSET["bg"]}" alt="" style="position:absolute;left:0px;top:0px;width:1920px;height:1080px;object-fit:cover">']
+        if title:
+            parts += [P(title, 100, 60, 1400, 56, WHITE, bold=True, lh=1.15, extra="white-space:nowrap;"),
+                      P(subtitle, 100, 136, 1720, 24, "#AFC1EE", italic=True, lh=1.3)]
+        parts += [back, body, logo(dark=True),
+                  P(footer, 100, 998, 1620, 15, "#AFC1EE", lh=1.3),
+                  P(f"Página {page}", 1740, 998, 80, 15, "#AFC1EE", align="right", lh=1.3)]
         color = WHITE
     else:
         bg = WHITE
-        parts = [P(title, 100, 50, 1440, 56, INK, bold=True, lh=1.1, extra="white-space:nowrap;"),
-                 P(subtitle, 100, 122, 1480, 24, G1, italic=True, lh=1.3),
+        parts = [back,
+                 P(title, 100, 60, 1400, 56, INK, bold=True, lh=1.15, extra="white-space:nowrap;"),
+                 P(subtitle, 100, 134, 1720, 24, G1, italic=True, lh=1.3),
                  logo(), body,
-                 P(footer, 100, 992, 1500, 15, G1, lh=1.3),
-                 P(f"Página {page}", 1640, 992, 180, 15, G1, align="right", lh=1.3)]
+                 P(footer, 100, 998, 1620, 15, G1, lh=1.3),
+                 P(f"Página {page}", 1740, 998, 80, 15, G1, align="right", lh=1.3)]
         color = INK
     notes = notes.strip()
     assert len(notes) <= 4000, (sid, len(notes))
     return (f'<section id="{sid}" data-transition="{transition}" style="background:{bg};color:{color};'
             f'font-family:{FONT};padding:90px 100px 60px 100px;display:flex;flex-direction:column">\n'
-            + "\n".join(parts) + f"\n<aside>{e(notes)}</aside>\n</section>\n")
+            + "\n".join(x for x in parts if x) + f"\n<aside>{e(notes)}</aside>\n</section>\n")
+
+
+CHART_CARD = [(100, 206, 1178, 786)]
 
 
 # ---------------------------------------------------------------- SVG
@@ -195,9 +234,19 @@ class Svg:
 
     def render(self):
         body = "".join(self.items)
-        s = (f'<svg aria-label="{e(self.alt)}" xmlns="http://www.w3.org/2000/svg" width="{self.w}" height="{self.h}" '
-             f'viewBox="0 0 {self.w} {self.h}" style="position:absolute;left:{self.left}px;top:{self.top}px;'
-             f'width:{self.w}px;height:{self.h}px">{body}</svg>')
+        left, top, k = self.left, self.top, 1.0
+        if 100 <= left and left + self.w <= 1291 and 240 <= top <= 262:  # gráfico dentro do cartão
+            k = 1120 / 1190
+            left, top = 129 + (left - 100) * k, 268 + (top - 252) * k
+        elif left == 100 and self.w == 1720 and top == 250:  # diagrama de largura total
+            k = 1662 / 1720
+            left, top = 129, 262
+        W, H = round(self.w * k), round(self.h * k)
+        if k != 1.0:
+            body = f'<g transform="scale({k:.5f})">{body}</g>'
+        s = (f'<svg aria-label="{e(self.alt)}" xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" '
+             f'viewBox="0 0 {W} {H}" style="position:absolute;left:{left:.0f}px;top:{top:.0f}px;'
+             f'width:{W}px;height:{H}px">{body}</svg>')
         assert len(s.encode()) < 52000, (self.alt, len(s.encode()))
         return s
 

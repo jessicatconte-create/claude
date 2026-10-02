@@ -16,6 +16,15 @@ SL = os.path.join(ROOT, "project", "slides")
 PV = os.path.join(ROOT, "preview")
 os.makedirs(SL, exist_ok=True); os.makedirs(PV, exist_ok=True)
 
+from lib import ASSET
+BLOBMAP = {ASSET['nadir']: '../assets/nadir-azul.png', ASSET['doc']: '../assets/doc-azul.png', ASSET['nadir_w']: '../assets/nadir-branco.png',
+           ASSET['doc_w']: '../assets/doc-branco.png', ASSET['bg']: '../assets/fundo-capa.png'}
+def preview_html(h):
+    for k, v in BLOBMAP.items():
+        h = h.replace(k, v)
+    return h
+
+
 order = []
 for fn in SLIDES_A + SLIDES_B + SLIDES_C:
     html = fn()
@@ -26,7 +35,7 @@ for fn in SLIDES_A + SLIDES_B + SLIDES_C:
     with open(os.path.join(PV, sid + ".html"), "w") as f:
         f.write('<!doctype html><html><head><meta charset="utf-8"><style>*{margin:0;box-sizing:border-box}'
                 'body{width:1920px;height:1080px;overflow:hidden}section{position:relative;width:1920px;height:1080px;overflow:hidden}'
-                'aside{display:none}</style></head><body>' + html + '</body></html>')
+                'aside{display:none}</style></head><body>' + preview_html(html) + '</body></html>')
 
 sections = {
     "abertura": {"description": "Abertura: capa, sumário e fundamentos dos dados.", "start": "s01"},

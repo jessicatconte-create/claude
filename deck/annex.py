@@ -66,7 +66,7 @@ def a2():
     body = "".join([
         P("Sensibilidade do volume ao preço nas faixas nacionais por versão do cálculo", 100, 212, 1100, 18, INK, bold=True),
         seals(["COMPROVADA"], 1820, 208), grid,
-        f'<div style="position:absolute;left:100px;top:742px;width:1720px;display:flex;flex-direction:column;gap:10px;background:{PANEL};border-radius:16px;padding:20px 24px">{nb}</div>',
+        f'<div style="position:absolute;left:100px;top:742px;width:1720px;display:flex;flex-direction:column;gap:10px;{CARD};padding:20px 24px">{nb}</div>',
     ])
     notes = ("A forma de agrupar e a limpeza de extremos mexem pouco nos números do Duralex, da Opaline e da Lasanheira, e o Copo continua sem "
              "leitura em todas as versões. O que não fazemos em nenhuma versão é misturar o sell-through do CD com a venda no caixa das lojas, "
@@ -113,7 +113,7 @@ def a4():
              ("2 · Sensibilidade de empate", "A sensibilidade do volume ao preço que faz a baixa empatar.", "ln[m ÷ (m + Δp)] ÷ ln(1 + Δp)"),
              ("3 · Volume esperado", "O que a sensibilidade estimada diz que a baixa traz.", "(1 + Δp)^β − 1"),
              ("4 · Variação da margem bruta total", "O efeito final na margem, com o volume esperado.", "(1 + Δp)^β × (m + Δp) ÷ m − 1")]
-    ch = "".join(f'<div style="width:410px;background:{PANEL};border-radius:18px;padding:24px 24px;display:flex;flex-direction:column;gap:14px">'
+    ch = "".join(f'<div style="width:410px;{CARD};padding:24px 24px;display:flex;flex-direction:column;gap:14px">'
                  f'{h3(t)}{p(d, 17, INK)}<div style="background:{WHITE};border-radius:12px;padding:16px 16px">{p(f, 22, BLUE, bold=True, lh=1.3)}</div></div>'
                  for t, d, f in cards)
     leg = p("m = margem SAP (margem bruta ÷ Net Net) · Δp = variação do preço (−0,10 para uma baixa de 10%) · β = sensibilidade do volume ao preço", 18, INK)
@@ -139,7 +139,7 @@ def a5():
             ("Opaline", "24", "24", "142", "2.072 (11)"), ("Lasanheira", "4", "8", "44", "2.114 (10)")]
     tbl = mini_table(rows, [100, 52, 76, 70, 110], 16, head=["Item", "P10", "Mediana", "P90", "Pontos × mês (redes)"])
     body = "".join([
-        P("Volume por ponto de venda no mês contra o preço: sell-through (distribuidores, atacados, CD e Mtrix)", 100, 216, 1100, 18, INK, bold=True),
+        ctitle("Volume por ponto de venda no mês contra o preço: sell-through (distribuidores, atacados, CD e Mtrix)"),
         seals(["COMPROVADA"], 1290, 212),
         placeholder(100, 256, 1190, 700, "Gráfico A · Sell-through à parte",
                     "Deck faixas - Gráfico A - Sell-through à parte - 02-10-2026.png",
@@ -160,7 +160,7 @@ def a5():
             "Mtrix (sell-through dos distribuidores ao varejo); preço = faturamento ÷ peças (preço de venda ao varejo), exceto o CD, com preço de "
             "gôndola (PDV) da coleta Involves; sell-out fora do gráfico | Elaboração: DOC Consulting. Período: BASE SO de jan/25 a mai/26; Mtrix em "
             "jan a jul de 2025 e 2026.")
-    return slide("a5", "A5 · Sell-through à parte", sub, body, foot, "22", notes)
+    return slide("a5", "A5 · Sell-through à parte", sub, body, foot, "22", notes, cards=CHART_CARD)
 
 
 # ------------------------------------------------------------------ A6
