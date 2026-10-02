@@ -1,0 +1,3 @@
+#!/bin/sh
+# usage: ./shoot.sh s01 s02 ...
+for s in "$@"; do /opt/pw-browsers/chromium-1194/chrome-linux/chrome --headless=new --no-sandbox --disable-gpu --hide-scrollbars --window-size=1920,1180 --screenshot=shots/$s.png preview/$s.html >/dev/null 2>&1; done

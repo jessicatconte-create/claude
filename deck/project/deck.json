@@ -1,0 +1,72 @@
+{
+ "v": 4,
+ "createdOnFiles": {
+  "v": 1,
+  "at": "2026-10-02T12:00:00Z"
+ },
+ "lists": "css",
+ "title": "Preço, volume e margem · Nadir",
+ "order": [
+  "s01",
+  "s02",
+  "s03",
+  "s04",
+  "s05",
+  "s06",
+  "s07",
+  "s08",
+  "s09",
+  "s10",
+  "s11",
+  "s12",
+  "s13",
+  "s14",
+  "s15",
+  "s16",
+  "s17",
+  "a1",
+  "a2",
+  "a3",
+  "a4",
+  "a5",
+  "a6",
+  "a6b",
+  "a7"
+ ],
+ "sections": {
+  "abertura": {
+   "description": "Abertura: capa, sumário e fundamentos dos dados.",
+   "start": "s01"
+  },
+  "etapa1": {
+   "description": "Etapa 1, a base recebida: sell-out em todas as redes e o Atacadão por loja.",
+   "start": "s04"
+  },
+  "etapa2": {
+   "description": "Etapa 2, por que a regressão direta não conclui.",
+   "start": "s06"
+  },
+  "etapa3": {
+   "description": "Etapa 3, o tratamento: agrupamento nacional em 10 faixas.",
+   "start": "s09"
+  },
+  "etapa4": {
+   "description": "Etapa 4, a sensibilidade e o grau de confiança.",
+   "start": "s10"
+  },
+  "etapa5": {
+   "description": "Etapa 5, a pergunta de negócio: volume, margem e decisão.",
+   "start": "s13"
+  },
+  "encerramento": {
+   "description": "Encerramento: o que aprovar hoje.",
+   "start": "s17"
+  },
+  "anexo": {
+   "description": "Anexo: faixas, robustez, recortes, fórmulas, sell-through e bases.",
+   "start": "a1"
+  }
+ },
+ "faces": {},
+ "designSystems": []
+}
