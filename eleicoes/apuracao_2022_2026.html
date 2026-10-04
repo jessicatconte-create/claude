@@ -573,7 +573,7 @@ const thav = (q, nome) => `<img class="thav" src="${FOTOS[q]}" alt="" style="--c
   // 2022 no mesmo ponto
   document.getElementById("past").innerHTML = `
     <h2>2022 com ${fmt(b[0])}% apurado</h2>
-    ${mrow("Jair Bolsonaro", "var(--flavio)", b[3], FOTOS.jair)}${mrow("Lula", "var(--lula)", b[2])}
+    ${mrow("Jair Bolsonaro", "var(--flavio)", b[3], FOTOS.jair)}${mrow("Lula", "var(--lula)", b[2], FOTOS.lula)}
     <div class="hint">Às ${b[1]}, Bolsonaro liderava por ${fmt(Math.abs(b[3] - b[2]))} p.p. Resultado final: Lula 48,43% × 43,20%.</div>`;
 
   document.getElementById("lede").innerHTML = `<b>${lider}</b> lidera por ${fmt(Math.abs(d))} pontos com ${fmt(a[0])}% apurado. Em 2022, no mesmo ponto, a diferença era de ${fmt(Math.abs(b[3] - b[2]))} e Lula virou com cerca de 67% apurado.`;
