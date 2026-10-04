@@ -4,10 +4,26 @@ Grava dados_exterior_2026.json, usado pelo atualizar_pagina.py.
 Uso: python exterior_tse.py
 """
 import json, time
-from monitor_tse import baixar, ler, URL
-import requests
+from monitor_tse import baixar, ler
+import requests, sys
 
 CM = "https://resultados.tse.jus.br/oficial/ele2026/6257/config/mun-e006257-cm.json"
+URL_CIDADE = "https://resultados.tse.jus.br/oficial/ele2026/6257/dados/zz/zz{cd}-c0001-e006257-u.json"
+
+
+def baixar_cidade(cd):
+    for tentativa in range(4):
+        try:
+            r = requests.get(URL_CIDADE.format(cd=cd), timeout=15, headers={"User-Agent": "Mozilla/5.0"})
+            if r.ok:
+                return r.json()
+            if r.status_code != 429:
+                print("TSE respondeu", r.status_code, "para", cd, file=sys.stderr)
+                return None
+        except requests.RequestException as e:
+            print("erro", cd, e, file=sys.stderr)
+        time.sleep(2 ** tentativa)
+    return None
 
 
 def main():
@@ -16,7 +32,7 @@ def main():
     total = ler(baixar("zz"))
     linhas = []
     for c in cidades:
-        j = baixar(f"zz{c['cd']}")
+        j = baixar_cidade(c["cd"])
         if j:
             d = ler(j)
             if d["vv"]:
