@@ -12,6 +12,7 @@ Uso:  pip install requests pandas matplotlib
 """
 import csv, json, subprocess, sys, time
 from datetime import datetime, timedelta, timezone
+from concurrent.futures import ThreadPoolExecutor
 import requests
 
 # Arquivo que o painel resultados.tse.jus.br consulta (eleição 6257 = 1º turno 2026).
@@ -82,6 +83,27 @@ def outros_cargos():
     return out
 
 
+def cargo_por_uf(c, anterior=None):
+    """Cargo estadual (5 = senador, 3 = governador) em todas as UFs: % apurado, vagas e os mais votados,
+    com a situação do TSE quando houver. UF que não responder mantém o dado anterior."""
+    def uma(uf):
+        try:
+            j = requests.get(URL_EST.format(uf=uf, c=c), timeout=30, headers={"User-Agent": "Mozilla/5.0"}).json()
+        except (requests.RequestException, ValueError):
+            return uf, None
+        nv = int(j["carg"][0].get("nv", 1))
+        cs = sorted(((cd, par["sg"]) for a in j["carg"][0]["agr"] for par in a["par"] for cd in par["cand"]), key=lambda x: -int(x[0]["vap"]))
+        return uf, {"apurado": num(j["s"]["pstn"]), "vagas": nv,
+                    "cands": [{"nome": cd["nmu"].title(), "partido": sg, "pct": num(cd["pvapn"]), "votos": int(cd["vap"]),
+                               "st": cd.get("st", ""), "eleito": cd.get("e") == "s"} for cd, sg in cs[:nv + 2]]}
+    out = dict(anterior or {})
+    with ThreadPoolExecutor(6) as ex:
+        for uf, d in ex.map(uma, UFS):
+            if d:
+                out[uf.upper()] = d
+    return out
+
+
 def somar(partes, nacional):
     """Total do Brasil somando as UFs e o exterior. O arquivo nacional do TSE às vezes fica parado
     enquanto os das UFs seguem atualizando; vale o que estiver mais adiantado."""
@@ -106,12 +128,11 @@ def rodada():
             anterior = json.load(f)
         estados, exterior = anterior["estados"], anterior.get("exterior")
     except (OSError, ValueError, KeyError):
-        estados, exterior = {}, None
-    for uf in UFS:
-        ju = baixar(uf)
-        if ju:
-            estados[uf.upper()] = ler(ju)
-        time.sleep(0.3)
+        anterior, estados, exterior = {}, {}, None
+    with ThreadPoolExecutor(6) as ex:
+        for uf, ju in zip(UFS, ex.map(baixar, UFS)):
+            if ju:
+                estados[uf.upper()] = ler(ju)
     jz = baixar("zz")
     if jz:
         exterior = ler(jz)
@@ -124,7 +145,8 @@ def rodada():
             csv.writer(f).writerow([f"{br['pct']:.2f}", br["hora"], f"{br['lula']:.2f}", f"{br['flavio']:.2f}"])
         subprocess.run([sys.executable, "grafico.py"])
     with open(JSON_UF, "w") as f:
-        json.dump({"br": br, "estados": estados, "exterior": exterior, "outros": outros_cargos(), "candidatos": cands}, f, ensure_ascii=False)
+        json.dump({"br": br, "estados": estados, "exterior": exterior, "outros": outros_cargos(), "candidatos": cands,
+                   "senado": cargo_por_uf(5, anterior.get("senado")), "governador": cargo_por_uf(3, anterior.get("governador"))}, f, ensure_ascii=False)
     print(f"{br['hora']}  {br['pct']:.2f}% apurado  Flávio {br['flavio']:.2f}%  Lula {br['lula']:.2f}%  ({br.get('fonte', 'arquivo nacional')})")
 
 
