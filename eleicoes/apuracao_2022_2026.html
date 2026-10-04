@@ -160,6 +160,17 @@ figcaption a { color: var(--muted); }
 .panel { background: var(--bg); border-radius: 12px; padding: 12px 14px; display: grid; gap: 3px; font-size: 14px; font-variant-numeric: tabular-nums; }
 .panel b { font-weight: 700; }
 .themebtn { margin-left: auto; border: 1px solid var(--rule); background: var(--panel); color: var(--fg); border-radius: 99px; padding: 4px 12px; font: 600 12px var(--display); cursor: pointer; letter-spacing: 0; text-transform: none; }
+.polls { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr)); gap: 16px; }
+.pt { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
+.pt th { text-align: right; color: var(--muted); font-weight: 600; font-size: 12px; padding: 6px 8px; border-bottom: 1px solid var(--rule); }
+.pt td { text-align: right; padding: 7px 8px; border-bottom: 1px solid var(--grid); }
+.pt th:first-child, .pt td:first-child { text-align: left; }
+.pt tr.ref td { font-weight: 700; background: var(--bg); }
+.pt .sub { display: block; font-size: 11px; color: var(--muted); font-weight: 400; }
+.lead-f { color: var(--flavio); font-weight: 700; } .lead-l { color: var(--lula); font-weight: 700; }
+.dots { width: 100%; height: auto; display: block; overflow: visible; }
+.dots text { font: 12px var(--display); fill: var(--muted); }
+.tw { overflow-x: auto; }
 </style>
 
 <div class="wrap">
@@ -238,6 +249,19 @@ figcaption a { color: var(--muted); }
   </div>
 
 
+  <figure id="pesquisas">
+    <div class="sectionhead">
+      <h2>Pesquisas × urnas</h2>
+      <p>Diferença entre Flávio e Lula nas últimas pesquisas do 1º turno, comparada com o que está saindo da apuração.</p>
+    </div>
+    <svg class="dots" id="dots" role="img" aria-label="Diferença Flávio menos Lula em cada pesquisa e na apuração"></svg>
+    <div class="polls">
+      <div class="tw"><table class="pt" id="pt1"></table></div>
+      <div class="tw"><table class="pt" id="pt2"></table></div>
+    </div>
+    <figcaption>Pesquisas do 1º turno em % dos votos válidos. As do 2º turno estão em votos totais (incluem brancos, nulos e indecisos), exceto quando indicado. Erro = diferença Flávio − Lula na pesquisa menos a mesma diferença na projeção da apuração. Fontes: Metrópoles, Diario de Pernambuco, CNN Brasil, Brasil de Fato, VTV News, configuração pública do projeto apuracao-2026 (Quaest eleitor provável).</figcaption>
+  </figure>
+
   <details>
     <summary>Ver os dados em tabela</summary>
     <div class="tables" id="tables"></div>
@@ -255,7 +279,7 @@ figcaption a { color: var(--muted); }
 const D22 = [[0.09,"17h06",51.18,36.73],[0.88,"17h43",41.15,48.40],[1.99,"18h07",41.46,48.41],[8.10,"18h31",42.64,48.51],[13.20,"18h42",43.23,48.04],[20.26,"18h55",43.32,47.93],[33.18,"19h14",43.75,47.45],[44.17,"19h32",44.32,46.84],[60.33,"19h53",45.20,46.01],[70.00,"20h06",45.75,45.51],[85.00,"20h25",46.64,44.73],[93.00,"20h47",47.46,44.03],[95.99,"21h16",47.75,43.79],[98.21,"21h55",48.05,43.52],[99.75,"23h33",48.36,43.25],[100,"final",48.43,43.20]];
 /*DADOS*/
 const D26 = [[4.97,"",41.24,50.31],[9.08,"17h52",40.95,50.79],[10.08,"",40.78,50.96],[12.45,"",40.67,51.09],[14.24,"",40.67,51.17],[21.96,"18h16",40.82,51.07],[24.45,"18h19",40.97,50.94],[27.88,"",41.27,50.66],[31.9,"18h27",41.14,50.74],[36.6,"18h32",41.23,50.63],[41.57,"18h38",41.44,50.41],[47.26,"18h44",41.63,50.2],[64.81,"19h06",42.25,49.58]];
-const ESTADOS = {"AC":{"pct":94.49339207,"hora":"17h16","st":2145,"ts":2270,"vv":440884,"lula":28.470073761,"flavio":64.761025576,"lv":125520,"fv":285521},"AL":{"pct":42.092663005,"hora":"19h16","st":2989,"ts":7101,"vv":702258,"lula":57.142958856,"flavio":38.315263051,"lv":401291,"fv":269072},"AP":{"pct":75.235109718,"hora":"19h16","st":1440,"ts":1914,"vv":329983,"lula":46.597248949,"flavio":44.857462354,"lv":153763,"fv":148022},"AM":{"pct":76.52323158,"hora":"18h16","st":6242,"ts":8157,"vv":1666300,"lula":44.54467983,"flavio":48.052031447,"lv":742248,"fv":800691},"BA":{"pct":54.118277145,"hora":"19h17","st":19199,"ts":35476,"vv":4443314,"lula":64.846261147,"flavio":29.526970185,"lv":2881323,"fv":1311976},"CE":{"pct":53.09488744,"hora":"19h17","st":12618,"ts":23765,"vv":2929855,"lula":61.348360243,"flavio":32.826027227,"lv":1797418,"fv":961755},"DF":{"pct":99.024250251,"hora":"19h16","st":6901,"ts":6969,"vv":1753380,"lula":38.145524644,"flavio":51.269833122,"lv":668836,"fv":898955},"ES":{"pct":96.414059325,"hora":"19h16","st":9491,"ts":9844,"vv":2160890,"lula":37.49316254,"flavio":55.04107104,"lv":810186,"fv":1189377},"GO":{"pct":83.437460156,"hora":"19h17","st":13088,"ts":15686,"vv":3175216,"lula":30.314378612,"flavio":54.349026964,"lv":962547,"fv":1725699},"MA":{"pct":63.759464986,"hora":"19h17","st":11536,"ts":18093,"vv":2473703,"lula":62.501803976,"flavio":32.190849104,"lv":1546109,"fv":796306},"MT":{"pct":89.960178593,"hora":"18h16","st":7455,"ts":8287,"vv":1789521,"lula":28.653589424,"flavio":65.602247752,"lv":512762,"fv":1173966},"PA":{"pct":73.385509195,"hora":"19h16","st":15284,"ts":20827,"vv":3536209,"lula":48.133919686,"flavio":45.846809394,"lv":1702116,"fv":1621239},"PB":{"pct":94.174757282,"hora":"19h16","st":10088,"ts":10712,"vv":2356576,"lula":61.133144019,"flavio":33.201687533,"lv":1440649,"fv":782423},"PR":{"pct":97.623609167,"hora":"19h15","st":26497,"ts":27142,"vv":6427798,"lula":31.039836659,"flavio":60.02335481,"lv":1995178,"fv":3858180},"PI":{"pct":75.471882641,"hora":"19h16","st":7717,"ts":10225,"vv":1609600,"lula":69.949117793,"flavio":24.919980119,"lv":1125901,"fv":401112},"RJ":{"pct":57.205043132,"hora":"19h16","st":21552,"ts":37675,"vv":5079262,"lula":39.033111503,"flavio":53.498047551,"lv":1982594,"fv":2717306},"RN":{"pct":69.796672828,"hora":"19h16","st":5664,"ts":8115,"vv":1402617,"lula":59.949366078,"flavio":34.55939861,"lv":840860,"fv":484736},"RS":{"pct":91.051657168,"hora":"19h15","st":25082,"ts":27547,"vv":5867900,"lula":35.880314934,"flavio":55.449717957,"lv":2105421,"fv":3253734},"RO":{"pct":94.955300128,"hora":"18h16","st":4461,"ts":4698,"vv":918370,"lula":26.102115705,"flavio":67.20842362,"lv":239714,"fv":617222},"RR":{"pct":93.285055958,"hora":"18h16","st":1417,"ts":1519,"vv":302480,"lula":22.579013488,"flavio":71.289341444,"lv":68297,"fv":215636},"SP":{"pct":73.960986339,"hora":"19h13","st":76665,"ts":103656,"vv":18228834,"lula":37.509941667,"flavio":52.651167924,"lv":6837625,"fv":9597694},"SE":{"pct":83.791997299,"hora":"19h17","st":4963,"ts":5923,"vv":1120664,"lula":61.692621517,"flavio":31.511764454,"lv":691367,"fv":353141},"TO":{"pct":96.41879562,"hora":"19h16","st":4227,"ts":4384,"vv":895129,"lula":43.589806609,"flavio":50.273759425,"lv":390185,"fv":450015},"MS":{"pct":97.649873346,"hora":"18h16","st":6939,"ts":7106,"vv":1457429,"lula":34.145745693,"flavio":59.064901275,"lv":497650,"fv":860829},"MG":{"pct":67.965118513,"hora":"19h16","st":35384,"ts":52062,"vv":8152717,"lula":42.177374733,"flavio":49.072793769,"lv":3438602,"fv":4000766},"PE":{"pct":60.332430666,"hora":"20h16","st":12922,"ts":21418,"vv":3247281,"lula":62.084525485,"flavio":32.23798618,"lv":2016059,"fv":1046858},"SC":{"pct":83.804686598,"hora":"19h16","st":14520,"ts":17326,"vv":3759667,"lula":25.185129428,"flavio":66.371729198,"lv":946877,"fv":2495356}};
+const ESTADOS = {"AC":{"pct":98.061674009,"hora":"17h28","st":2226,"ts":2270,"vv":458909,"lula":28.661673665,"flavio":64.610412958,"lv":131531,"fv":296503},"AL":{"pct":53.175609069,"hora":"19h26","st":3776,"ts":7101,"vv":901670,"lula":56.831656815,"flavio":38.639635343,"lv":512434,"fv":348402},"AP":{"pct":82.549634274,"hora":"19h31","st":1580,"ts":1914,"vv":368061,"lula":46.382800677,"flavio":45.07568039,"lv":170717,"fv":165906},"AM":{"pct":85.019002084,"hora":"18h31","st":6935,"ts":8157,"vv":1847219,"lula":45.642287135,"flavio":47.157104815,"lv":843113,"fv":871095},"BA":{"pct":63.941819822,"hora":"19h26","st":22684,"ts":35476,"vv":5302664,"lula":64.981281107,"flavio":29.453874505,"lv":3445739,"fv":1561840},"CE":{"pct":64.54870608,"hora":"19h26","st":15340,"ts":23765,"vv":3605123,"lula":61.588439562,"flavio":32.617500152,"lv":2220339,"fv":1175901},"DF":{"pct":99.512125126,"hora":"19h26","st":6935,"ts":6969,"vv":1762818,"lula":38.123334343,"flavio":51.294574936,"lv":672045,"fv":904230},"ES":{"pct":98.720032507,"hora":"19h25","st":9718,"ts":9844,"vv":2219375,"lula":37.656051816,"flavio":54.879819769,"lv":835729,"fv":1217989},"GO":{"pct":91.138594925,"hora":"19h31","st":14296,"ts":15686,"vv":3480204,"lula":30.621998021,"flavio":54.046199591,"lv":1065708,"fv":1880918},"MA":{"pct":72.387111037,"hora":"19h25","st":13097,"ts":18093,"vv":2837471,"lula":62.541079715,"flavio":32.200716765,"lv":1774585,"fv":913686},"MT":{"pct":95.474840111,"hora":"18h30","st":7912,"ts":8287,"vv":1901821,"lula":28.912132109,"flavio":65.366929906,"lv":549857,"fv":1243162},"PA":{"pct":83.204494166,"hora":"19h31","st":17329,"ts":20827,"vv":4023861,"lula":48.284744428,"flavio":45.830111925,"lv":1942911,"fv":1844140},"PB":{"pct":97.750186706,"hora":"19h31","st":10471,"ts":10712,"vv":2453666,"lula":61.206415217,"flavio":33.15068147,"lv":1501801,"fv":813407},"PR":{"pct":99.171026453,"hora":"19h30","st":26917,"ts":27142,"vv":6528607,"lula":31.134604978,"flavio":59.957583601,"lv":2032656,"fv":3914395},"PI":{"pct":84.518337408,"hora":"19h31","st":8642,"ts":10225,"vv":1807554,"lula":70.312643495,"flavio":24.639651153,"lv":1270939,"fv":445375},"RJ":{"pct":69.714664897,"hora":"19h26","st":26265,"ts":37675,"vv":6293145,"lula":39.106694665,"flavio":53.413674721,"lv":2461041,"fv":3361400},"RN":{"pct":80.209488601,"hora":"19h26","st":6509,"ts":8115,"vv":1633405,"lula":59.736868688,"flavio":34.758372847,"lv":975745,"fv":567745},"RS":{"pct":96.602170835,"hora":"19h26","st":26611,"ts":27547,"vv":6224215,"lula":35.804049185,"flavio":55.538618123,"lv":2228521,"fv":3456843},"RO":{"pct":98.084291188,"hora":"18h30","st":4608,"ts":4698,"vv":948542,"lula":25.978080043,"flavio":67.35937892,"lv":246413,"fv":638932},"RR":{"pct":98.156682028,"hora":"18h28","st":1491,"ts":1519,"vv":319403,"lula":22.393966243,"flavio":71.458001334,"lv":71527,"fv":228239},"SP":{"pct":87.109284557,"hora":"19h25","st":90294,"ts":103656,"vv":21587195,"lula":37.910437183,"flavio":52.249720262,"lv":8183800,"fv":11279249},"SE":{"pct":91.23754854,"hora":"19h26","st":5404,"ts":5923,"vv":1228845,"lula":62.017015978,"flavio":31.213049652,"lv":762093,"fv":383560},"TO":{"pct":98.813868613,"hora":"19h31","st":4332,"ts":4384,"vv":918383,"lula":43.506249571,"flavio":50.358510556,"lv":399554,"fv":462484},"MS":{"pct":99.226006192,"hora":"18h29","st":7051,"ts":7106,"vv":1480621,"lula":34.503292875,"flavio":58.756764898,"lv":510863,"fv":869965},"MG":{"pct":78.35273328,"hora":"19h25","st":40792,"ts":52062,"vv":9381943,"lula":42.413346574,"flavio":48.917734844,"lv":3979196,"fv":4589434},"PE":{"pct":71.243813615,"hora":"20h16","st":15259,"ts":21418,"vv":3887323,"lula":62.496170244,"flavio":31.88250629,"lv":2429428,"fv":1239376},"SC":{"pct":93.841625303,"hora":"19h31","st":16259,"ts":17326,"vv":4216075,"lula":25.066394692,"flavio":66.569830945,"lv":1056818,"fv":2806634}};
 const BR = {"pct":64.805267122,"hora":"19h06","st":323539,"ts":499248,"vv":75762826,"lula":42.247438077,"flavio":49.58486501,"lv":32007853,"fv":37566895};
 /*FIM*/
 
@@ -502,5 +526,68 @@ renderMap(); resumo();
     const t = el("text", {class: "ufl", x, y}, svg2);
     t.innerHTML = `<tspan x="${x}">${uf}</tspan><tspan class="p" x="${x}" dy="15">${Math.round(ESTADOS[uf].pct)}%</tspan>`;
   }
+})();
+// ---- pesquisas × urnas ----
+(function () {
+  // 1º turno, % dos votos válidos
+  const P1 = [
+    {i: "AtlasIntel", d: "27/09–02/10", l: 47.0, f: 44.1},
+    {i: "Quaest", d: "véspera", l: 46.0, f: 45.0},
+    {i: "Quaest (eleitor provável)", d: "véspera", l: 45.8, f: 44.6},
+    {i: "Datafolha", d: "03/10", l: 45.0, f: 42.0},
+    {i: "Datafolha", d: "01/10", l: 45.0, f: 40.0},
+    {i: "Gerp", d: "03/10", l: 44.0, f: 46.0},
+    {i: "Futura", d: "03/10", l: 42.6, f: 44.8},
+  ];
+  // 2º turno
+  const P2 = [
+    {i: "Datafolha", d: "03/10", l: 47.0, f: 46.0},
+    {i: "Datafolha", d: "01/10", l: 48.0, f: 45.0},
+    {i: "AtlasIntel", d: "véspera", l: 47.6, f: 47.4},
+    {i: "Quaest", d: "véspera", l: 42.0, f: 44.0},
+    {i: "Real Time Big Data", d: "véspera", l: 46.0, f: 45.0, nota: "51% × 49% dos válidos"},
+  ];
+  let F = 0, L = 0, V = 0;
+  for (const e of Object.values(ESTADOS)) { const k = e.ts / e.st; F += e.fv * k; L += e.lv * k; V += e.vv * k; }
+  const pf = V ? F / V * 100 : null, pl = V ? L / V * 100 : null;
+  const a = D26[D26.length - 1];
+  const f1 = v => v.toFixed(1).replace(".", ",");
+  const lead = (f, l) => { const d = f - l; return `<span class="${d >= 0 ? "lead-f" : "lead-l"}">${d >= 0 ? "Flávio +" : "Lula +"}${f1(Math.abs(d))}</span>`; };
+  const erro = (f, l) => pf == null ? "–" : (() => { const e = (f - l) - (pf - pl); return `${e > 0 ? "+" : "−"}${f1(Math.abs(e))}`; })();
+  document.getElementById("pt1").innerHTML = `<caption style="text-align:left;font-weight:700;padding-bottom:6px">1º turno</caption>
+    <thead><tr><th>Pesquisa</th><th>Lula</th><th>Flávio</th><th>Vantagem</th><th>Erro</th></tr></thead><tbody>
+    ${P1.map(p => `<tr><td>${p.i}<span class="sub">${p.d}</span></td><td>${f1(p.l)}%</td><td>${f1(p.f)}%</td><td>${lead(p.f, p.l)}</td><td>${erro(p.f, p.l)}</td></tr>`).join("")}
+    <tr class="ref"><td>Apuração agora<span class="sub">${fmt(a[0])}% apurado</span></td><td>${f1(a[2])}%</td><td>${f1(a[3])}%</td><td>${lead(a[3], a[2])}</td><td></td></tr>
+    ${pf != null ? `<tr class="ref"><td>Projeção da apuração<span class="sub">estimativa simples</span></td><td>${f1(pl)}%</td><td>${f1(pf)}%</td><td>${lead(pf, pl)}</td><td>0</td></tr>` : ""}</tbody>`;
+  document.getElementById("pt2").innerHTML = `<caption style="text-align:left;font-weight:700;padding-bottom:6px">2º turno (Lula × Flávio)</caption>
+    <thead><tr><th>Pesquisa</th><th>Lula</th><th>Flávio</th><th>Vantagem</th></tr></thead><tbody>
+    ${P2.map(p => `<tr><td>${p.i}<span class="sub">${p.d}${p.nota ? " · " + p.nota : ""}</span></td><td>${f1(p.l)}%</td><td>${f1(p.f)}%</td><td>${lead(p.f, p.l)}</td></tr>`).join("")}</tbody>`;
+
+  // gráfico de pontos: vantagem Flávio − Lula
+  const svgD = document.getElementById("dots");
+  function drawDots() {
+    const Wd = Math.max(300, svgD.clientWidth || 600), rows = P1.length + 1, rh = 26, top = 24, Hd = top + rows * rh + 28;
+    const lab = Wd < 520 ? 150 : 250, xr = Wd - 20;
+    const lo = -8, hi = 8, Xd = v => lab + (v - lo) / (hi - lo) * (xr - lab);
+    svgD.setAttribute("viewBox", `0 0 ${Wd} ${Hd}`); svgD.innerHTML = "";
+    const mk = (t, at) => el(t, at, svgD);
+    for (let v = lo; v <= hi; v += 4) {
+      mk("line", {x1: Xd(v), x2: Xd(v), y1: top - 6, y2: Hd - 24, stroke: v === 0 ? "var(--faint)" : "var(--grid)", "stroke-width": 1});
+      mk("text", {x: Xd(v), y: Hd - 8, "text-anchor": "middle"}).textContent = v === 0 ? "empate" : (v > 0 ? `Flávio +${v}` : `Lula +${-v}`);
+    }
+    if (pf != null) {
+      const x = Xd(pf - pl);
+      mk("rect", {x: x - 1.5, y: top - 10, width: 3, height: rows * rh + 4, fill: "var(--fg)", opacity: .8, rx: 1.5});
+      mk("text", {x, y: top - 14, "text-anchor": "middle", style: "fill:var(--fg);font-weight:700"}).textContent = `projeção: Flávio +${f1(pf - pl)}`;
+    }
+    P1.concat([{i: "Média das pesquisas", d: "", l: P1.reduce((s, p) => s + p.l, 0) / P1.length, f: P1.reduce((s, p) => s + p.f, 0) / P1.length, media: true}]).forEach((p, n) => {
+      const y = top + n * rh + rh / 2, d = p.f - p.l;
+      mk("text", {x: lab - 10, y: y + 4, "text-anchor": "end", style: p.media ? "fill:var(--fg);font-weight:700" : ""}).textContent = p.i + (p.d && Wd >= 520 ? ` · ${p.d}` : "");
+      if (pf != null) mk("line", {x1: Xd(d), x2: Xd(pf - pl), y1: y, y2: y, stroke: "var(--faint)", "stroke-width": 1.5, "stroke-dasharray": "2 3"});
+      mk("circle", {cx: Xd(d), cy: y, r: p.media ? 7 : 5.5, fill: d >= 0 ? "var(--flavio)" : "var(--lula)", stroke: "var(--panel)", "stroke-width": 2});
+    });
+  }
+  drawDots();
+  let t; new ResizeObserver(() => { clearTimeout(t); t = setTimeout(drawDots, 120); }).observe(svgD);
 })();
 </script>
