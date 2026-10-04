@@ -9,9 +9,9 @@ with open("dados_2026.csv") as f:
 with open("dados_estados_2026.json") as f:
     uf = json.load(f)
 
-campos = ("pct", "hora", "st", "ts", "vv", "lula", "flavio", "lv", "fv")
-estados = {k: {c: v[c] for c in campos} for k, v in uf["estados"].items()}
-br = {c: uf["br"][c] for c in campos + ("hms", "data") if c in uf["br"]}
+campos = ("pct", "hora", "st", "ts", "vv", "tv", "lula", "flavio", "lv", "fv")
+estados = {k: {c: v[c] for c in campos if c in v} for k, v in uf["estados"].items()}
+br = {c: uf["br"][c] for c in campos + ("hms", "data", "fonte", "est", "comp", "abst", "vb", "vn") if c in uf["br"]}
 try:
     with open("dados_exterior_2026.json") as f:
         ext = json.load(f)

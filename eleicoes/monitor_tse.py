@@ -11,6 +11,7 @@ Uso:  pip install requests pandas matplotlib
       python monitor_tse.py --uma-vez  # uma leitura e sai
 """
 import csv, json, subprocess, sys, time
+from datetime import datetime, timedelta, timezone
 import requests
 
 # Arquivo que o painel resultados.tse.jus.br consulta (eleição 6257 = 1º turno 2026).
@@ -47,7 +48,7 @@ def ler(j):
     lula, flavio = cands[LULA], cands[FLAVIO]
     return {
         "pct": num(j["s"]["pstn"]), "st": int(j["s"]["st"]), "ts": int(j["s"]["ts"]),
-        "hora": j["ht"][:5].replace(":", "h"), "hms": j["ht"], "data": j["dt"], "vv": int(j["v"]["vv"]),
+        "hora": j["ht"][:5].replace(":", "h"), "hms": j["ht"], "data": j["dt"], "vv": int(j["v"]["vv"]), "tv": int(j["v"]["tv"]), "est": int(j["e"]["est"]), "comp": int(j["e"]["c"]), "abst": int(j["e"]["a"]), "vb": int(j["v"]["vb"]), "vn": int(j["v"]["tvn"]),
         "lula": num(lula["pvapn"]), "flavio": num(flavio["pvapn"]),
         "lv": int(lula["vap"]), "fv": int(flavio["vap"]),
     }
@@ -59,29 +60,48 @@ def ultimo_pct():
     return float(linhas[-1]["pct_secoes"]) if linhas else -1
 
 
+def somar(partes, nacional):
+    """Total do Brasil somando as UFs e o exterior. O arquivo nacional do TSE às vezes fica parado
+    enquanto os das UFs seguem atualizando; vale o que estiver mais adiantado."""
+    t = {k: sum(p.get(k, 0) for p in partes) for k in ("st", "ts", "vv", "tv", "lv", "fv", "est", "comp", "abst", "vb", "vn")}
+    # alguns arquivos (exterior, UFs em outro fuso) trazem horário local: vale o mais recente que já passou em Brasília
+    agora = datetime.now(timezone(timedelta(hours=-3)))
+    quando = lambda p: datetime.strptime(p["data"] + " " + p["hms"], "%d/%m/%Y %H:%M:%S").replace(tzinfo=agora.tzinfo)
+    validos = [p for p in partes if quando(p) <= agora] or partes
+    mais_novo = max(validos, key=quando)
+    t.update(pct=100 * t["st"] / t["ts"], lula=100 * t["lv"] / t["vv"], flavio=100 * t["fv"] / t["vv"],
+             hms=mais_novo["hms"], hora=mais_novo["hora"], data=mais_novo["data"], fonte="soma das UFs e exterior")
+    return t if nacional is None or t["pct"] > nacional["pct"] + 0.01 else nacional
+
+
 def rodada():
     j = baixar()
-    if not j:
-        return
-    br = ler(j)
-    if round(br["pct"], 2) > ultimo_pct():
-        with open(CSV, "a", newline="") as f:
-            csv.writer(f).writerow([f"{br['pct']:.2f}", br["hora"], f"{br['lula']:.2f}", f"{br['flavio']:.2f}"])
-        subprocess.run([sys.executable, "grafico.py"])
-    print(f"{br['hora']}  {br['pct']:.2f}% apurado  Flávio {br['flavio']:.2f}%  Lula {br['lula']:.2f}%")
+    nacional = ler(j) if j else None
     try:  # mantém o último dado de um estado que não responder
         with open(JSON_UF) as f:
-            estados = json.load(f)["estados"]
+            anterior = json.load(f)
+        estados, exterior = anterior["estados"], anterior.get("exterior")
     except (OSError, ValueError, KeyError):
-        estados = {}
+        estados, exterior = {}, None
     for uf in UFS:
         ju = baixar(uf)
         if ju:
             estados[uf.upper()] = ler(ju)
         time.sleep(0.3)
+    jz = baixar("zz")
+    if jz:
+        exterior = ler(jz)
+    partes = list(estados.values()) + ([exterior] if exterior else [])
+    br = somar(partes, nacional) if len(estados) == len(UFS) else nacional
+    if br is None:
+        return
+    if round(br["pct"], 2) > ultimo_pct():
+        with open(CSV, "a", newline="") as f:
+            csv.writer(f).writerow([f"{br['pct']:.2f}", br["hora"], f"{br['lula']:.2f}", f"{br['flavio']:.2f}"])
+        subprocess.run([sys.executable, "grafico.py"])
     with open(JSON_UF, "w") as f:
-        json.dump({"br": br, "estados": estados}, f, ensure_ascii=False)
-    print(f"   {len(estados)} estados salvos em {JSON_UF}")
+        json.dump({"br": br, "estados": estados, "exterior": exterior}, f, ensure_ascii=False)
+    print(f"{br['hora']}  {br['pct']:.2f}% apurado  Flávio {br['flavio']:.2f}%  Lula {br['lula']:.2f}%  ({br.get('fonte', 'arquivo nacional')})")
 
 
 if __name__ == "__main__":
