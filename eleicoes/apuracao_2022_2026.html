@@ -114,6 +114,18 @@ figcaption a { color: var(--muted); }
 .tally span { display: inline-flex; align-items: center; gap: 6px; }
 .tally i { width: 10px; height: 10px; border-radius: 50%; }
 .note { font-size: 12px; color: var(--muted); padding-inline: 6px; line-height: 1.5; }
+.pe-grid { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 20px; align-items: start; }
+@media (max-width: 760px) { .pe-grid { grid-template-columns: 1fr; } }
+.pe-grid .bars { columns: 1; }
+.pe-map { display: grid; gap: 8px; min-width: 0; }
+.pe-map svg { width: 100%; max-width: 420px; margin: 0 auto; display: block; }
+.pe-map path { stroke: var(--panel); stroke-width: 1.2; stroke-linejoin: round; }
+.pe-map path:hover { stroke: var(--fg); stroke-width: 2; }
+.pe-map .ufl { font: 700 15px var(--display); fill: var(--fg); text-anchor: middle; paint-order: stroke; stroke: var(--panel); stroke-width: 4px; pointer-events: none; }
+.pe-map .ufl tspan.p { font-weight: 500; font-size: 13px; }
+.pe-key { display: grid; gap: 4px; font-size: 12px; color: var(--muted); }
+.pe-key .ramp2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.pe-key .g { height: 8px; border-radius: 99px; }
 </style>
 
 <div class="wrap">
@@ -147,7 +159,17 @@ figcaption a { color: var(--muted); }
       <p id="pe-sub">% das seções totalizadas em cada UF, do mais adiantado ao mais atrasado. A cor da barra indica quem lidera no estado.</p>
     </div>
     <div class="tally" id="tally"></div>
-    <div class="bars" id="bars"></div>
+    <div class="pe-grid">
+      <div class="pe-map">
+        <svg id="brmap2" viewBox="0 0 613 639" role="img" aria-label="Mapa: % das urnas apuradas em cada estado e quem lidera"></svg>
+        <div class="pe-key">
+          <span>Cor: quem lidera. Intensidade: % das urnas apuradas.</span>
+          <div class="ramp2"><div class="g" style="background:linear-gradient(90deg, color-mix(in srgb, var(--flavio) 25%, transparent), var(--flavio))"></div><div class="g" style="background:linear-gradient(90deg, color-mix(in srgb, var(--lula) 25%, transparent), var(--lula))"></div></div>
+          <div class="ramp2"><span>Flávio · 0% → 100% apurado</span><span>Lula · 0% → 100% apurado</span></div>
+        </div>
+      </div>
+      <div class="bars" id="bars"></div>
+    </div>
     <p class="note">2022: o TSE não publica mais o andamento da apuração por estado daquela noite, só o resultado final (100% em todas as UFs), então não há como comparar estado a estado. Se você tiver prints ou dados de 2022 por estado num mesmo horário, eles entram aqui ao lado de 2026.</p>
   </figure>
   </div>
@@ -192,7 +214,7 @@ figcaption a { color: var(--muted); }
 const D22 = [[0.09,"17h06",51.18,36.73],[0.88,"17h43",41.15,48.40],[1.99,"18h07",41.46,48.41],[8.10,"18h31",42.64,48.51],[13.20,"18h42",43.23,48.04],[20.26,"18h55",43.32,47.93],[33.18,"19h14",43.75,47.45],[44.17,"19h32",44.32,46.84],[60.33,"19h53",45.20,46.01],[70.00,"20h06",45.75,45.51],[85.00,"20h25",46.64,44.73],[93.00,"20h47",47.46,44.03],[95.99,"21h16",47.75,43.79],[98.21,"21h55",48.05,43.52],[99.75,"23h33",48.36,43.25],[100,"final",48.43,43.20]];
 /*DADOS*/
 const D26 = [[4.97,"",41.24,50.31],[9.08,"17h52",40.95,50.79],[10.08,"",40.78,50.96],[12.45,"",40.67,51.09],[14.24,"",40.67,51.17],[21.96,"18h16",40.82,51.07],[24.45,"18h19",40.97,50.94],[27.88,"",41.27,50.66],[31.9,"18h27",41.14,50.74],[36.6,"18h32",41.23,50.63],[41.57,"18h38",41.44,50.41],[47.26,"18h44",41.63,50.2]];
-const ESTADOS = {"AC":{"pct":86.475770925,"hora":"16h49","st":1963,"ts":2270,"vv":401473,"lula":28.558832101,"flavio":64.559509606,"lv":114656,"fv":259189},"AL":{"pct":22.348964935,"hora":"18h49","st":1587,"ts":7101,"vv":359884,"lula":58.230429805,"flavio":37.341198831,"lv":209562,"fv":134385},"AP":{"pct":53.343782654,"hora":"18h49","st":1021,"ts":1914,"vv":218661,"lula":48.342411312,"flavio":43.473230251,"lv":105706,"fv":95059},"AM":{"pct":60.353070982,"hora":"17h49","st":4923,"ts":8157,"vv":1316891,"lula":42.944176853,"flavio":49.34121351,"lv":565528,"fv":649770},"BA":{"pct":33.354944188,"hora":"18h49","st":11833,"ts":35476,"vv":2685283,"lula":64.190105847,"flavio":30.024693859,"lv":1723686,"fv":806248},"CE":{"pct":30.944666526,"hora":"18h49","st":7354,"ts":23765,"vv":1673491,"lula":60.820823058,"flavio":33.272542249,"lv":1017831,"fv":556813},"DF":{"pct":96.355287703,"hora":"18h49","st":6715,"ts":6969,"vv":1701228,"lula":38.160904946,"flavio":51.245276941,"lv":649204,"fv":871799},"ES":{"pct":86.418122714,"hora":"18h49","st":8507,"ts":9844,"vv":1915588,"lula":37.029465626,"flavio":55.510266299,"lv":709332,"fv":1063348},"GO":{"pct":61.781206171,"hora":"18h49","st":9691,"ts":15686,"vv":2322697,"lula":29.493214139,"flavio":55.350439597,"lv":685038,"fv":1285623},"MA":{"pct":42.502625325,"hora":"18h49","st":7690,"ts":18093,"vv":1612713,"lula":61.471569957,"flavio":33.140676611,"lv":991360,"fv":534464},"MT":{"pct":74.996983227,"hora":"17h49","st":6215,"ts":8287,"vv":1487016,"lula":28.360622885,"flavio":65.781067588,"lv":421727,"fv":978175},"PA":{"pct":55.408844289,"hora":"18h49","st":11540,"ts":20827,"vv":2655328,"lula":48.009398462,"flavio":45.66942389,"lv":1274807,"fv":1212673},"PB":{"pct":82.552277819,"hora":"18h49","st":8843,"ts":10712,"vv":2050352,"lula":60.7640054,"flavio":33.482104536,"lv":1245876,"fv":686501},"PR":{"pct":89.385454278,"hora":"18h49","st":24261,"ts":27142,"vv":5872676,"lula":30.930294809,"flavio":60.071865024,"lv":1816436,"fv":3527826},"PI":{"pct":57.926650367,"hora":"18h49","st":5923,"ts":10225,"vv":1228480,"lula":68.964329904,"flavio":25.77315056,"lv":847213,"fv":316618},"RJ":{"pct":30.821499668,"hora":"18h49","st":11612,"ts":37675,"vv":2649904,"lula":39.186136554,"flavio":53.353291289,"lv":1038395,"fv":1413811},"RN":{"pct":47.652495379,"hora":"18h49","st":3867,"ts":8115,"vv":925677,"lula":60.207394156,"flavio":34.343945026,"lv":557326,"fv":317914},"RS":{"pct":73.075107997,"hora":"18h49","st":20130,"ts":27547,"vv":4702718,"lula":35.599476728,"flavio":55.744486486,"lv":1674143,"fv":2621506},"RO":{"pct":79.225202214,"hora":"17h49","st":3722,"ts":4698,"vv":769010,"lula":26.552190479,"flavio":66.574166786,"lv":204189,"fv":511962},"RR":{"pct":61.026991442,"hora":"17h49","st":927,"ts":1519,"vv":191555,"lula":23.657957245,"flavio":70.720158701,"lv":45318,"fv":135468},"SP":{"pct":47.747356641,"hora":"18h49","st":49493,"ts":103656,"vv":11625219,"lula":36.567784228,"flavio":53.688390731,"lv":4251085,"fv":6241393},"SE":{"pct":56.289042715,"hora":"18h49","st":3334,"ts":5923,"vv":731674,"lula":60.794834858,"flavio":32.31616813,"lv":444820,"fv":236449},"TO":{"pct":90.944343066,"hora":"18h49","st":3987,"ts":4384,"vv":842689,"lula":43.43073186,"flavio":50.384661482,"lv":365986,"fv":424586},"MS":{"pct":92.034900084,"hora":"17h49","st":6540,"ts":7106,"vv":1371614,"lula":33.801492257,"flavio":59.326749362,"lv":463626,"fv":813734},"MG":{"pct":44.579539779,"hora":"18h49","st":23209,"ts":52062,"vv":5370018,"lula":41.824403568,"flavio":49.329778783,"lv":2245978,"fv":2649018},"PE":{"pct":37.949388365,"hora":"19h46","st":8128,"ts":21418,"vv":1961148,"lula":61.551754381,"flavio":32.671272132,"lv":1207121,"fv":640732},"SC":{"pct":55.465773981,"hora":"18h49","st":9610,"ts":17326,"vv":2467366,"lula":26.012557521,"flavio":65.470992143,"lv":641825,"fv":1615409}};
+const ESTADOS = {"AC":{"pct":89.955947137,"hora":"16h59","st":2042,"ts":2270,"vv":418636,"lula":28.456702243,"flavio":64.720425381,"lv":119130,"fv":270943},"AL":{"pct":27.517251091,"hora":"18h59","st":1954,"ts":7101,"vv":443920,"lula":58.293836727,"flavio":37.245900162,"lv":258778,"fv":165342},"AP":{"pct":56.530825496,"hora":"18h59","st":1082,"ts":1914,"vv":233606,"lula":48.39387687,"flavio":43.452222974,"lv":113051,"fv":101507},"AM":{"pct":64.361897757,"hora":"18h00","st":5250,"ts":8157,"vv":1406186,"lula":43.359555564,"flavio":49.005465849,"lv":609716,"fv":689108},"BA":{"pct":37.848122674,"hora":"18h59","st":13427,"ts":35476,"vv":3058464,"lula":64.247347688,"flavio":29.988059366,"lv":1964982,"fv":917174},"CE":{"pct":36.410687987,"hora":"19h00","st":8653,"ts":23765,"vv":1976533,"lula":60.990077069,"flavio":33.126489667,"lv":1205489,"fv":654756},"DF":{"pct":97.230592624,"hora":"18h59","st":6776,"ts":6969,"vv":1718287,"lula":38.174123415,"flavio":51.231604499,"lv":655941,"fv":880306},"ES":{"pct":89.110117838,"hora":"19h00","st":8772,"ts":9844,"vv":1980033,"lula":37.066048899,"flavio":55.474580474,"lv":733920,"fv":1098415},"GO":{"pct":67.161800332,"hora":"18h59","st":10535,"ts":15686,"vv":2533859,"lula":29.689260531,"flavio":55.077847662,"lv":752284,"fv":1395595},"MA":{"pct":47.847233737,"hora":"19h00","st":8657,"ts":18093,"vv":1823586,"lula":61.821378317,"flavio":32.850164456,"lv":1127366,"fv":599051},"MT":{"pct":81.211536141,"hora":"18h00","st":6730,"ts":8287,"vv":1613214,"lula":28.405344858,"flavio":65.772798897,"lv":458239,"fv":1061056},"PA":{"pct":60.335141883,"hora":"19h00","st":12566,"ts":20827,"vv":2892172,"lula":48.036873326,"flavio":45.729991162,"lv":1389309,"fv":1322590},"PB":{"pct":86.398431665,"hora":"18h59","st":9255,"ts":10712,"vv":2151734,"lula":60.764341689,"flavio":33.495729491,"lv":1307487,"fv":720739},"PR":{"pct":93.239260187,"hora":"19h00","st":25307,"ts":27142,"vv":6134303,"lula":30.921720039,"flavio":60.100422167,"lv":1896832,"fv":3686742},"PI":{"pct":63.276283619,"hora":"19h00","st":6470,"ts":10225,"vv":1344851,"lula":69.227371657,"flavio":25.530486277,"lv":931005,"fv":343347},"RJ":{"pct":37.173191772,"hora":"19h00","st":14005,"ts":37675,"vv":3208883,"lula":39.148264365,"flavio":53.391133301,"lv":1256222,"fv":1713259},"RN":{"pct":54.417744917,"hora":"18h59","st":4416,"ts":8115,"vv":1066162,"lula":60.178847117,"flavio":34.350220698,"lv":641604,"fv":366229},"RS":{"pct":78.041166007,"hora":"18h59","st":21498,"ts":27547,"vv":5025413,"lula":35.637608292,"flavio":55.698506769,"lv":1790937,"fv":2799080},"RO":{"pct":83.205619413,"hora":"17h59","st":3909,"ts":4698,"vv":806195,"lula":26.536135798,"flavio":66.654221373,"lv":213933,"fv":537363},"RR":{"pct":71.823568137,"hora":"17h59","st":1091,"ts":1519,"vv":227326,"lula":23.123179927,"flavio":71.054784758,"lv":52565,"fv":161526},"SP":{"pct":53.146947596,"hora":"18h58","st":55090,"ts":103656,"vv":12981089,"lula":36.851353534,"flavio":53.381122339,"lv":4783707,"fv":6929451},"SE":{"pct":62.518993753,"hora":"18h59","st":3703,"ts":5923,"vv":817319,"lula":61.102335808,"flavio":32.056883542,"lv":499401,"fv":262007},"TO":{"pct":91.879562044,"hora":"18h59","st":4028,"ts":4384,"vv":851818,"lula":43.474427636,"flavio":50.349135613,"lv":370323,"fv":428883},"MS":{"pct":94.202082747,"hora":"17h59","st":6694,"ts":7106,"vv":1402740,"lula":33.962316609,"flavio":59.207622225,"lv":476403,"fv":830529},"MG":{"pct":50.605047828,"hora":"19h00","st":26346,"ts":52062,"vv":6075648,"lula":41.904238034,"flavio":49.267320951,"lv":2545954,"fv":2993309},"PE":{"pct":43.463441965,"hora":"19h59","st":9309,"ts":21418,"vv":2268484,"lula":61.76472922,"flavio":32.482353854,"lv":1401123,"fv":736857},"SC":{"pct":63.274847051,"hora":"18h59","st":10963,"ts":17326,"vv":2819273,"lula":25.70013617,"flavio":65.827502338,"lv":724557,"fv":1855857}};
 const BR = {"pct":47.257274942,"hora":"18h44","st":235931,"ts":499248,"vv":54746502,"lula":41.631478117,"flavio":50.20283853,"lv":22791778,"fv":27484298};
 /*FIM*/
 
@@ -364,5 +386,25 @@ renderMap(); resumo();
   if (nat != null) document.getElementById("pe-sub").textContent = `% das seções totalizadas em cada UF, do mais adiantado ao mais atrasado. A cor indica quem lidera; o traço marca o Brasil (${fmt(nat)}%).`;
   const nf = ufs.filter(uf => ESTADOS[uf].flavio >= ESTADOS[uf].lula).length;
   document.getElementById("tally").innerHTML = `<span><i style="background:var(--flavio)"></i>Flávio lidera em <b>${nf}</b> estados</span><span><i style="background:var(--lula)"></i>Lula lidera em <b>${ufs.length - nf}</b></span>`;
+})();
+// ---- mapa de urnas apuradas + líder ----
+(function () {
+  const svg2 = document.getElementById("brmap2");
+  for (const uf of Object.keys(PATHS)) {
+    const d = ESTADOS[uf]; if (!d) continue;
+    const cor = d.flavio >= d.lula ? "var(--flavio)" : "var(--lula)";
+    const op = (0.25 + 0.75 * d.pct / 100).toFixed(2);
+    const path = el("path", {d: PATHS[uf], fill: `color-mix(in srgb, ${cor} ${Math.round(op * 100)}%, var(--panel))`, "data-uf": uf}, svg2);
+    const t = document.createElementNS(ns, "title");
+    t.textContent = `${NOMES[uf]}: ${fmt(d.pct)}% apurado · ${d.flavio >= d.lula ? "Flávio" : "Lula"} lidera (Flávio ${fmt(d.flavio)}% × Lula ${fmt(d.lula)}%)`;
+    path.appendChild(t);
+  }
+  for (const uf of Object.keys(PATHS)) {
+    const p = svg2.querySelector(`[data-uf="${uf}"]`); if (!p) continue;
+    const b = p.getBBox(); if (b.width * b.height < 2600) continue;  // estados pequenos: só no tooltip
+    const x = b.x + b.width / 2, y = b.y + b.height / 2;
+    const t = el("text", {class: "ufl", x, y}, svg2);
+    t.innerHTML = `<tspan x="${x}">${uf}</tspan><tspan class="p" x="${x}" dy="15">${Math.round(ESTADOS[uf].pct)}%</tspan>`;
+  }
 })();
 </script>
