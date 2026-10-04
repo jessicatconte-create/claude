@@ -61,7 +61,7 @@ def ultimo_pct():
 
 
 URL_EST = "https://resultados.tse.jus.br/oficial/ele2026/6259/dados/{uf}/{uf}-c{c:04d}-e006259-u.json"
-ACOMPANHAR = [("sp", 5, "Senado SP", ["SIMONE TEBET", "MARINA SILVA"]), ("sp", 6, "Dep. federal SP", ["RODRIGO AGOSTINHO"])]
+ACOMPANHAR = [("sp", 5, "Senado SP", ["SIMONE TEBET", "MARINA SILVA"]), ("sp", 6, "Dep. federal SP", ["ERIKA HILTON", "RODRIGO AGOSTINHO"])]
 
 
 def outros_cargos():
@@ -77,7 +77,8 @@ def outros_cargos():
         for pos, (cd, sg) in enumerate(cs, 1):
             if cd["nmu"].upper() in nomes:
                 out.append({"nome": cd["nmu"].title(), "partido": sg, "cargo": cargo, "pos": pos, "pct": num(cd["pvapn"]), "votos": int(cd["vap"]),
-                            "vagas": int(j["carg"][0].get("nv", 1)), "apurado": num(j["s"]["pstn"]), "lideres": lideres})
+                            "vagas": int(j["carg"][0].get("nv", 1)), "apurado": num(j["s"]["pstn"]), "lideres": lideres,
+                            "vv_cargo": int(j["v"]["vv"]), "st": cd.get("st", ""), "eleito": cd.get("e") == "s"})
     return out
 
 
@@ -98,6 +99,8 @@ def somar(partes, nacional):
 def rodada():
     j = baixar()
     nacional = ler(j) if j else None
+    cands = sorted(({"nome": c["nmu"].title(), "pct": num(c["pvapn"]), "votos": int(c["vap"])}
+                    for agr in j["carg"][0]["agr"] for par in agr["par"] for c in par["cand"]), key=lambda c: -c["votos"]) if j else []
     try:  # mantém o último dado de um estado que não responder
         with open(JSON_UF) as f:
             anterior = json.load(f)
@@ -121,7 +124,7 @@ def rodada():
             csv.writer(f).writerow([f"{br['pct']:.2f}", br["hora"], f"{br['lula']:.2f}", f"{br['flavio']:.2f}"])
         subprocess.run([sys.executable, "grafico.py"])
     with open(JSON_UF, "w") as f:
-        json.dump({"br": br, "estados": estados, "exterior": exterior, "outros": outros_cargos()}, f, ensure_ascii=False)
+        json.dump({"br": br, "estados": estados, "exterior": exterior, "outros": outros_cargos(), "candidatos": cands}, f, ensure_ascii=False)
     print(f"{br['hora']}  {br['pct']:.2f}% apurado  Flávio {br['flavio']:.2f}%  Lula {br['lula']:.2f}%  ({br.get('fonte', 'arquivo nacional')})")
 
 
