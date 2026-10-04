@@ -17,6 +17,8 @@ try:
         ext = json.load(f)
 except OSError:
     ext = None
+if ext and uf.get("exterior"):  # total do exterior mais recente, lido pelo monitor
+    ext["total"] = uf["exterior"]
 try:
     with open("dados_2022_resumo.json") as f:
         r22 = json.load(f)
