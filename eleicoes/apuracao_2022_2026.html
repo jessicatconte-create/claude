@@ -176,25 +176,78 @@ figcaption a { color: var(--muted); }
 .updbadge::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--s4); }
 .ext { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 20px; align-items: start; }
 @media (max-width: 760px) { .ext { grid-template-columns: 1fr; } }
-.ext .cmp { display: grid; gap: 12px; }
+.ext .cmp { display: grid; gap: 12px; padding-inline: 6px; }
 .ext .cmp .yr { display: grid; gap: 6px; }
 .ext .cmp h3 { margin: 0; font-size: 13px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
 .ext .cmp .rowx { display: grid; grid-template-columns: 1fr auto; font-size: 15px; }
 .ext .cmp .rowx b { font-variant-numeric: tabular-nums; }
 .row.wav { grid-template-columns: 40px 1fr auto; }
 .av { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--c); background: var(--grid); }
+/* ---- topo ---- */
+.top { display: grid; gap: 8px; }
+.top .lede { font-size: 16px; max-width: 70ch; }
+.status { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px 24px; align-items: center; background: var(--panel); border: 1px solid var(--rule); border-radius: var(--radius); padding: 16px 20px; }
+.status .big { font-size: clamp(30px, 5vw, 40px); font-weight: 800; letter-spacing: -.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+.status .big small { display: block; font-size: 12px; font-weight: 600; letter-spacing: .02em; color: var(--muted); margin-top: 4px; }
+.status .track { position: relative; height: 12px; background: var(--grid); border-radius: 99px; }
+.status .fill { position: absolute; inset: 0 auto 0 0; background: var(--s4); border-radius: 99px; transition: width .6s ease; }
+.status .mark { position: absolute; top: -5px; bottom: -5px; width: 2px; background: var(--fg); opacity: .5; border-radius: 1px; }
+.status .marklbl { position: absolute; top: 18px; transform: translateX(-50%); font-size: 11px; color: var(--muted); white-space: nowrap; }
+.status .barwrap { padding-bottom: 18px; }
+.status .meta { display: grid; gap: 2px; text-align: right; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.status .meta b { font-size: 18px; color: var(--fg); letter-spacing: -.01em; }
+.status .meta .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--s4); margin-right: 6px; vertical-align: 1px; }
+@media (max-width: 700px) { .status { grid-template-columns: 1fr; } .status .meta { text-align: left; } }
+.hero { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 16px; align-items: stretch; }
+@media (max-width: 900px) { .hero { grid-template-columns: 1fr; } }
+.side { display: grid; gap: 16px; }
+.now { gap: 18px; padding: 20px 22px; align-content: space-between; }
+.now .hd { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.now .hd h2 { margin: 0; }
+.gap { font-size: 13px; font-weight: 700; padding: 4px 12px; border-radius: 99px; background: color-mix(in srgb, var(--c) 16%, transparent); color: var(--c); white-space: nowrap; }
+.duel { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.cand { display: grid; grid-template-columns: 64px minmax(0, 1fr); grid-template-areas: "ph nm" "ph pc" "vt vt"; gap: 4px 14px; align-items: center; }
+.cand .ph { grid-area: ph; } .cand .nm { grid-area: nm; } .cand .pc { grid-area: pc; } .cand .vt { grid-area: vt; }
+.cand.r { grid-template-columns: minmax(0, 1fr) 64px; grid-template-areas: "nm ph" "pc ph" "vt vt"; text-align: right; }
+.cand .ph { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 3px solid var(--c); background: var(--grid); }
+.cand .nm { font-size: 14px; font-weight: 600; line-height: 1.2; }
+.cand .nm small { display: block; font-size: 12px; color: var(--muted); font-weight: 500; }
+.cand .pc { font-size: clamp(30px, 4.6vw, 44px); font-weight: 800; letter-spacing: -.03em; line-height: 1; color: var(--c); font-variant-numeric: tabular-nums; }
+.cand .vt { grid-column: 1 / -1; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.cand.r .vt { text-align: right; }
+.bigsplit { position: relative; display: flex; height: 14px; border-radius: 99px; overflow: hidden; gap: 2px; }
+.bigsplit > div { height: 100%; }
+.half { position: relative; height: 0; }
+.half span { position: absolute; left: 50%; top: -22px; width: 2px; height: 20px; background: var(--fg); opacity: .7; transform: translateX(-1px); }
+.half em { position: absolute; left: 50%; top: 2px; transform: translateX(-50%); font-size: 11px; font-style: normal; color: var(--muted); white-space: nowrap; }
+.now .foot { font-size: 12px; color: var(--muted); padding-top: 16px; line-height: 1.5; }
+.mini { gap: 10px; padding: 16px 18px; }
+.mini h2 { margin: 0; }
+.mini .kicker { font-size: 12px; color: var(--muted); }
+.mini .mrow { display: grid; grid-template-columns: 28px 1fr auto; align-items: center; gap: 10px; font-size: 14px; }
+.mini .mrow img, .mini .mrow i { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 2px solid var(--c); background: var(--grid); }
+.mini .mrow b { font-size: 18px; font-variant-numeric: tabular-nums; }
+.mini .hint { font-size: 12px; color: var(--muted); line-height: 1.45; }
+.pill2 { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: var(--bg); color: var(--muted); }
+@media (max-width: 520px) { .duel { grid-template-columns: 1fr; } .cand.r { grid-template-columns: 64px minmax(0, 1fr); grid-template-areas: "ph nm" "ph pc" "vt vt"; text-align: left; } .cand.r .vt { text-align: left; } }
 </style>
 
 <div class="wrap">
-  <header>
-    <div class="eyebrow"><span class="live">Apuração em andamento</span><span>1º turno · Presidente</span><span id="upd"></span><button type="button" class="themebtn" id="themebtn" aria-label="Alternar tema claro/escuro">◐ Tema</button></div>
+  <header class="top">
+    <div class="eyebrow"><span class="live">Apuração em andamento</span><span>1º turno · Presidente da República</span><button type="button" class="themebtn" id="themebtn" aria-label="Alternar tema claro/escuro">◐ Tema</button></div>
     <h1>Apuração 2022 × 2026</h1>
     <p class="lede" id="lede">Percentual dos votos válidos conforme as seções são totalizadas pelo TSE.</p>
-    <div class="updbadge" id="updbadge" hidden></div>
-    <div class="progress" aria-label="Seções totalizadas"><div class="progress-bar"><div class="progress-fill" id="progFill"></div></div><span id="progTxt"></span></div>
   </header>
 
-  <section class="score" aria-label="Placar" id="score"></section>
+  <section class="status" id="status" aria-label="Andamento da apuração"></section>
+
+  <section class="hero" aria-label="Placar">
+    <div class="card now" id="now"></div>
+    <div class="side">
+      <div class="card mini" id="proj"></div>
+      <div class="card mini" id="past"></div>
+    </div>
+  </section>
 
   <figure>
     <div class="legend" aria-hidden="true">
@@ -304,9 +357,9 @@ figcaption a { color: var(--muted); }
 const D22 = [[0.09,"17h06",51.18,36.73],[0.88,"17h43",41.15,48.40],[1.99,"18h07",41.46,48.41],[8.10,"18h31",42.64,48.51],[13.20,"18h42",43.23,48.04],[20.26,"18h55",43.32,47.93],[33.18,"19h14",43.75,47.45],[44.17,"19h32",44.32,46.84],[60.33,"19h53",45.20,46.01],[70.00,"20h06",45.75,45.51],[85.00,"20h25",46.64,44.73],[93.00,"20h47",47.46,44.03],[95.99,"21h16",47.75,43.79],[98.21,"21h55",48.05,43.52],[99.75,"23h33",48.36,43.25],[100,"final",48.43,43.20]];
 /*DADOS*/
 const D26 = [[4.97,"",41.24,50.31],[9.08,"17h52",40.95,50.79],[10.08,"",40.78,50.96],[12.45,"",40.67,51.09],[14.24,"",40.67,51.17],[21.96,"18h16",40.82,51.07],[24.45,"18h19",40.97,50.94],[27.88,"",41.27,50.66],[31.9,"18h27",41.14,50.74],[36.6,"18h32",41.23,50.63],[41.57,"18h38",41.44,50.41],[47.26,"18h44",41.63,50.2],[64.81,"19h06",42.25,49.58]];
-const ESTADOS = {"AC":{"pct":98.061674009,"hora":"17h28","st":2226,"ts":2270,"vv":458909,"lula":28.661673665,"flavio":64.610412958,"lv":131531,"fv":296503},"AL":{"pct":57.006055485,"hora":"19h31","st":4048,"ts":7101,"vv":972424,"lula":56.965377243,"flavio":38.527226806,"lv":553945,"fv":374648},"AP":{"pct":83.594566353,"hora":"19h31","st":1600,"ts":1914,"vv":373205,"lula":46.337267721,"flavio":45.117562734,"lv":172933,"fv":168381},"AM":{"pct":85.019002084,"hora":"18h31","st":6935,"ts":8157,"vv":1847219,"lula":45.642287135,"flavio":47.157104815,"lv":843113,"fv":871095},"BA":{"pct":67.101702559,"hora":"19h31","st":23805,"ts":35476,"vv":5590186,"lula":64.932741057,"flavio":29.513275587,"lv":3629861,"fv":1649847},"CE":{"pct":68.440984641,"hora":"19h32","st":16265,"ts":23765,"vv":3833114,"lula":61.701739108,"flavio":32.526061056,"lv":2365098,"fv":1246761},"DF":{"pct":99.512125126,"hora":"19h26","st":6935,"ts":6969,"vv":1762818,"lula":38.123334343,"flavio":51.294574936,"lv":672045,"fv":904230},"ES":{"pct":99.268590004,"hora":"19h31","st":9772,"ts":9844,"vv":2233268,"lula":37.669370626,"flavio":54.86461992,"lv":841258,"fv":1225274},"GO":{"pct":91.27884738,"hora":"19h31","st":14318,"ts":15686,"vv":3486047,"lula":30.63145735,"flavio":54.034125185,"lv":1067827,"fv":1883655},"MA":{"pct":75.493284696,"hora":"19h32","st":13659,"ts":18093,"vv":2969385,"lula":62.570229189,"flavio":32.18447591,"lv":1857951,"fv":955681},"MT":{"pct":95.752383251,"hora":"18h31","st":7935,"ts":8287,"vv":1907934,"lula":28.917247662,"flavio":65.368246491,"lv":551722,"fv":1247183},"PA":{"pct":83.204494166,"hora":"19h31","st":17329,"ts":20827,"vv":4023861,"lula":48.284744428,"flavio":45.830111925,"lv":1942911,"fv":1844140},"PB":{"pct":97.750186706,"hora":"19h31","st":10471,"ts":10712,"vv":2453666,"lula":61.206415217,"flavio":33.15068147,"lv":1501801,"fv":813407},"PR":{"pct":99.17471078,"hora":"19h31","st":26918,"ts":27142,"vv":6528816,"lula":31.136089606,"flavio":59.956307545,"lv":2032818,"fv":3914437},"PI":{"pct":84.518337408,"hora":"19h31","st":8642,"ts":10225,"vv":1807554,"lula":70.312643495,"flavio":24.639651153,"lv":1270939,"fv":445375},"RJ":{"pct":73.470471135,"hora":"19h32","st":27680,"ts":37675,"vv":6663420,"lula":39.127249971,"flavio":53.383217627,"lv":2607213,"fv":3557148},"RN":{"pct":83.561306223,"hora":"19h32","st":6781,"ts":8115,"vv":1708778,"lula":59.699914208,"flavio":34.774909321,"lv":1020139,"fv":594226},"RS":{"pct":97.408066214,"hora":"19h32","st":26833,"ts":27547,"vv":6272777,"lula":35.768783108,"flavio":55.579418812,"lv":2243696,"fv":3486373},"RO":{"pct":98.084291188,"hora":"18h30","st":4608,"ts":4698,"vv":948542,"lula":25.978080043,"flavio":67.35937892,"lv":246413,"fv":638932},"RR":{"pct":98.156682028,"hora":"18h28","st":1491,"ts":1519,"vv":319403,"lula":22.393966243,"flavio":71.458001334,"lv":71527,"fv":228239},"SP":{"pct":87.109284557,"hora":"19h25","st":90294,"ts":103656,"vv":21587195,"lula":37.910437183,"flavio":52.249720262,"lv":8183800,"fv":11279249},"SE":{"pct":93.010298835,"hora":"19h30","st":5509,"ts":5923,"vv":1255414,"lula":62.137748982,"flavio":31.11284405,"lv":780086,"fv":390595},"TO":{"pct":98.813868613,"hora":"19h31","st":4332,"ts":4384,"vv":918383,"lula":43.506249571,"flavio":50.358510556,"lv":399554,"fv":462484},"MS":{"pct":99.282296651,"hora":"18h31","st":7055,"ts":7106,"vv":1481367,"lula":34.516969799,"flavio":58.744389473,"lv":511323,"fv":870220},"MG":{"pct":78.35273328,"hora":"19h25","st":40792,"ts":52062,"vv":9381943,"lula":42.413346574,"flavio":48.917734844,"lv":3979196,"fv":4589434},"PE":{"pct":75.058362125,"hora":"20h16","st":16076,"ts":21418,"vv":4114744,"lula":62.544765847,"flavio":31.839696467,"lv":2573557,"fv":1310122},"SC":{"pct":93.841625303,"hora":"19h31","st":16259,"ts":17326,"vv":4216075,"lula":25.066394692,"flavio":66.569830945,"lv":1056818,"fv":2806634}};
+const ESTADOS = {"AC":{"pct":98.061674009,"hora":"17h28","st":2226,"ts":2270,"vv":458909,"lula":28.661673665,"flavio":64.610412958,"lv":131531,"fv":296503},"AL":{"pct":57.006055485,"hora":"19h31","st":4048,"ts":7101,"vv":972424,"lula":56.965377243,"flavio":38.527226806,"lv":553945,"fv":374648},"AP":{"pct":83.594566353,"hora":"19h31","st":1600,"ts":1914,"vv":373205,"lula":46.337267721,"flavio":45.117562734,"lv":172933,"fv":168381},"AM":{"pct":85.019002084,"hora":"18h31","st":6935,"ts":8157,"vv":1847219,"lula":45.642287135,"flavio":47.157104815,"lv":843113,"fv":871095},"BA":{"pct":67.101702559,"hora":"19h31","st":23805,"ts":35476,"vv":5590186,"lula":64.932741057,"flavio":29.513275587,"lv":3629861,"fv":1649847},"CE":{"pct":68.440984641,"hora":"19h32","st":16265,"ts":23765,"vv":3833114,"lula":61.701739108,"flavio":32.526061056,"lv":2365098,"fv":1246761},"DF":{"pct":99.512125126,"hora":"19h26","st":6935,"ts":6969,"vv":1762818,"lula":38.123334343,"flavio":51.294574936,"lv":672045,"fv":904230},"ES":{"pct":99.268590004,"hora":"19h31","st":9772,"ts":9844,"vv":2233268,"lula":37.669370626,"flavio":54.86461992,"lv":841258,"fv":1225274},"GO":{"pct":91.27884738,"hora":"19h31","st":14318,"ts":15686,"vv":3486047,"lula":30.63145735,"flavio":54.034125185,"lv":1067827,"fv":1883655},"MA":{"pct":75.493284696,"hora":"19h32","st":13659,"ts":18093,"vv":2969385,"lula":62.570229189,"flavio":32.18447591,"lv":1857951,"fv":955681},"MT":{"pct":95.752383251,"hora":"18h31","st":7935,"ts":8287,"vv":1907934,"lula":28.917247662,"flavio":65.368246491,"lv":551722,"fv":1247183},"PA":{"pct":83.204494166,"hora":"19h31","st":17329,"ts":20827,"vv":4023861,"lula":48.284744428,"flavio":45.830111925,"lv":1942911,"fv":1844140},"PB":{"pct":97.750186706,"hora":"19h31","st":10471,"ts":10712,"vv":2453666,"lula":61.206415217,"flavio":33.15068147,"lv":1501801,"fv":813407},"PR":{"pct":99.17471078,"hora":"19h31","st":26918,"ts":27142,"vv":6528816,"lula":31.136089606,"flavio":59.956307545,"lv":2032818,"fv":3914437},"PI":{"pct":84.518337408,"hora":"19h31","st":8642,"ts":10225,"vv":1807554,"lula":70.312643495,"flavio":24.639651153,"lv":1270939,"fv":445375},"RJ":{"pct":73.470471135,"hora":"19h32","st":27680,"ts":37675,"vv":6663420,"lula":39.127249971,"flavio":53.383217627,"lv":2607213,"fv":3557148},"RN":{"pct":83.561306223,"hora":"19h32","st":6781,"ts":8115,"vv":1708778,"lula":59.699914208,"flavio":34.774909321,"lv":1020139,"fv":594226},"RS":{"pct":97.408066214,"hora":"19h32","st":26833,"ts":27547,"vv":6272777,"lula":35.768783108,"flavio":55.579418812,"lv":2243696,"fv":3486373},"RO":{"pct":98.084291188,"hora":"18h30","st":4608,"ts":4698,"vv":948542,"lula":25.978080043,"flavio":67.35937892,"lv":246413,"fv":638932},"RR":{"pct":98.156682028,"hora":"18h28","st":1491,"ts":1519,"vv":319403,"lula":22.393966243,"flavio":71.458001334,"lv":71527,"fv":228239},"SP":{"pct":90.050744771,"hora":"19h32","st":93343,"ts":103656,"vv":22341987,"lula":37.987422515,"flavio":52.166931258,"lv":8487145,"fv":11655129},"SE":{"pct":93.010298835,"hora":"19h30","st":5509,"ts":5923,"vv":1255414,"lula":62.137748982,"flavio":31.11284405,"lv":780086,"fv":390595},"TO":{"pct":98.813868613,"hora":"19h31","st":4332,"ts":4384,"vv":918383,"lula":43.506249571,"flavio":50.358510556,"lv":399554,"fv":462484},"MS":{"pct":99.282296651,"hora":"18h31","st":7055,"ts":7106,"vv":1481367,"lula":34.516969799,"flavio":58.744389473,"lv":511323,"fv":870220},"MG":{"pct":81.1340325,"hora":"19h31","st":42240,"ts":52062,"vv":9718361,"lula":42.455770062,"flavio":48.90034441,"lv":4126005,"fv":4752312},"PE":{"pct":75.058362125,"hora":"20h16","st":16076,"ts":21418,"vv":4114744,"lula":62.544765847,"flavio":31.839696467,"lv":2573557,"fv":1310122},"SC":{"pct":93.841625303,"hora":"19h31","st":16259,"ts":17326,"vv":4216075,"lula":25.066394692,"flavio":66.569830945,"lv":1056818,"fv":2806634}};
 const BR = {"pct":64.805267122,"hora":"19h06","st":323539,"ts":499248,"vv":75762826,"lula":42.247438077,"flavio":49.58486501,"lv":32007853,"fv":37566895,"hms":"19:06:33","data":"04/10/2026"};
-const EXTERIOR = null;
+const EXTERIOR = {"total":{"pct":68.319763138,"st":923,"ts":1351,"hora":"09h19","hms":"09:19:47","data":"05/10/2026","vv":240700,"lula":51.085583714,"flavio":39.51308683,"lv":122963,"fv":95108},"cidades":[{"nome":"Abu Dhabi","pct":100.0,"vv":1355,"lula":37.78597786,"flavio":48.634686347,"lv":512,"fv":659},{"nome":"Amsterdã","pct":100.0,"vv":6274,"lula":73.700988205,"flavio":17.229837424,"lv":4624,"fv":1081},{"nome":"Amã","pct":100.0,"vv":783,"lula":86.206896552,"flavio":7.535121328,"lv":675,"fv":59},{"nome":"Artigas","pct":100.0,"vv":367,"lula":28.337874659,"flavio":61.852861035,"lv":104,"fv":227},{"nome":"Assunção","pct":100.0,"vv":1061,"lula":23.56267672,"flavio":69.745523091,"lv":250,"fv":740},{"nome":"Atenas","pct":100.0,"vv":494,"lula":39.67611336,"flavio":46.558704453,"lv":196,"fv":230},{"nome":"Atlanta","pct":100.0,"vv":4903,"lula":24.903120538,"flavio":66.816234958,"lv":1221,"fv":3276},{"nome":"Bangkok","pct":100.0,"vv":99,"lula":40.404040404,"flavio":51.515151515,"lv":40,"fv":51},{"nome":"Barcelona","pct":100.0,"vv":5043,"lula":73.21039064,"flavio":19.730319254,"lv":3692,"fv":995},{"nome":"Beirute","pct":100.0,"vv":3883,"lula":65.361833634,"flavio":29.307236673,"lv":2538,"fv":1138},{"nome":"Belgrado","pct":100.0,"vv":48,"lula":62.5,"flavio":27.083333333,"lv":30,"fv":13},{"nome":"Berlim","pct":100.0,"vv":8019,"lula":81.107369996,"flavio":11.535104128,"lv":6504,"fv":925},{"nome":"Bratislava","pct":100.0,"vv":58,"lula":60.344827586,"flavio":22.413793103,"lv":35,"fv":13},{"nome":"Bruxelas","pct":100.0,"vv":4975,"lula":50.572864322,"flavio":39.376884422,"lv":2516,"fv":1959},{"nome":"Bucareste","pct":100.0,"vv":62,"lula":50.0,"flavio":35.483870968,"lv":31,"fv":22},{"nome":"Budapeste","pct":100.0,"vv":464,"lula":71.336206897,"flavio":20.043103448,"lv":331,"fv":93},{"nome":"Buenos Aires","pct":100.0,"vv":5309,"lula":66.057637973,"flavio":27.29327557,"lv":3507,"fv":1449},{"nome":"Caiena","pct":100.0,"vv":1084,"lula":44.649446494,"flavio":47.78597786,"lv":484,"fv":518},{"nome":"Cairo","pct":100.0,"vv":64,"lula":71.875,"flavio":18.75,"lv":46,"fv":12},{"nome":"Camberra","pct":100.0,"vv":2593,"lula":56.999614346,"flavio":31.045121481,"lv":1478,"fv":805},{"nome":"Cantão","pct":100.0,"vv":92,"lula":52.173913043,"flavio":38.043478261,"lv":48,"fv":35},{"nome":"Caracas","pct":33.333333333,"vv":53,"lula":35.849056604,"flavio":64.150943396,"lv":19,"fv":34},{"nome":"Cidade Do Cabo","pct":100.0,"vv":160,"lula":56.25,"flavio":36.25,"lv":90,"fv":58},{"nome":"Ciudad Del Este","pct":100.0,"vv":2503,"lula":8.070315621,"flavio":89.452656812,"lv":202,"fv":2239},{"nome":"Cochabamba","pct":100.0,"vv":185,"lula":30.810810811,"flavio":64.324324324,"lv":57,"fv":119},{"nome":"Copenhague","pct":100.0,"vv":1476,"lula":78.997289973,"flavio":13.211382114,"lv":1166,"fv":195},{"nome":"Córdoba","pct":100.0,"vv":367,"lula":49.591280654,"flavio":43.324250681,"lv":182,"fv":159},{"nome":"Dacar","pct":100.0,"vv":79,"lula":64.556962025,"flavio":30.379746835,"lv":51,"fv":24},{"nome":"Damasco","pct":100.0,"vv":108,"lula":89.814814815,"flavio":6.481481481,"lv":97,"fv":7},{"nome":"Doha","pct":100.0,"vv":357,"lula":41.176470588,"flavio":48.459383754,"lv":147,"fv":173},{"nome":"Dublin","pct":100.0,"vv":8299,"lula":72.599108326,"flavio":18.785395831,"lv":6025,"fv":1559},{"nome":"Edimburgo","pct":100.0,"vv":677,"lula":72.082717873,"flavio":20.531757755,"lv":488,"fv":139},{"nome":"Encarnación","pct":100.0,"vv":141,"lula":9.929078014,"flavio":86.524822695,"lv":14,"fv":122},{"nome":"Estocolmo","pct":100.0,"vv":2540,"lula":69.68503937,"flavio":19.881889764,"lv":1770,"fv":505},{"nome":"Faro","pct":100.0,"vv":2670,"lula":41.086142322,"flavio":48.876404494,"lv":1097,"fv":1305},{"nome":"Frankfurt","pct":100.0,"vv":5495,"lula":66.551410373,"flavio":24.021838035,"lv":3657,"fv":1320},{"nome":"Genebra","pct":100.0,"vv":5063,"lula":45.388109816,"flavio":43.966028047,"lv":2298,"fv":2226},{"nome":"Georgetown","pct":100.0,"vv":53,"lula":13.20754717,"flavio":81.132075472,"lv":7,"fv":43},{"nome":"Hamamatsu","pct":100.0,"vv":6475,"lula":13.652509653,"flavio":72.555984556,"lv":884,"fv":4698},{"nome":"Hartford","pct":100.0,"vv":1895,"lula":29.393139842,"flavio":63.693931398,"lv":557,"fv":1207},{"nome":"Helsinque","pct":100.0,"vv":693,"lula":68.542568543,"flavio":22.366522367,"lv":475,"fv":155},{"nome":"Hong Kong","pct":100.0,"vv":244,"lula":40.573770492,"flavio":43.032786885,"lv":99,"fv":105},{"nome":"Houston","pct":4.347826087,"vv":126,"lula":23.80952381,"flavio":67.46031746,"lv":30,"fv":85},{"nome":"Istambul","pct":100.0,"vv":127,"lula":70.866141732,"flavio":23.622047244,"lv":90,"fv":30},{"nome":"Jacarta","pct":100.0,"vv":31,"lula":25.806451613,"flavio":61.290322581,"lv":8,"fv":19},{"nome":"Kuaite","pct":100.0,"vv":73,"lula":73.97260274,"flavio":16.438356164,"lv":54,"fv":12},{"nome":"Kuala Lumpur","pct":100.0,"vv":82,"lula":53.658536585,"flavio":32.926829268,"lv":44,"fv":27},{"nome":"La Paz","pct":100.0,"vv":224,"lula":43.75,"flavio":47.321428571,"lv":98,"fv":106},{"nome":"Lisboa","pct":100.0,"vv":27936,"lula":53.508018328,"flavio":37.757731959,"lv":14948,"fv":10548},{"nome":"Liubliana","pct":100.0,"vv":98,"lula":62.244897959,"flavio":25.510204082,"lv":61,"fv":25},{"nome":"Londres","pct":100.0,"vv":14472,"lula":56.329463792,"flavio":36.118021006,"lv":8152,"fv":5227},{"nome":"Luanda","pct":100.0,"vv":264,"lula":55.681818182,"flavio":38.257575758,"lv":147,"fv":101},{"nome":"Madri","pct":100.0,"vv":6554,"lula":54.485810192,"flavio":35.749160818,"lv":3571,"fv":2343},{"nome":"Manila","pct":100.0,"vv":62,"lula":41.935483871,"flavio":53.225806452,"lv":26,"fv":33},{"nome":"Maputo","pct":100.0,"vv":214,"lula":41.588785047,"flavio":52.803738318,"lv":89,"fv":113},{"nome":"Marselha","pct":100.0,"vv":868,"lula":82.373271889,"flavio":11.98156682,"lv":715,"fv":104},{"nome":"Mendoza","pct":100.0,"vv":112,"lula":43.75,"flavio":49.107142857,"lv":49,"fv":55},{"nome":"Milão","pct":100.0,"vv":7163,"lula":50.160547257,"flavio":40.597515008,"lv":3593,"fv":2908},{"nome":"Montevidéu","pct":100.0,"vv":1263,"lula":54.315122724,"flavio":36.817102138,"lv":686,"fv":465},{"nome":"Montreal","pct":13.333333333,"vv":933,"lula":63.772775991,"flavio":26.045016077,"lv":595,"fv":243},{"nome":"Munique","pct":100.0,"vv":5288,"lula":63.615733737,"flavio":24.338124054,"lv":3364,"fv":1287},{"nome":"Nagóia","pct":100.0,"vv":15406,"lula":13.124756588,"flavio":74.516422173,"lv":2022,"fv":11480},{"nome":"Nairóbi","pct":100.0,"vv":46,"lula":56.52173913,"flavio":36.956521739,"lv":26,"fv":17},{"nome":"Nicosia","pct":100.0,"vv":57,"lula":42.105263158,"flavio":35.087719298,"lv":24,"fv":20},{"nome":"Nova Delhi","pct":100.0,"vv":50,"lula":48.0,"flavio":52.0,"lv":24,"fv":26},{"nome":"Oslo","pct":100.0,"vv":884,"lula":66.968325792,"flavio":22.398190045,"lv":592,"fv":198},{"nome":"Ottawa","pct":100.0,"vv":1361,"lula":58.339456282,"flavio":29.02277737,"lv":794,"fv":395},{"nome":"Panama","pct":100.0,"vv":658,"lula":35.866261398,"flavio":51.063829787,"lv":236,"fv":336},{"nome":"Paramaribo","pct":100.0,"vv":540,"lula":22.407407407,"flavio":67.777777778,"lv":121,"fv":366},{"nome":"Paris","pct":100.0,"vv":10341,"lula":77.884150469,"flavio":15.994584663,"lv":8054,"fv":1654},{"nome":"Pedro Juan Caballero","pct":100.0,"vv":295,"lula":20.0,"flavio":74.237288136,"lv":59,"fv":219},{"nome":"Pequim","pct":100.0,"vv":134,"lula":77.611940299,"flavio":16.417910448,"lv":104,"fv":22},{"nome":"Porto","pct":100.0,"vv":19728,"lula":52.493917275,"flavio":38.316098946,"lv":10356,"fv":7559},{"nome":"Praga","pct":100.0,"vv":397,"lula":70.277078086,"flavio":17.632241814,"lv":279,"fv":70},{"nome":"Praia","pct":100.0,"vv":70,"lula":55.714285714,"flavio":28.571428571,"lv":39,"fv":20},{"nome":"Pretória","pct":100.0,"vv":259,"lula":23.938223938,"flavio":66.409266409,"lv":62,"fv":172},{"nome":"Rabat","pct":100.0,"vv":42,"lula":71.428571429,"flavio":14.285714286,"lv":30,"fv":6},{"nome":"Ramallah","pct":100.0,"vv":1157,"lula":93.171996543,"flavio":3.975799481,"lv":1078,"fv":46},{"nome":"Riade","pct":100.0,"vv":83,"lula":62.65060241,"flavio":26.506024096,"lv":52,"fv":22},{"nome":"Roma","pct":100.0,"vv":4432,"lula":57.648916968,"flavio":33.348375451,"lv":2555,"fv":1478},{"nome":"Salto Del Guairá","pct":100.0,"vv":525,"lula":3.619047619,"flavio":94.476190476,"lv":19,"fv":496},{"nome":"Santa Cruz De La Sierra","pct":100.0,"vv":1428,"lula":13.585434174,"flavio":81.37254902,"lv":194,"fv":1162},{"nome":"Santiago","pct":100.0,"vv":1971,"lula":47.082699137,"flavio":41.045154744,"lv":928,"fv":809},{"nome":"Seul","pct":100.0,"vv":216,"lula":56.944444444,"flavio":33.333333333,"lv":123,"fv":72},{"nome":"Singapura","pct":100.0,"vv":348,"lula":54.597701149,"flavio":26.436781609,"lv":190,"fv":92},{"nome":"Sydney","pct":100.0,"vv":5536,"lula":55.708092486,"flavio":32.044797688,"lv":3084,"fv":1774},{"nome":"São Domingos","pct":100.0,"vv":188,"lula":34.574468085,"flavio":56.382978723,"lv":65,"fv":106},{"nome":"Taipé","pct":100.0,"vv":218,"lula":35.321100917,"flavio":49.082568807,"lv":77,"fv":107},{"nome":"Talin","pct":100.0,"vv":190,"lula":74.736842105,"flavio":10.0,"lv":142,"fv":19},{"nome":"Tel Aviv","pct":100.0,"vv":704,"lula":13.068181818,"flavio":74.289772727,"lv":92,"fv":523},{"nome":"Toronto","pct":7.142857143,"vv":479,"lula":44.467640919,"flavio":41.544885177,"lv":213,"fv":199},{"nome":"Tóquio","pct":100.0,"vv":12400,"lula":18.774193548,"flavio":67.927419355,"lv":2328,"fv":8423},{"nome":"Varsóvia","pct":100.0,"vv":282,"lula":64.893617021,"flavio":23.04964539,"lv":183,"fv":65},{"nome":"Viena","pct":100.0,"vv":1471,"lula":66.553365058,"flavio":21.142080218,"lv":979,"fv":311},{"nome":"Wellington","pct":100.0,"vv":332,"lula":70.481927711,"flavio":19.277108434,"lv":234,"fv":64},{"nome":"Xangai","pct":100.0,"vv":181,"lula":64.08839779,"flavio":22.651933702,"lv":116,"fv":41},{"nome":"Zagreb","pct":100.0,"vv":48,"lula":60.416666667,"flavio":35.416666667,"lv":29,"fv":17},{"nome":"Zurique","pct":100.0,"vv":5790,"lula":50.017271157,"flavio":39.706390328,"lv":2896,"fv":2299}]};
 /*FIM*/
 
 const fmt = v => v.toFixed(2).replace(".", ",");
@@ -495,35 +548,53 @@ const FOTOS = {lula: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAY
 (function () {
   const a = D26[D26.length - 1];
   const b = D22.reduce((m, p) => Math.abs(p[0] - a[0]) < Math.abs(m[0] - a[0]) ? p : m);
-  const row = (nome, cor, v, foto) => foto
-    ? `<div class="row wav"><img class="av" src="${foto}" alt="" style="--c:${cor}">${nome}<span class="num">${fmt(v)}%</span></div>`
-    : `<div class="row"><span class="sw" style="background:${cor}"></span>${nome}<span class="num">${fmt(v)}%</span></div>`;
-  const split = (f, l) => `<div class="split" aria-hidden="true"><div style="width:${f}%;background:var(--flavio)"></div><div style="flex:1;background:var(--grid)"></div><div style="width:${l}%;background:var(--lula)"></div></div>`;
-  const dif = (x, y, quem) => `Diferença: <b>${fmt(Math.abs(x - y))} p.p.</b> a favor de ${x > y ? quem : "Lula"}`;
-  // projeção simples: o que falta em cada estado vota como o que já foi apurado nele
   let F = 0, L = 0, V = 0;
   for (const e of Object.values(ESTADOS)) { const k = e.ts / e.st; F += e.fv * k; L += e.lv * k; V += e.vv * k; }
-  const pf = F / V * 100, pl = L / V * 100;
-  document.getElementById("score").innerHTML =
-    `<div class="card primary"><h2>2026 · agora</h2><span class="kicker">${fmt(a[0])}% das seções${a[1] ? " · " + a[1] : ""}</span>
-      <div class="rows">${row("Flávio Bolsonaro (PL)", "var(--flavio)", a[3], FOTOS.flavio)}${row("Lula (PT)", "var(--lula)", a[2], FOTOS.lula)}</div>${split(a[3], a[2])}
-      <div class="margin">${dif(a[3], a[2], "Flávio")}${BR ? ` · ${votos(BR.fv)} × ${votos(BR.lv)} votos` : ""}</div></div>` +
-    `<div class="card"><h2>2022 · mesmo ponto</h2><span class="kicker">${fmt(b[0])}% das seções · ${b[1]}</span>
-      <div class="rows">${row("Jair Bolsonaro (PL)", "var(--flavio)", b[3])}${row("Lula (PT)", "var(--lula)", b[2])}</div>${split(b[3], b[2])}
-      <div class="margin">${dif(b[3], b[2], "Bolsonaro")} · final: Lula 48,43% × 43,20%</div></div>` +
-    (V ? `<div class="card proj"><h2>2026 · projeção do resultado</h2><span class="kicker">estimativa a partir dos 27 estados</span>
-      <div class="rows">${row("Flávio Bolsonaro (PL)", "var(--flavio)", pf, FOTOS.flavio)}${row("Lula (PT)", "var(--lula)", pl, FOTOS.lula)}</div>${split(pf, pl)}
-      <div class="margin hint">Supõe que as seções que faltam em cada estado votam como as já apuradas nele. ${pf < 50 && pl < 50 ? "Nesse cenário, ninguém passa de 50% e há 2º turno." : ""} Sem votos do exterior; margem de erro de cerca de 1 p.p.</div></div>` : "");
-  const lider = a[3] >= a[2] ? "Flávio Bolsonaro" : "Lula";
-  document.getElementById("lede").innerHTML = `Com <b>${fmt(a[0])}%</b> das seções totalizadas, <b>${lider}</b> lidera por ${fmt(Math.abs(a[3] - a[2]))} pontos. Em 2022, no mesmo ponto, Bolsonaro liderava por ${fmt(Math.abs(b[3] - b[2]))} e Lula virou com cerca de 70% apurado.`;
-  document.getElementById("progFill").style.width = a[0] + "%";
-  document.getElementById("progTxt").textContent = `${fmt(a[0])}% apurado`;
-  if (BR) {
-    document.getElementById("upd").textContent = `· TSE, totalizado às ${BR.hora}`;
-    const ub = document.getElementById("updbadge");
-    ub.innerHTML = `Última atualização do TSE <b>${BR.hms || BR.hora}</b>${BR.data ? " · " + BR.data : ""}`;
-    ub.hidden = false;
-  }
+  const pf = V ? F / V * 100 : null, pl = V ? L / V * 100 : null;
+  const f1 = v => v.toFixed(1).replace(".", ",");
+  const d = a[3] - a[2], lider = d >= 0 ? "Flávio Bolsonaro" : "Lula";
+
+  // faixa de status
+  document.getElementById("status").innerHTML = `
+    <div class="big">${fmt(a[0])}%<small>das seções totalizadas</small></div>
+    <div class="barwrap"><div class="track"><div class="fill" style="width:${a[0]}%"></div>
+      <div class="mark" style="left:67%"></div><span class="marklbl" style="left:67%">virada em 2022</span></div></div>
+    <div class="meta"><span><span class="dot"></span>Última atualização do TSE</span><b>${BR ? (BR.hms || BR.hora) : a[1]}</b>
+      <span>${BR ? `${votos(BR.st)} de ${votos(BR.ts)} seções${BR.data ? " · " + BR.data : ""}` : ""}</span></div>`;
+
+  // placar principal
+  const cand = (lado, nome, partido, foto, cor, pc, vt) => `<div class="cand ${lado}" style="--c:${cor}">
+      <img class="ph" src="${foto}" alt="">
+      <div class="nm">${nome}<small>${partido}</small></div>
+      <div class="pc">${fmt(pc)}%</div>
+      ${vt != null ? `<div class="vt">${votos(vt)} votos</div>` : ""}</div>`;
+  document.getElementById("now").innerHTML = `
+    <div class="hd"><h2>Agora · votos válidos</h2>
+      <span class="gap" style="--c:${d >= 0 ? "var(--flavio)" : "var(--lula)"}">${d >= 0 ? "Flávio" : "Lula"} +${fmt(Math.abs(d))} p.p.</span></div>
+    <div class="duel">
+      ${cand("", "Flávio Bolsonaro", "PL · 22", FOTOS.flavio, "var(--flavio)", a[3], BR && BR.fv)}
+      ${cand("r", "Lula", "PT · 13", FOTOS.lula, "var(--lula)", a[2], BR && BR.lv)}
+    </div>
+    <div>
+      <div class="bigsplit" aria-hidden="true"><div style="width:${a[3]}%;background:var(--flavio)"></div><div style="flex:1;background:var(--grid)"></div><div style="width:${a[2]}%;background:var(--lula)"></div></div>
+      <div class="half"><span></span><em>50% vence no 1º turno</em></div>
+      <div class="foot">${a[3] > 50 || a[2] > 50 ? `${lider} está acima de 50% neste momento.` : "Ninguém passa de 50% neste momento: sem vitória no 1º turno até aqui."} Outros candidatos somam ${f1(100 - a[2] - a[3])}%.</div>
+    </div>`;
+
+  // projeção
+  const mrow = (nome, cor, v, foto) => `<div class="mrow" style="--c:${cor}">${foto ? `<img src="${foto}" alt="">` : `<i style="background:${cor}"></i>`}<span>${nome}</span><b>${f1(v)}%</b></div>`;
+  document.getElementById("proj").innerHTML = pf == null ? "" : `
+    <h2>Projeção do resultado</h2>
+    ${mrow("Flávio Bolsonaro", "var(--flavio)", pf, FOTOS.flavio)}${mrow("Lula", "var(--lula)", pl, FOTOS.lula)}
+    <div><span class="pill2">${pf < 50 && pl < 50 ? "2º turno provável" : "possível vitória no 1º turno"}</span></div>
+    <div class="hint">Estimativa simples: o que falta em cada estado vota como o já apurado nele. Margem de cerca de 1 p.p.</div>`;
+  // 2022 no mesmo ponto
+  document.getElementById("past").innerHTML = `
+    <h2>2022 com ${fmt(b[0])}% apurado</h2>
+    ${mrow("Jair Bolsonaro", "var(--flavio)", b[3])}${mrow("Lula", "var(--lula)", b[2])}
+    <div class="hint">Às ${b[1]}, Bolsonaro liderava por ${fmt(Math.abs(b[3] - b[2]))} p.p. Resultado final: Lula 48,43% × 43,20%.</div>`;
+
+  document.getElementById("lede").innerHTML = `<b>${lider}</b> lidera por ${fmt(Math.abs(d))} pontos com ${fmt(a[0])}% apurado. Em 2022, no mesmo ponto, a diferença era de ${fmt(Math.abs(b[3] - b[2]))} e Lula virou com cerca de 67% apurado.`;
 })();
 // ---- barras por estado ----
 (function () {
