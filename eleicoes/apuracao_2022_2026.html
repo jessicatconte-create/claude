@@ -1,6 +1,20 @@
 <title>Apuração 2022 × 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<script>
+(function () {
+  const root = document.documentElement;
+  let t = "dark"; try { t = localStorage.getItem("tema") || "dark"; } catch (e) {}
+  root.setAttribute("data-theme", t);
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("themebtn").addEventListener("click", () => {
+      t = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      root.setAttribute("data-theme", t);
+      try { localStorage.setItem("tema", t); } catch (e) {}
+    });
+  });
+})();
+</script>
 <style>
 /* Layout: boletim de apuração. Cabeçalho, placar 2026 x 2022 no mesmo ponto, gráfico, tabela. */
 :root {
@@ -66,7 +80,7 @@ th:first-child, td:first-child { text-align: left; }
 .sources a { color: var(--muted); }
 
 /* mapa por estado */
-.duo { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+.duo { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 16px; align-items: start; }
 .duo > figure, .col > figure { align-content: start; }
 .col { display: grid; gap: 16px; min-width: 0; }
 @media (max-width: 1100px) { .duo { grid-template-columns: 1fr; } }
@@ -138,11 +152,19 @@ figcaption a { color: var(--muted); }
 .card.proj .hint { font-size: 12px; color: var(--muted); line-height: 1.45; }
 .score { grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); }
 @media (prefers-reduced-motion: reduce) { .progress-fill { transition: none; } }
+.ctrls { display: flex; flex-wrap: wrap; gap: 8px; padding-inline: 6px; }
+.seg { display: inline-flex; background: var(--bg); border: 1px solid var(--rule); border-radius: 12px; padding: 3px; gap: 2px; }
+.seg button { border: 0; background: transparent; color: var(--muted); font: 600 13px var(--display); padding: 7px 12px; border-radius: 9px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--panel); color: var(--fg); box-shadow: 0 1px 3px rgb(0 0 0 / .15); }
+.seg button:focus-visible, .themebtn:focus-visible { outline: 2px solid var(--flavio); outline-offset: 2px; }
+.panel { background: var(--bg); border-radius: 12px; padding: 12px 14px; display: grid; gap: 3px; font-size: 14px; font-variant-numeric: tabular-nums; }
+.panel b { font-weight: 700; }
+.themebtn { margin-left: auto; border: 1px solid var(--rule); background: var(--panel); color: var(--fg); border-radius: 99px; padding: 4px 12px; font: 600 12px var(--display); cursor: pointer; letter-spacing: 0; text-transform: none; }
 </style>
 
 <div class="wrap">
   <header>
-    <div class="eyebrow"><span class="live">Apuração em andamento</span><span>1º turno · Presidente</span><span id="upd"></span></div>
+    <div class="eyebrow"><span class="live">Apuração em andamento</span><span>1º turno · Presidente</span><span id="upd"></span><button type="button" class="themebtn" id="themebtn" aria-label="Alternar tema claro/escuro">◐ Tema</button></div>
     <h1>Apuração 2022 × 2026</h1>
     <p class="lede" id="lede">Percentual dos votos válidos conforme as seções são totalizadas pelo TSE.</p>
     <div class="progress" aria-label="Seções totalizadas"><div class="progress-bar"><div class="progress-fill" id="progFill"></div></div><span id="progTxt"></span></div>
@@ -150,8 +172,6 @@ figcaption a { color: var(--muted); }
 
   <section class="score" aria-label="Placar" id="score"></section>
 
-  <div class="duo">
-  <div class="col">
   <figure>
     <div class="legend" aria-hidden="true">
       <span><svg width="26" height="8"><line x1="0" y1="4" x2="26" y2="4" stroke="var(--lula)" stroke-width="3"/></svg>Lula 2026</span>
@@ -159,12 +179,20 @@ figcaption a { color: var(--muted); }
       <span><svg width="26" height="8"><line x1="0" y1="4" x2="26" y2="4" stroke="var(--lula)" stroke-width="2" stroke-dasharray="5 4" opacity=".6"/></svg>Lula 2022</span>
       <span><svg width="26" height="8"><line x1="0" y1="4" x2="26" y2="4" stroke="var(--flavio)" stroke-width="2" stroke-dasharray="5 4" opacity=".6"/></svg>Jair Bolsonaro 2022</span>
     </div>
+    <div class="ctrls">
+      <div class="seg" role="group" aria-label="Eixo horizontal"><button type="button" data-axis="pct" aria-pressed="true">% apurado</button><button type="button" data-axis="time" aria-pressed="false">Horário</button></div>
+      <div class="seg" role="group" aria-label="Escala vertical"><button type="button" data-scale="zoom" aria-pressed="true">Ampliar escala</button><button type="button" data-scale="full" aria-pressed="false">Escala 0–100%</button></div>
+    </div>
     <div class="chartbox" id="box">
       <svg id="chart" viewBox="0 0 980 470" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Gráfico de linhas: percentual dos votos válidos por percentual de seções totalizadas, 2022 e 2026"></svg>
       <div class="tip" id="tip" hidden></div>
     </div>
-    <figcaption>Eixo horizontal proporcional ao % de seções totalizadas. A linha pontilhada marca 50% dos votos válidos, o necessário para vencer no 1º turno.</figcaption>
+    <div class="panel" id="panel" aria-live="polite"></div>
+    <figcaption id="chartcap">Eixo horizontal proporcional ao % de seções totalizadas. A linha pontilhada marca 50% dos votos válidos, o necessário para vencer no 1º turno.</figcaption>
   </figure>
+
+  <div class="duo">
+  <div class="col">
 
   <figure id="porestado">
     <div class="sectionhead">
@@ -241,65 +269,100 @@ const Y0 = 35, Y1 = 53;
 let W = 0, H, m, X, Y;
 
 // desenha o gráfico na largura real do cartão, para o texto manter o tamanho no celular
-function drawChart() {
-  const w = Math.max(300, Math.round(box.clientWidth));
-  if (w === W) return;
-  W = w; const small = W < 560;
-  H = small ? 320 : Math.min(470, Math.round(W * 0.52));
-  m = {l: 38, r: small ? 50 : 64, t: 12, b: 40};
-  X = v => m.l + v / 100 * (W - m.l - m.r);
-  Y = v => m.t + (Y1 - v) / (Y1 - Y0) * (H - m.t - m.b);
+const modo = {axis: "pct", scale: "zoom"};
+const minuto = h => { const m = /^(\d{1,2})h(\d{2})$/.exec(h || ""); return m ? +m[1] * 60 + +m[2] : null; };
+const hhmm = v => `${String(Math.floor(v / 60)).padStart(2, "0")}h${String(Math.round(v % 60)).padStart(2, "0")}`;
+const xv = p => modo.axis === "pct" ? p[0] : minuto(p[1]);
+let lastKey = "";
+function painel(q) {
+  const [pct, hora, lula, bol] = q.p, nome = q.y === 2026 ? "Flávio" : "Bolsonaro", dif = bol - lula;
+  document.getElementById("panel").innerHTML = `<div><b>${q.y}${hora ? " · " + hora : ""}</b>${q === pts26last ? " · último boletim" : ""}</div>
+    <div>${nome} <b>${fmt(bol)}%</b> · Lula <b>${fmt(lula)}%</b></div>
+    <div>Apurado: <b>${fmt(pct)}%</b></div>
+    <div>Diferença (${nome} − Lula): <b>${dif >= 0 ? "+" : "−"}${fmt(Math.abs(dif))} p.p.</b></div>`;
+}
+const pts26last = pts[pts.length - 1];
+function drawChart(force) {
+  const w = Math.max(300, Math.round(box.clientWidth)), key = w + modo.axis + modo.scale;
+  if (key === lastKey && !force) return;
+  lastKey = key; W = w; const small = W < 560;
+  H = small ? 320 : Math.min(460, Math.round(W * 0.42));
+  m = {l: 42, r: small ? 50 : 64, t: 12, b: 40};
+  const tempo = modo.axis === "time";
+  const x0 = tempo ? 17 * 60 : 0, x1 = tempo ? 24 * 60 : 100;
+  const y0 = modo.scale === "full" ? 0 : Y0, y1 = modo.scale === "full" ? 100 : Y1;
+  X = v => m.l + (v - x0) / (x1 - x0) * (W - m.l - m.r);
+  Y = v => m.t + (y1 - v) / (y1 - y0) * (H - m.t - m.b);
   svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
   svg.innerHTML = "";
-  for (let y = 36; y <= 52; y += 2) {
+  const ystep = modo.scale === "full" ? 20 : 2;
+  for (let y = modo.scale === "full" ? 0 : 36; y <= y1; y += ystep) {
     el("line", {x1: m.l, x2: W - m.r, y1: Y(y), y2: Y(y), stroke: "var(--grid)", "stroke-width": 1});
     el("text", {x: m.l - 6, y: Y(y) + 4, "text-anchor": "end"}).textContent = y + "%";
   }
-  for (let x = 0; x <= 100; x += small ? 25 : 20) {
+  const xticks = tempo ? (small ? [17, 19, 21, 23].map(h => h * 60) : [17, 18, 19, 20, 21, 22, 23, 24].map(h => h * 60)) : (small ? [0, 25, 50, 75, 100] : [0, 20, 40, 60, 80, 100]);
+  for (const x of xticks) {
     el("line", {x1: X(x), x2: X(x), y1: m.t, y2: H - m.b, stroke: "var(--grid)", "stroke-width": 1});
-    el("text", {x: X(x), y: H - m.b + 18, "text-anchor": "middle"}).textContent = x + "%";
+    el("text", {x: X(x), y: H - m.b + 18, "text-anchor": "middle"}).textContent = tempo ? hhmm(x).replace("24h00", "0h00") : x + "%";
   }
-  el("text", {x: (m.l + W - m.r) / 2, y: H - 4, "text-anchor": "middle"}).textContent = "% das seções totalizadas";
+  el("text", {x: (m.l + W - m.r) / 2, y: H - 4, "text-anchor": "middle"}).textContent = tempo ? "Horário de Brasília" : "% das seções totalizadas";
   el("line", {x1: m.l, x2: W - m.r, y1: Y(50), y2: Y(50), stroke: "var(--faint)", "stroke-width": 1, "stroke-dasharray": "2 4"});
-  el("text", {x: small ? W - m.r : X(60), y: Y(50) - 6, "text-anchor": small ? "end" : "start"}).textContent = small ? "50%" : "50% · vence no 1º turno";
-  const path = (d, i) => d.map((p, j) => (j ? "L" : "M") + X(p[0]).toFixed(1) + " " + Y(p[i]).toFixed(1)).join(" ");
+  el("text", {x: W - m.r, y: Y(50) - 6, "text-anchor": "end"}).textContent = small ? "50%" : "50% · vence no 1º turno";
+  // virada de 2022: entre 19h53 (60,33%) e 20h06 (70%)
+  const vx = tempo ? 20 * 60 + 2 : 67;
+  el("line", {x1: X(vx), x2: X(vx), y1: m.t, y2: H - m.b, stroke: "var(--faint)", "stroke-width": 1, "stroke-dasharray": "3 4"});
+  el("text", {x: X(vx), y: m.t + 12, "text-anchor": "middle"}).textContent = tempo ? "Virada 2022 · ≈20h02" : "Virada 2022 · ≈67%";
+  const visiveis = d => d.filter(p => xv(p) != null);
+  const path = (d, i) => visiveis(d).map((p, j) => (j ? "L" : "M") + X(xv(p)).toFixed(1) + " " + Y(p[i]).toFixed(1)).join(" ");
   const k = small ? .75 : 1;
   for (const s of [
-    {d: D22, i: 2, c: "var(--lula)", w: 2, dash: "6 5", op: .55, r: 3.5},
-    {d: D22, i: 3, c: "var(--flavio)", w: 2, dash: "6 5", op: .55, r: 3.5},
+    {d: D22, i: 2, c: "var(--lula)", w: 2, dash: "6 5", op: .6, r: 3.5},
+    {d: D22, i: 3, c: "var(--flavio)", w: 2, dash: "6 5", op: .6, r: 3.5},
     {d: D26, i: 2, c: "var(--lula)", w: 3, dash: "", op: 1, r: 4.5},
     {d: D26, i: 3, c: "var(--flavio)", w: 3, dash: "", op: 1, r: 4.5},
   ]) {
     const g = el("g", {opacity: s.op});
     el("path", {d: path(s.d, s.i), fill: "none", stroke: s.c, "stroke-width": s.w, "stroke-dasharray": s.dash, "stroke-linejoin": "round", "stroke-linecap": "round"}, g);
-    for (const p of s.d) el("circle", {cx: X(p[0]), cy: Y(p[s.i]), r: s.r * k, fill: s.c, stroke: "var(--panel)", "stroke-width": 1.5}, g);
+    const vis = visiveis(s.d);
+    vis.forEach((p, n) => el("circle", {cx: X(xv(p)), cy: Y(p[s.i]), r: (s.d === D26 && n === vis.length - 1 ? 6.5 : s.r) * k, fill: s.c, stroke: "var(--panel)", "stroke-width": 1.5}, g));
   }
-  const endLabel = (d, i, dy = 4) => { const p = d[d.length - 1]; el("text", {x: X(p[0]) + 8, y: Y(p[i]) + dy, style: "fill:var(--fg);font-weight:600"}).textContent = fmt(p[i]) + "%"; };
+  const endLabel = (d, i) => { const v = visiveis(d), p = v[v.length - 1]; if (!p) return; el("text", {x: X(xv(p)) + 9, y: Y(p[i]) + 4, style: "fill:var(--fg);font-weight:600"}).textContent = fmt(p[i]) + "%"; };
   endLabel(D26, 2); endLabel(D26, 3); endLabel(D22, 2); endLabel(D22, 3);
-  if (!small) el("text", {x: X(70), y: Y(45.6) + 26, "text-anchor": "middle"}).textContent = "virada 2022 (70%)";
 
   const cross = el("line", {y1: m.t, y2: H - m.b, stroke: "var(--faint)", "stroke-width": 1, visibility: "hidden"});
   const hit = el("rect", {x: m.l, y: m.t, width: W - m.l - m.r, height: H - m.t - m.b, fill: "transparent"});
+  const alvo = pts.filter(q => xv(q.p) != null);
   function show(evt) {
     const r = svg.getBoundingClientRect(), sx = (evt.clientX - r.left) * W / r.width;
-    let best = pts[0], bd = Infinity;
-    for (const q of pts) { const d = Math.abs(X(q.p[0]) - sx); if (d < bd || (d === bd && q.y === 2026)) { bd = d; best = q; } }
+    let best = alvo[0], bd = Infinity;
+    for (const q of alvo) { const d = Math.abs(X(xv(q.p)) - sx); if (d < bd || (d === bd && q.y === 2026)) { bd = d; best = q; } }
     const [pct, hora, lula, bol] = best.p, nome = best.y === 2026 ? "Flávio Bolsonaro" : "Jair Bolsonaro";
-    cross.setAttribute("x1", X(pct)); cross.setAttribute("x2", X(pct)); cross.setAttribute("visibility", "visible");
+    cross.setAttribute("x1", X(xv(best.p))); cross.setAttribute("x2", X(xv(best.p))); cross.setAttribute("visibility", "visible");
     const dif = bol - lula;
     tip.innerHTML = `<b>${best.y} · ${fmt(pct)}% apurado${hora ? " · " + hora : ""}</b>
       <div class="r"><span>${nome}</span><span>${fmt(bol)}%</span></div>
       <div class="r"><span>Lula</span><span>${fmt(lula)}%</span></div>
       <div class="r" style="color:var(--muted)"><span>Diferença</span><span>${fmt(Math.abs(dif))} p.p. ${dif > 0 ? "Bolsonaro" : "Lula"}</span></div>`;
     tip.hidden = false;
-    const bx = box.getBoundingClientRect(), px = X(pct) / W * r.width, tw = tip.offsetWidth;
+    const bx = box.getBoundingClientRect(), px = X(xv(best.p)) / W * r.width, tw = tip.offsetWidth;
     tip.style.left = Math.max(0, Math.min(px + 12 + tw > bx.width ? px - tw - 12 : px + 12, bx.width - tw)) + "px";
     tip.style.top = "8px";
+    painel(best);
   }
   hit.addEventListener("pointermove", show);
   hit.addEventListener("pointerdown", show);
-  hit.addEventListener("pointerleave", () => { tip.hidden = true; cross.setAttribute("visibility", "hidden"); });
+  hit.addEventListener("pointerleave", () => { tip.hidden = true; cross.setAttribute("visibility", "hidden"); painel(pts26last); });
+  document.getElementById("chartcap").textContent = tempo
+    ? "Eixo horizontal pelo horário de Brasília em que cada boletim foi totalizado. Boletins de 2026 sem horário registrado ficam de fora nesta visão. A linha pontilhada marca 50% dos votos válidos."
+    : "Eixo horizontal proporcional ao % de seções totalizadas. A linha pontilhada marca 50% dos votos válidos, o necessário para vencer no 1º turno.";
 }
+document.querySelectorAll(".seg button").forEach(b => b.addEventListener("click", () => {
+  const [k, v] = b.dataset.axis ? ["axis", b.dataset.axis] : ["scale", b.dataset.scale];
+  modo[k] = v;
+  b.parentElement.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+  drawChart(true);
+}));
+painel(pts26last);
 drawChart();
 let resizeT; new ResizeObserver(() => { clearTimeout(resizeT); resizeT = setTimeout(drawChart, 120); }).observe(box);
 
