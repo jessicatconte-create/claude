@@ -25,8 +25,9 @@ try:
 except OSError:
     r22 = None
 
+outros = uf.get("outros")
 js = lambda o: json.dumps(o, ensure_ascii=False, separators=(",", ":"))
-bloco = f"/*DADOS*/\nconst D26 = {js(d26)};\nconst ESTADOS = {js(estados)};\nconst BR = {js(br)};\nconst EXTERIOR = {js(ext)};\nconst R22 = {js(r22)};\n/*FIM*/"
+bloco = f"/*DADOS*/\nconst D26 = {js(d26)};\nconst ESTADOS = {js(estados)};\nconst BR = {js(br)};\nconst EXTERIOR = {js(ext)};\nconst R22 = {js(r22)};\nconst OUTROS = {js(outros)};\n/*FIM*/"
 
 s = open(PAGINA).read()
 s = re.sub(r"/\*DADOS\*/.*?/\*FIM\*/", lambda _: bloco, s, count=1, flags=re.S)

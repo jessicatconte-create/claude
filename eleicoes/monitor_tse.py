@@ -60,6 +60,27 @@ def ultimo_pct():
     return float(linhas[-1]["pct_secoes"]) if linhas else -1
 
 
+URL_EST = "https://resultados.tse.jus.br/oficial/ele2026/6259/dados/{uf}/{uf}-c{c:04d}-e006259-u.json"
+ACOMPANHAR = [("sp", 5, "Senado SP", ["SIMONE TEBET", "MARINA SILVA"]), ("sp", 6, "Dep. federal SP", ["RODRIGO AGOSTINHO"])]
+
+
+def outros_cargos():
+    """Candidatos de outros cargos acompanhados (eleição estadual 6259): posição, % e votos."""
+    out = []
+    for uf, c, cargo, nomes in ACOMPANHAR:
+        try:
+            j = requests.get(URL_EST.format(uf=uf, c=c), timeout=30, headers={"User-Agent": "Mozilla/5.0"}).json()
+        except (requests.RequestException, ValueError):
+            continue
+        cs = sorted(((cd, par["sg"]) for a in j["carg"][0]["agr"] for par in a["par"] for cd in par["cand"]), key=lambda x: -int(x[0]["vap"]))
+        lideres = [{"nome": cd["nmu"].title(), "partido": sg, "pct": num(cd["pvapn"]), "votos": int(cd["vap"])} for cd, sg in cs[:2]]
+        for pos, (cd, sg) in enumerate(cs, 1):
+            if cd["nmu"].upper() in nomes:
+                out.append({"nome": cd["nmu"].title(), "partido": sg, "cargo": cargo, "pos": pos, "pct": num(cd["pvapn"]), "votos": int(cd["vap"]),
+                            "vagas": int(j["carg"][0].get("nv", 1)), "apurado": num(j["s"]["pstn"]), "lideres": lideres})
+    return out
+
+
 def somar(partes, nacional):
     """Total do Brasil somando as UFs e o exterior. O arquivo nacional do TSE às vezes fica parado
     enquanto os das UFs seguem atualizando; vale o que estiver mais adiantado."""
@@ -100,7 +121,7 @@ def rodada():
             csv.writer(f).writerow([f"{br['pct']:.2f}", br["hora"], f"{br['lula']:.2f}", f"{br['flavio']:.2f}"])
         subprocess.run([sys.executable, "grafico.py"])
     with open(JSON_UF, "w") as f:
-        json.dump({"br": br, "estados": estados, "exterior": exterior}, f, ensure_ascii=False)
+        json.dump({"br": br, "estados": estados, "exterior": exterior, "outros": outros_cargos()}, f, ensure_ascii=False)
     print(f"{br['hora']}  {br['pct']:.2f}% apurado  Flávio {br['flavio']:.2f}%  Lula {br['lula']:.2f}%  ({br.get('fonte', 'arquivo nacional')})")
 
 
