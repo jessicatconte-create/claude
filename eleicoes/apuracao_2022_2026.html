@@ -126,13 +126,26 @@ figcaption a { color: var(--muted); }
 .pe-key { display: grid; gap: 4px; font-size: 12px; color: var(--muted); }
 .pe-key .ramp2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .pe-key .g { height: 8px; border-radius: 99px; }
+.progress { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; max-width: 640px; margin-top: 4px; }
+.progress-bar { height: 10px; border-radius: 99px; background: var(--grid); overflow: hidden; }
+.progress-fill { height: 100%; width: 0; border-radius: 99px; background: var(--s4); transition: width .6s ease; }
+.progress span { font-size: 13px; font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; }
+.card.primary { border-color: color-mix(in srgb, var(--flavio) 35%, var(--rule)); }
+.card .kicker { font-size: 12px; color: var(--muted); }
+.split { display: flex; height: 8px; border-radius: 99px; overflow: hidden; gap: 2px; background: var(--panel); }
+.split > div { height: 100%; }
+.card.proj .num { color: var(--fg); }
+.card.proj .hint { font-size: 12px; color: var(--muted); line-height: 1.45; }
+.score { grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); }
+@media (prefers-reduced-motion: reduce) { .progress-fill { transition: none; } }
 </style>
 
 <div class="wrap">
   <header>
     <div class="eyebrow"><span class="live">Apuração em andamento</span><span>1º turno · Presidente</span><span id="upd"></span></div>
     <h1>Apuração 2022 × 2026</h1>
-    <p class="lede">Percentual dos votos válidos conforme as seções são totalizadas pelo TSE. Em 2022, Lula virou com cerca de 70% apurado. Em 2026, Flávio Bolsonaro abriu acima de 50%.</p>
+    <p class="lede" id="lede">Percentual dos votos válidos conforme as seções são totalizadas pelo TSE.</p>
+    <div class="progress" aria-label="Seções totalizadas"><div class="progress-bar"><div class="progress-fill" id="progFill"></div></div><span id="progTxt"></span></div>
   </header>
 
   <section class="score" aria-label="Placar" id="score"></section>
@@ -147,7 +160,7 @@ figcaption a { color: var(--muted); }
       <span><svg width="26" height="8"><line x1="0" y1="4" x2="26" y2="4" stroke="var(--flavio)" stroke-width="2" stroke-dasharray="5 4" opacity=".6"/></svg>Jair Bolsonaro 2022</span>
     </div>
     <div class="chartbox" id="box">
-      <svg id="chart" viewBox="0 0 980 470" role="img" aria-label="Gráfico de linhas: percentual dos votos válidos por percentual de seções totalizadas, 2022 e 2026"></svg>
+      <svg id="chart" viewBox="0 0 980 470" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Gráfico de linhas: percentual dos votos válidos por percentual de seções totalizadas, 2022 e 2026"></svg>
       <div class="tip" id="tip" hidden></div>
     </div>
     <figcaption>Eixo horizontal proporcional ao % de seções totalizadas. A linha pontilhada marca 50% dos votos válidos, o necessário para vencer no 1º turno.</figcaption>
@@ -175,7 +188,7 @@ figcaption a { color: var(--muted); }
   </div>
   <figure id="estados">
     <div class="sectionhead">
-      <h2>Apuração por estado</h2>
+      <h2>Avanço por região</h2>
       <p>% das seções totalizadas em cada estado. Os rótulos mostram o total da região. Toque num estado para ver o placar.</p>
     </div>
     <div class="mapgrid">
@@ -214,73 +227,81 @@ figcaption a { color: var(--muted); }
 const D22 = [[0.09,"17h06",51.18,36.73],[0.88,"17h43",41.15,48.40],[1.99,"18h07",41.46,48.41],[8.10,"18h31",42.64,48.51],[13.20,"18h42",43.23,48.04],[20.26,"18h55",43.32,47.93],[33.18,"19h14",43.75,47.45],[44.17,"19h32",44.32,46.84],[60.33,"19h53",45.20,46.01],[70.00,"20h06",45.75,45.51],[85.00,"20h25",46.64,44.73],[93.00,"20h47",47.46,44.03],[95.99,"21h16",47.75,43.79],[98.21,"21h55",48.05,43.52],[99.75,"23h33",48.36,43.25],[100,"final",48.43,43.20]];
 /*DADOS*/
 const D26 = [[4.97,"",41.24,50.31],[9.08,"17h52",40.95,50.79],[10.08,"",40.78,50.96],[12.45,"",40.67,51.09],[14.24,"",40.67,51.17],[21.96,"18h16",40.82,51.07],[24.45,"18h19",40.97,50.94],[27.88,"",41.27,50.66],[31.9,"18h27",41.14,50.74],[36.6,"18h32",41.23,50.63],[41.57,"18h38",41.44,50.41],[47.26,"18h44",41.63,50.2]];
-const ESTADOS = {"AC":{"pct":89.955947137,"hora":"16h59","st":2042,"ts":2270,"vv":418636,"lula":28.456702243,"flavio":64.720425381,"lv":119130,"fv":270943},"AL":{"pct":27.517251091,"hora":"18h59","st":1954,"ts":7101,"vv":443920,"lula":58.293836727,"flavio":37.245900162,"lv":258778,"fv":165342},"AP":{"pct":56.530825496,"hora":"18h59","st":1082,"ts":1914,"vv":233606,"lula":48.39387687,"flavio":43.452222974,"lv":113051,"fv":101507},"AM":{"pct":64.361897757,"hora":"18h00","st":5250,"ts":8157,"vv":1406186,"lula":43.359555564,"flavio":49.005465849,"lv":609716,"fv":689108},"BA":{"pct":37.848122674,"hora":"18h59","st":13427,"ts":35476,"vv":3058464,"lula":64.247347688,"flavio":29.988059366,"lv":1964982,"fv":917174},"CE":{"pct":36.410687987,"hora":"19h00","st":8653,"ts":23765,"vv":1976533,"lula":60.990077069,"flavio":33.126489667,"lv":1205489,"fv":654756},"DF":{"pct":97.230592624,"hora":"18h59","st":6776,"ts":6969,"vv":1718287,"lula":38.174123415,"flavio":51.231604499,"lv":655941,"fv":880306},"ES":{"pct":89.110117838,"hora":"19h00","st":8772,"ts":9844,"vv":1980033,"lula":37.066048899,"flavio":55.474580474,"lv":733920,"fv":1098415},"GO":{"pct":67.161800332,"hora":"18h59","st":10535,"ts":15686,"vv":2533859,"lula":29.689260531,"flavio":55.077847662,"lv":752284,"fv":1395595},"MA":{"pct":47.847233737,"hora":"19h00","st":8657,"ts":18093,"vv":1823586,"lula":61.821378317,"flavio":32.850164456,"lv":1127366,"fv":599051},"MT":{"pct":81.211536141,"hora":"18h00","st":6730,"ts":8287,"vv":1613214,"lula":28.405344858,"flavio":65.772798897,"lv":458239,"fv":1061056},"PA":{"pct":60.335141883,"hora":"19h00","st":12566,"ts":20827,"vv":2892172,"lula":48.036873326,"flavio":45.729991162,"lv":1389309,"fv":1322590},"PB":{"pct":86.398431665,"hora":"18h59","st":9255,"ts":10712,"vv":2151734,"lula":60.764341689,"flavio":33.495729491,"lv":1307487,"fv":720739},"PR":{"pct":93.239260187,"hora":"19h00","st":25307,"ts":27142,"vv":6134303,"lula":30.921720039,"flavio":60.100422167,"lv":1896832,"fv":3686742},"PI":{"pct":63.276283619,"hora":"19h00","st":6470,"ts":10225,"vv":1344851,"lula":69.227371657,"flavio":25.530486277,"lv":931005,"fv":343347},"RJ":{"pct":37.173191772,"hora":"19h00","st":14005,"ts":37675,"vv":3208883,"lula":39.148264365,"flavio":53.391133301,"lv":1256222,"fv":1713259},"RN":{"pct":54.417744917,"hora":"18h59","st":4416,"ts":8115,"vv":1066162,"lula":60.178847117,"flavio":34.350220698,"lv":641604,"fv":366229},"RS":{"pct":78.041166007,"hora":"18h59","st":21498,"ts":27547,"vv":5025413,"lula":35.637608292,"flavio":55.698506769,"lv":1790937,"fv":2799080},"RO":{"pct":83.205619413,"hora":"17h59","st":3909,"ts":4698,"vv":806195,"lula":26.536135798,"flavio":66.654221373,"lv":213933,"fv":537363},"RR":{"pct":71.823568137,"hora":"17h59","st":1091,"ts":1519,"vv":227326,"lula":23.123179927,"flavio":71.054784758,"lv":52565,"fv":161526},"SP":{"pct":53.146947596,"hora":"18h58","st":55090,"ts":103656,"vv":12981089,"lula":36.851353534,"flavio":53.381122339,"lv":4783707,"fv":6929451},"SE":{"pct":62.518993753,"hora":"18h59","st":3703,"ts":5923,"vv":817319,"lula":61.102335808,"flavio":32.056883542,"lv":499401,"fv":262007},"TO":{"pct":91.879562044,"hora":"18h59","st":4028,"ts":4384,"vv":851818,"lula":43.474427636,"flavio":50.349135613,"lv":370323,"fv":428883},"MS":{"pct":94.202082747,"hora":"17h59","st":6694,"ts":7106,"vv":1402740,"lula":33.962316609,"flavio":59.207622225,"lv":476403,"fv":830529},"MG":{"pct":50.605047828,"hora":"19h00","st":26346,"ts":52062,"vv":6075648,"lula":41.904238034,"flavio":49.267320951,"lv":2545954,"fv":2993309},"PE":{"pct":43.463441965,"hora":"19h59","st":9309,"ts":21418,"vv":2268484,"lula":61.76472922,"flavio":32.482353854,"lv":1401123,"fv":736857},"SC":{"pct":63.274847051,"hora":"18h59","st":10963,"ts":17326,"vv":2819273,"lula":25.70013617,"flavio":65.827502338,"lv":724557,"fv":1855857}};
+const ESTADOS = {"AC":{"pct":91.453744493,"hora":"17h03","st":2076,"ts":2270,"vv":425613,"lula":28.39574919,"flavio":64.800182325,"lv":120856,"fv":275798},"AL":{"pct":29.967610196,"hora":"19h03","st":2128,"ts":7101,"vv":485573,"lula":58.242941844,"flavio":37.302115233,"lv":282812,"fv":181129},"AP":{"pct":58.620689655,"hora":"19h01","st":1122,"ts":1914,"vv":244289,"lula":48.163036404,"flavio":43.61923787,"lv":117657,"fv":106557},"AM":{"pct":66.838298394,"hora":"18h03","st":5452,"ts":8157,"vv":1460860,"lula":43.607395644,"flavio":48.79119149,"lv":637043,"fv":712771},"BA":{"pct":40.937535235,"hora":"19h03","st":14523,"ts":35476,"vv":3320961,"lula":64.318460831,"flavio":29.947596494,"lv":2135991,"fv":994548},"CE":{"pct":38.771302335,"hora":"19h03","st":9214,"ts":23765,"vv":2110849,"lula":61.023123871,"flavio":33.106536754,"lv":1288106,"fv":698829},"DF":{"pct":97.675419716,"hora":"19h01","st":6807,"ts":6969,"vv":1726777,"lula":38.176614583,"flavio":51.233540868,"lv":659225,"fv":884689},"ES":{"pct":90.918325884,"hora":"19h03","st":8950,"ts":9844,"vv":2024909,"lula":37.227747025,"flavio":55.317300679,"lv":753828,"fv":1120125},"GO":{"pct":70.935866378,"hora":"19h03","st":11127,"ts":15686,"vv":2679521,"lula":29.763864512,"flavio":55.003077043,"lv":797529,"fv":1473819},"MA":{"pct":49.577184547,"hora":"19h02","st":8970,"ts":18093,"vv":1894719,"lula":61.932983202,"flavio":32.741952764,"lv":1173456,"fv":620368},"MT":{"pct":83.250874864,"hora":"18h04","st":6899,"ts":8287,"vv":1652585,"lula":28.608815885,"flavio":65.585854888,"lv":472785,"fv":1083862},"PA":{"pct":62.990349066,"hora":"19h03","st":13119,"ts":20827,"vv":3020762,"lula":48.054067153,"flavio":45.761864059,"lv":1451599,"fv":1382357},"PB":{"pct":87.397311426,"hora":"19h02","st":9362,"ts":10712,"vv":2177866,"lula":60.836984461,"flavio":33.435895505,"lv":1324948,"fv":728189},"PR":{"pct":93.946650947,"hora":"19h02","st":25499,"ts":27142,"vv":6177751,"lula":30.940175478,"flavio":60.096157971,"lv":1911407,"fv":3712591},"PI":{"pct":64.371638142,"hora":"19h02","st":6582,"ts":10225,"vv":1369166,"lula":69.2728274,"flavio":25.492306996,"lv":948460,"fv":349032},"RJ":{"pct":40.546781685,"hora":"19h03","st":15276,"ts":37675,"vv":3520384,"lula":38.964698169,"flavio":53.577564266,"lv":1371707,"fv":1886136},"RN":{"pct":57.178065311,"hora":"19h03","st":4640,"ts":8115,"vv":1126796,"lula":60.005005343,"flavio":34.514854508,"lv":676134,"fv":388912},"RS":{"pct":82.259411188,"hora":"19h03","st":22660,"ts":27547,"vv":5296271,"lula":35.737238521,"flavio":55.596966243,"lv":1892741,"fv":2944566},"RO":{"pct":85.185185185,"hora":"18h03","st":4002,"ts":4698,"vv":823961,"lula":26.529046885,"flavio":66.688836001,"lv":218589,"fv":549490},"RR":{"pct":77.485187623,"hora":"18h03","st":1177,"ts":1519,"vv":246702,"lula":22.963737627,"flavio":71.096302422,"lv":56652,"fv":175396},"SP":{"pct":60.064058038,"hora":"19h03","st":62260,"ts":103656,"vv":14716667,"lula":37.14039327,"flavio":53.06056052,"lv":5465828,"fv":7808746},"SE":{"pct":68.090494682,"hora":"19h03","st":4033,"ts":5923,"vv":897222,"lula":61.080758162,"flavio":32.052379456,"lv":548030,"fv":287581},"TO":{"pct":93.362226277,"hora":"19h03","st":4093,"ts":4384,"vv":866286,"lula":43.476288431,"flavio":50.35380925,"lv":376629,"fv":436208},"MS":{"pct":94.947931326,"hora":"18h02","st":6747,"ts":7106,"vv":1415174,"lula":34.010022796,"flavio":59.175196831,"lv":481301,"fv":837432},"MG":{"pct":50.605047828,"hora":"19h00","st":26346,"ts":52062,"vv":6075648,"lula":41.904238034,"flavio":49.267320951,"lv":2545954,"fv":2993309},"PE":{"pct":47.296666355,"hora":"19h59","st":10130,"ts":21418,"vv":2486276,"lula":61.947828801,"flavio":32.314232209,"lv":1540194,"fv":803421},"SC":{"pct":68.071107007,"hora":"19h02","st":11794,"ts":17326,"vv":3036831,"lula":25.533459056,"flavio":65.993728331,"lv":775408,"fv":2004118}};
 const BR = {"pct":47.257274942,"hora":"18h44","st":235931,"ts":499248,"vv":54746502,"lula":41.631478117,"flavio":50.20283853,"lv":22791778,"fv":27484298};
 /*FIM*/
 
-const W = 980, H = 470, m = {l: 44, r: 64, t: 12, b: 40};
-const X = v => m.l + v / 100 * (W - m.l - m.r);
-const Y0 = 35, Y1 = 53, Y = v => m.t + (Y1 - v) / (Y1 - Y0) * (H - m.t - m.b);
 const fmt = v => v.toFixed(2).replace(".", ",");
 const ns = "http://www.w3.org/2000/svg";
 const svg = document.getElementById("chart");
 const el = (tag, at, parent = svg) => { const e = document.createElementNS(ns, tag); for (const k in at) e.setAttribute(k, at[k]); parent.appendChild(e); return e; };
-
-// grade e eixos
-for (let y = 36; y <= 52; y += 2) {
-  el("line", {x1: m.l, x2: W - m.r, y1: Y(y), y2: Y(y), stroke: "var(--grid)", "stroke-width": 1});
-  el("text", {x: m.l - 8, y: Y(y) + 4, "text-anchor": "end"}).textContent = y + "%";
-}
-for (let x = 0; x <= 100; x += 20) {
-  el("line", {x1: X(x), x2: X(x), y1: m.t, y2: H - m.b, stroke: "var(--grid)", "stroke-width": 1});
-  el("text", {x: X(x), y: H - m.b + 18, "text-anchor": "middle"}).textContent = x + "%";
-}
-el("text", {x: (m.l + W - m.r) / 2, y: H - 4, "text-anchor": "middle"}).textContent = "% das seções totalizadas";
-el("line", {x1: m.l, x2: W - m.r, y1: Y(50), y2: Y(50), stroke: "var(--faint)", "stroke-width": 1, "stroke-dasharray": "2 4"});
-el("text", {x: X(60), y: Y(50) - 6}).textContent = "50% · vence no 1º turno";
-
-const path = (d, i) => d.map((p, j) => (j ? "L" : "M") + X(p[0]).toFixed(1) + " " + Y(p[i]).toFixed(1)).join(" ");
-const series = [
-  {d: D22, i: 2, c: "var(--lula)", w: 2, dash: "6 5", op: .55, r: 3.5},
-  {d: D22, i: 3, c: "var(--flavio)", w: 2, dash: "6 5", op: .55, r: 3.5},
-  {d: D26, i: 2, c: "var(--lula)", w: 3, dash: "", op: 1, r: 4.5},
-  {d: D26, i: 3, c: "var(--flavio)", w: 3, dash: "", op: 1, r: 4.5},
-];
-for (const s of series) {
-  const g = el("g", {opacity: s.op});
-  el("path", {d: path(s.d, s.i), fill: "none", stroke: s.c, "stroke-width": s.w, "stroke-dasharray": s.dash, "stroke-linejoin": "round", "stroke-linecap": "round"}, g);
-  for (const p of s.d) el("circle", {cx: X(p[0]), cy: Y(p[s.i]), r: s.r, fill: s.c, stroke: "var(--panel)", "stroke-width": 1.5}, g);
-}
-// rótulos das pontas
-const endLabel = (d, i, dy = 4) => { const p = d[d.length - 1]; el("text", {x: X(p[0]) + 9, y: Y(p[i]) + dy, style: "fill:var(--fg)"}).textContent = fmt(p[i]) + "%"; };
-endLabel(D26, 2); endLabel(D26, 3); endLabel(D22, 2); endLabel(D22, 3);
-// virada de 2022
-el("text", {x: X(70), y: Y(45.6) + 26, "text-anchor": "middle"}).textContent = "virada 2022 (70%)";
-
-// hover
-const cross = el("line", {y1: m.t, y2: H - m.b, stroke: "var(--faint)", "stroke-width": 1, visibility: "hidden"});
-const hit = el("rect", {x: m.l, y: m.t, width: W - m.l - m.r, height: H - m.t - m.b, fill: "transparent"});
 const tip = document.getElementById("tip"), box = document.getElementById("box");
 const pts = [...D22.map(p => ({p, y: 2022})), ...D26.map(p => ({p, y: 2026}))];
-function show(evt) {
-  const r = svg.getBoundingClientRect(), sx = (evt.clientX - r.left) * W / r.width;
-  let best = pts[0], bd = Infinity;
-  for (const q of pts) { const d = Math.abs(X(q.p[0]) - sx); if (d < bd || (d === bd && q.y === 2026)) { bd = d; best = q; } }
-  const [pct, hora, lula, bol] = best.p, nome = best.y === 2026 ? "Flávio Bolsonaro" : "Jair Bolsonaro";
-  cross.setAttribute("x1", X(pct)); cross.setAttribute("x2", X(pct)); cross.setAttribute("visibility", "visible");
-  const dif = bol - lula;
-  tip.innerHTML = `<b>${best.y} · ${fmt(pct)}% apurado${hora ? " · " + hora : ""}</b>
-    <div class="r"><span>${nome}</span><span>${fmt(bol)}%</span></div>
-    <div class="r"><span>Lula</span><span>${fmt(lula)}%</span></div>
-    <div class="r" style="color:var(--muted)"><span>Diferença</span><span>${fmt(Math.abs(dif))} p.p. ${dif > 0 ? "Bolsonaro" : "Lula"}</span></div>`;
-  tip.hidden = false;
-  const bx = box.getBoundingClientRect(), px = X(pct) / W * r.width, tw = tip.offsetWidth;
-  tip.style.left = Math.max(0, Math.min(px + 12 + tw > bx.width ? px - tw - 12 : px + 12, bx.width - tw)) + "px";
-  tip.style.top = "8px";
+const Y0 = 35, Y1 = 53;
+let W = 0, H, m, X, Y;
+
+// desenha o gráfico na largura real do cartão, para o texto manter o tamanho no celular
+function drawChart() {
+  const w = Math.max(300, Math.round(box.clientWidth));
+  if (w === W) return;
+  W = w; const small = W < 560;
+  H = small ? 320 : Math.min(470, Math.round(W * 0.52));
+  m = {l: 38, r: small ? 50 : 64, t: 12, b: 40};
+  X = v => m.l + v / 100 * (W - m.l - m.r);
+  Y = v => m.t + (Y1 - v) / (Y1 - Y0) * (H - m.t - m.b);
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.innerHTML = "";
+  for (let y = 36; y <= 52; y += 2) {
+    el("line", {x1: m.l, x2: W - m.r, y1: Y(y), y2: Y(y), stroke: "var(--grid)", "stroke-width": 1});
+    el("text", {x: m.l - 6, y: Y(y) + 4, "text-anchor": "end"}).textContent = y + "%";
+  }
+  for (let x = 0; x <= 100; x += small ? 25 : 20) {
+    el("line", {x1: X(x), x2: X(x), y1: m.t, y2: H - m.b, stroke: "var(--grid)", "stroke-width": 1});
+    el("text", {x: X(x), y: H - m.b + 18, "text-anchor": "middle"}).textContent = x + "%";
+  }
+  el("text", {x: (m.l + W - m.r) / 2, y: H - 4, "text-anchor": "middle"}).textContent = "% das seções totalizadas";
+  el("line", {x1: m.l, x2: W - m.r, y1: Y(50), y2: Y(50), stroke: "var(--faint)", "stroke-width": 1, "stroke-dasharray": "2 4"});
+  el("text", {x: small ? W - m.r : X(60), y: Y(50) - 6, "text-anchor": small ? "end" : "start"}).textContent = small ? "50%" : "50% · vence no 1º turno";
+  const path = (d, i) => d.map((p, j) => (j ? "L" : "M") + X(p[0]).toFixed(1) + " " + Y(p[i]).toFixed(1)).join(" ");
+  const k = small ? .75 : 1;
+  for (const s of [
+    {d: D22, i: 2, c: "var(--lula)", w: 2, dash: "6 5", op: .55, r: 3.5},
+    {d: D22, i: 3, c: "var(--flavio)", w: 2, dash: "6 5", op: .55, r: 3.5},
+    {d: D26, i: 2, c: "var(--lula)", w: 3, dash: "", op: 1, r: 4.5},
+    {d: D26, i: 3, c: "var(--flavio)", w: 3, dash: "", op: 1, r: 4.5},
+  ]) {
+    const g = el("g", {opacity: s.op});
+    el("path", {d: path(s.d, s.i), fill: "none", stroke: s.c, "stroke-width": s.w, "stroke-dasharray": s.dash, "stroke-linejoin": "round", "stroke-linecap": "round"}, g);
+    for (const p of s.d) el("circle", {cx: X(p[0]), cy: Y(p[s.i]), r: s.r * k, fill: s.c, stroke: "var(--panel)", "stroke-width": 1.5}, g);
+  }
+  const endLabel = (d, i, dy = 4) => { const p = d[d.length - 1]; el("text", {x: X(p[0]) + 8, y: Y(p[i]) + dy, style: "fill:var(--fg);font-weight:600"}).textContent = fmt(p[i]) + "%"; };
+  endLabel(D26, 2); endLabel(D26, 3); endLabel(D22, 2); endLabel(D22, 3);
+  if (!small) el("text", {x: X(70), y: Y(45.6) + 26, "text-anchor": "middle"}).textContent = "virada 2022 (70%)";
+
+  const cross = el("line", {y1: m.t, y2: H - m.b, stroke: "var(--faint)", "stroke-width": 1, visibility: "hidden"});
+  const hit = el("rect", {x: m.l, y: m.t, width: W - m.l - m.r, height: H - m.t - m.b, fill: "transparent"});
+  function show(evt) {
+    const r = svg.getBoundingClientRect(), sx = (evt.clientX - r.left) * W / r.width;
+    let best = pts[0], bd = Infinity;
+    for (const q of pts) { const d = Math.abs(X(q.p[0]) - sx); if (d < bd || (d === bd && q.y === 2026)) { bd = d; best = q; } }
+    const [pct, hora, lula, bol] = best.p, nome = best.y === 2026 ? "Flávio Bolsonaro" : "Jair Bolsonaro";
+    cross.setAttribute("x1", X(pct)); cross.setAttribute("x2", X(pct)); cross.setAttribute("visibility", "visible");
+    const dif = bol - lula;
+    tip.innerHTML = `<b>${best.y} · ${fmt(pct)}% apurado${hora ? " · " + hora : ""}</b>
+      <div class="r"><span>${nome}</span><span>${fmt(bol)}%</span></div>
+      <div class="r"><span>Lula</span><span>${fmt(lula)}%</span></div>
+      <div class="r" style="color:var(--muted)"><span>Diferença</span><span>${fmt(Math.abs(dif))} p.p. ${dif > 0 ? "Bolsonaro" : "Lula"}</span></div>`;
+    tip.hidden = false;
+    const bx = box.getBoundingClientRect(), px = X(pct) / W * r.width, tw = tip.offsetWidth;
+    tip.style.left = Math.max(0, Math.min(px + 12 + tw > bx.width ? px - tw - 12 : px + 12, bx.width - tw)) + "px";
+    tip.style.top = "8px";
+  }
+  hit.addEventListener("pointermove", show);
+  hit.addEventListener("pointerdown", show);
+  hit.addEventListener("pointerleave", () => { tip.hidden = true; cross.setAttribute("visibility", "hidden"); });
 }
-hit.addEventListener("pointermove", show);
-hit.addEventListener("pointerdown", show);
-hit.addEventListener("pointerleave", () => { tip.hidden = true; cross.setAttribute("visibility", "hidden"); });
+drawChart();
+let resizeT; new ResizeObserver(() => { clearTimeout(resizeT); resizeT = setTimeout(drawChart, 120); }).observe(box);
 
 // tabelas
 const tbl = (d, ano, nome) => `<div><table><caption>${ano}</caption><thead><tr><th>% seções</th><th>Horário</th><th>Lula</th><th>${nome}</th></tr></thead><tbody>${d.map(p => `<tr><td>${fmt(p[0])}%</td><td>${p[1] || "–"}</td><td>${fmt(p[2])}%</td><td>${fmt(p[3])}%</td></tr>`).join("")}</tbody></table></div>`;
@@ -360,15 +381,27 @@ renderMap(); resumo();
 (function () {
   const a = D26[D26.length - 1];
   const b = D22.reduce((m, p) => Math.abs(p[0] - a[0]) < Math.abs(m[0] - a[0]) ? p : m);
-  const card = (titulo, nome, bol, lula, rodape) => `<div class="card"><h2>${titulo}</h2><div class="rows">
-    <div class="row"><span class="sw" style="background:var(--flavio)"></span>${nome}<span class="num">${fmt(bol)}%</span></div>
-    <div class="row"><span class="sw" style="background:var(--lula)"></span>Lula (PT)<span class="num">${fmt(lula)}%</span></div></div>
-    <div class="margin">${rodape}</div></div>`;
-  const dif = (x, y, quem) => `Diferença: ${fmt(Math.abs(x - y))} p.p. a favor de ${x > y ? quem : "Lula"}`;
+  const row = (nome, cor, v) => `<div class="row"><span class="sw" style="background:${cor}"></span>${nome}<span class="num">${fmt(v)}%</span></div>`;
+  const split = (f, l) => `<div class="split" aria-hidden="true"><div style="width:${f}%;background:var(--flavio)"></div><div style="flex:1;background:var(--grid)"></div><div style="width:${l}%;background:var(--lula)"></div></div>`;
+  const dif = (x, y, quem) => `Diferença: <b>${fmt(Math.abs(x - y))} p.p.</b> a favor de ${x > y ? quem : "Lula"}`;
+  // projeção simples: o que falta em cada estado vota como o que já foi apurado nele
+  let F = 0, L = 0, V = 0;
+  for (const e of Object.values(ESTADOS)) { const k = e.ts / e.st; F += e.fv * k; L += e.lv * k; V += e.vv * k; }
+  const pf = F / V * 100, pl = L / V * 100;
   document.getElementById("score").innerHTML =
-    card(`2026 · ${fmt(a[0])}% das seções${a[1] ? " · " + a[1] : ""}`, "Flávio Bolsonaro (PL)", a[3], a[2],
-      dif(a[3], a[2], "Flávio") + (BR ? ` · ${votos(BR.fv)} × ${votos(BR.lv)} votos` : "")) +
-    card(`2022 · ${fmt(b[0])}% das seções · ${b[1]}`, "Jair Bolsonaro (PL)", b[3], b[2], dif(b[3], b[2], "Bolsonaro") + " · resultado final: Lula 48,43% × 43,20%");
+    `<div class="card primary"><h2>2026 · agora</h2><span class="kicker">${fmt(a[0])}% das seções${a[1] ? " · " + a[1] : ""}</span>
+      <div class="rows">${row("Flávio Bolsonaro (PL)", "var(--flavio)", a[3])}${row("Lula (PT)", "var(--lula)", a[2])}</div>${split(a[3], a[2])}
+      <div class="margin">${dif(a[3], a[2], "Flávio")}${BR ? ` · ${votos(BR.fv)} × ${votos(BR.lv)} votos` : ""}</div></div>` +
+    `<div class="card"><h2>2022 · mesmo ponto</h2><span class="kicker">${fmt(b[0])}% das seções · ${b[1]}</span>
+      <div class="rows">${row("Jair Bolsonaro (PL)", "var(--flavio)", b[3])}${row("Lula (PT)", "var(--lula)", b[2])}</div>${split(b[3], b[2])}
+      <div class="margin">${dif(b[3], b[2], "Bolsonaro")} · final: Lula 48,43% × 43,20%</div></div>` +
+    (V ? `<div class="card proj"><h2>2026 · projeção do resultado</h2><span class="kicker">estimativa a partir dos 27 estados</span>
+      <div class="rows">${row("Flávio Bolsonaro (PL)", "var(--flavio)", pf)}${row("Lula (PT)", "var(--lula)", pl)}</div>${split(pf, pl)}
+      <div class="margin hint">Supõe que as seções que faltam em cada estado votam como as já apuradas nele. ${pf < 50 && pl < 50 ? "Nesse cenário, ninguém passa de 50% e há 2º turno." : ""} Sem votos do exterior; margem de erro de cerca de 1 p.p.</div></div>` : "");
+  const lider = a[3] >= a[2] ? "Flávio Bolsonaro" : "Lula";
+  document.getElementById("lede").innerHTML = `Com <b>${fmt(a[0])}%</b> das seções totalizadas, <b>${lider}</b> lidera por ${fmt(Math.abs(a[3] - a[2]))} pontos. Em 2022, no mesmo ponto, Bolsonaro liderava por ${fmt(Math.abs(b[3] - b[2]))} e Lula virou com cerca de 70% apurado.`;
+  document.getElementById("progFill").style.width = a[0] + "%";
+  document.getElementById("progTxt").textContent = `${fmt(a[0])}% apurado`;
   if (BR) document.getElementById("upd").textContent = `· TSE, totalizado às ${BR.hora}`;
 })();
 // ---- barras por estado ----
