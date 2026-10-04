@@ -21,10 +21,11 @@ for d, ano, ls, a, lw in [(d22, 2022, "--", .55, 2), (d26, 2026, "-", 1, 3)]:
 ax.set_xlim(0, 104); ax.set_ylim(35, 53)
 ax.set_xlabel("% das seções totalizadas"); ax.set_ylabel("% dos votos válidos")
 ax.set_title("1º turno: evolução da apuração, 2022 x 2026", loc="left", fontweight="bold", fontsize=14)
+ax.axhline(50, color="#999", lw=1, ls=":"); ax.text(60, 50.15, "50% (vence no 1º turno)", fontsize=8, color="#777")
 ax.grid(alpha=.25); ax.spines[["top", "right"]].set_visible(False)
 ax.legend(frameon=False, loc="lower right", ncol=2)
 if d26.empty:
     ax.text(.5, .5, "Dados de 2026 ainda não preenchidos\n(dados_2026.csv)", transform=ax.transAxes,
             ha="center", color="#888", fontsize=14)
-fig.text(.01, .005, "Fonte: TSE / parciais ao vivo. 2022: Bloomberg Línea (02/10/2022).", fontsize=8, color="#777")
+fig.text(.01, .005, "Fonte: parciais do TSE. 2022: Bloomberg Línea (02/10/2022). 2026: InfoMoney, Agenda do Poder, Mix Vale, Latin Times (04/10/2026), apuração em andamento.", fontsize=8, color="#777")
 fig.tight_layout(); fig.savefig("comparacao_2022_2026.png")
