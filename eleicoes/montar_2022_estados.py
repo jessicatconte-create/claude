@@ -5,7 +5,8 @@ O TSE não guarda o histórico da divulgação, então cada seção entra no hor
 que a urna emitiu o boletim (DT_EMISSAO_BU), convertido para o horário de Brasília.
 É uma aproximação: a totalização acontecia alguns minutos depois.
 
-Saída: dados_2022_secoes.json -> {UF: [[minuto_brasilia, lula, bolsonaro, validos], ...]}
+Saída: dados_2022_secoes.json -> {UF: [[minuto_emissao, lula, bolsonaro, validos, minuto_recebido_tse], ...]}
+(DT_BU_RECEBIDO já vem no horário de Brasília e acompanha a totalização; DT_EMISSAO_BU é o fechamento da urna.)
 Uso: python montar_2022_estados.py   (baixa ~3 GB, um estado por vez, e apaga cada zip)
 """
 import csv, io, json, os, sys, time, zipfile
@@ -17,7 +18,7 @@ UFS = "AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO RR SC S
 # diferença para o horário de Brasília em 2022 (sem horário de verão)
 FUSO = {"AC": 2, "AM": 1, "RO": 1, "RR": 1, "MT": 1, "MS": 1}
 SAIDA = "dados_2022_secoes.json"
-TMP = "_bweb.zip"
+TMP = "_bweb.zip"  # fica fora do git (.gitignore)
 
 
 def baixar(uf):
@@ -44,7 +45,7 @@ def ler(uf):
         with z.open(nome) as f:
             leitor = csv.reader(io.TextIOWrapper(f, encoding="latin-1"), delimiter=";")
             cab = next(leitor)
-            i = {c: cab.index(c) for c in ("NR_ZONA", "NR_SECAO", "CD_CARGO_PERGUNTA", "NR_VOTAVEL", "QT_VOTOS", "DT_EMISSAO_BU")}
+            i = {c: cab.index(c) for c in ("NR_ZONA", "NR_SECAO", "CD_CARGO_PERGUNTA", "NR_VOTAVEL", "QT_VOTOS", "DT_EMISSAO_BU", "DT_BU_RECEBIDO")}
             for lin in leitor:
                 if lin[i["CD_CARGO_PERGUNTA"]] != "1":
                     continue
@@ -52,7 +53,9 @@ def ler(uf):
                 s = secoes.get(chave)
                 if s is None:
                     t = datetime.strptime(lin[i["DT_EMISSAO_BU"]], "%d/%m/%Y %H:%M:%S")
-                    s = secoes[chave] = [t.hour * 60 + t.minute + 60 * FUSO.get(uf, 0), 0, 0, 0]
+                    rc = datetime.strptime(lin[i["DT_BU_RECEBIDO"]], "%d/%m/%Y %H:%M:%S")
+                    dias = (rc.date() - t.date()).days
+                    s = secoes[chave] = [t.hour * 60 + t.minute + 60 * FUSO.get(uf, 0), 0, 0, 0, rc.hour * 60 + rc.minute + 1440 * dias]
                 nv, qt = lin[i["NR_VOTAVEL"]], int(lin[i["QT_VOTOS"]])
                 if nv not in ("95", "96"):  # 95 branco, 96 nulo
                     s[3] += qt
@@ -66,7 +69,7 @@ def ler(uf):
 if __name__ == "__main__":
     dados = json.load(open(SAIDA)) if os.path.exists(SAIDA) else {}
     for uf in UFS:
-        if uf in dados:
+        if uf in dados and dados[uf] and len(dados[uf][0]) >= 5:
             continue
         if not baixar(uf):
             print(uf, "não baixou; rode de novo depois", flush=True)
