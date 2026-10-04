@@ -11,10 +11,15 @@ with open("dados_estados_2026.json") as f:
 
 campos = ("pct", "hora", "st", "ts", "vv", "lula", "flavio", "lv", "fv")
 estados = {k: {c: v[c] for c in campos} for k, v in uf["estados"].items()}
-br = {c: uf["br"][c] for c in campos}
+br = {c: uf["br"][c] for c in campos + ("hms", "data") if c in uf["br"]}
+try:
+    with open("dados_exterior_2026.json") as f:
+        ext = json.load(f)
+except OSError:
+    ext = None
 
 js = lambda o: json.dumps(o, ensure_ascii=False, separators=(",", ":"))
-bloco = f"/*DADOS*/\nconst D26 = {js(d26)};\nconst ESTADOS = {js(estados)};\nconst BR = {js(br)};\n/*FIM*/"
+bloco = f"/*DADOS*/\nconst D26 = {js(d26)};\nconst ESTADOS = {js(estados)};\nconst BR = {js(br)};\nconst EXTERIOR = {js(ext)};\n/*FIM*/"
 
 s = open(PAGINA).read()
 s = re.sub(r"/\*DADOS\*/.*?/\*FIM\*/", lambda _: bloco, s, count=1, flags=re.S)

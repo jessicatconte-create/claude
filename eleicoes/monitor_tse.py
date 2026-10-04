@@ -47,7 +47,7 @@ def ler(j):
     lula, flavio = cands[LULA], cands[FLAVIO]
     return {
         "pct": num(j["s"]["pstn"]), "st": int(j["s"]["st"]), "ts": int(j["s"]["ts"]),
-        "hora": j["ht"][:5].replace(":", "h"), "vv": int(j["v"]["vv"]),
+        "hora": j["ht"][:5].replace(":", "h"), "hms": j["ht"], "data": j["dt"], "vv": int(j["v"]["vv"]),
         "lula": num(lula["pvapn"]), "flavio": num(flavio["pvapn"]),
         "lv": int(lula["vap"]), "fv": int(flavio["vap"]),
     }

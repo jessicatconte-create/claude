@@ -171,6 +171,16 @@ figcaption a { color: var(--muted); }
 .dots { width: 100%; height: auto; display: block; overflow: visible; }
 .dots text { font: 12px var(--display); fill: var(--muted); }
 .tw { overflow-x: auto; }
+.updbadge { display: inline-flex; align-items: center; gap: 8px; width: fit-content; background: var(--panel); border: 1px solid var(--rule); border-radius: 99px; padding: 6px 14px; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.updbadge b { color: var(--fg); font-size: 15px; }
+.updbadge::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--s4); }
+.ext { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 20px; align-items: start; }
+@media (max-width: 760px) { .ext { grid-template-columns: 1fr; } }
+.ext .cmp { display: grid; gap: 12px; }
+.ext .cmp .yr { display: grid; gap: 6px; }
+.ext .cmp h3 { margin: 0; font-size: 13px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+.ext .cmp .rowx { display: grid; grid-template-columns: 1fr auto; font-size: 15px; }
+.ext .cmp .rowx b { font-variant-numeric: tabular-nums; }
 </style>
 
 <div class="wrap">
@@ -178,6 +188,7 @@ figcaption a { color: var(--muted); }
     <div class="eyebrow"><span class="live">Apuração em andamento</span><span>1º turno · Presidente</span><span id="upd"></span><button type="button" class="themebtn" id="themebtn" aria-label="Alternar tema claro/escuro">◐ Tema</button></div>
     <h1>Apuração 2022 × 2026</h1>
     <p class="lede" id="lede">Percentual dos votos válidos conforme as seções são totalizadas pelo TSE.</p>
+    <div class="updbadge" id="updbadge" hidden></div>
     <div class="progress" aria-label="Seções totalizadas"><div class="progress-bar"><div class="progress-fill" id="progFill"></div></div><span id="progTxt"></span></div>
   </header>
 
@@ -249,6 +260,18 @@ figcaption a { color: var(--muted); }
   </div>
 
 
+  <figure id="exterior">
+    <div class="sectionhead">
+      <h2>Brasileiros no exterior</h2>
+      <p id="ext-sub">Votos das seções eleitorais fora do Brasil.</p>
+    </div>
+    <div class="ext">
+      <div class="cmp" id="extcmp"></div>
+      <div class="tw"><table class="pt" id="exttab"></table></div>
+    </div>
+    <figcaption>2026: JSON oficial do TSE, por cidade com seção eleitoral. 2022: resultado final do 1º turno no exterior (Poder360). Tabela com as 15 cidades com mais votos válidos apurados.</figcaption>
+  </figure>
+
   <figure id="pesquisas">
     <div class="sectionhead">
       <h2>Pesquisas × urnas</h2>
@@ -279,8 +302,9 @@ figcaption a { color: var(--muted); }
 const D22 = [[0.09,"17h06",51.18,36.73],[0.88,"17h43",41.15,48.40],[1.99,"18h07",41.46,48.41],[8.10,"18h31",42.64,48.51],[13.20,"18h42",43.23,48.04],[20.26,"18h55",43.32,47.93],[33.18,"19h14",43.75,47.45],[44.17,"19h32",44.32,46.84],[60.33,"19h53",45.20,46.01],[70.00,"20h06",45.75,45.51],[85.00,"20h25",46.64,44.73],[93.00,"20h47",47.46,44.03],[95.99,"21h16",47.75,43.79],[98.21,"21h55",48.05,43.52],[99.75,"23h33",48.36,43.25],[100,"final",48.43,43.20]];
 /*DADOS*/
 const D26 = [[4.97,"",41.24,50.31],[9.08,"17h52",40.95,50.79],[10.08,"",40.78,50.96],[12.45,"",40.67,51.09],[14.24,"",40.67,51.17],[21.96,"18h16",40.82,51.07],[24.45,"18h19",40.97,50.94],[27.88,"",41.27,50.66],[31.9,"18h27",41.14,50.74],[36.6,"18h32",41.23,50.63],[41.57,"18h38",41.44,50.41],[47.26,"18h44",41.63,50.2],[64.81,"19h06",42.25,49.58]];
-const ESTADOS = {"AC":{"pct":98.061674009,"hora":"17h28","st":2226,"ts":2270,"vv":458909,"lula":28.661673665,"flavio":64.610412958,"lv":131531,"fv":296503},"AL":{"pct":53.175609069,"hora":"19h26","st":3776,"ts":7101,"vv":901670,"lula":56.831656815,"flavio":38.639635343,"lv":512434,"fv":348402},"AP":{"pct":82.549634274,"hora":"19h31","st":1580,"ts":1914,"vv":368061,"lula":46.382800677,"flavio":45.07568039,"lv":170717,"fv":165906},"AM":{"pct":85.019002084,"hora":"18h31","st":6935,"ts":8157,"vv":1847219,"lula":45.642287135,"flavio":47.157104815,"lv":843113,"fv":871095},"BA":{"pct":63.941819822,"hora":"19h26","st":22684,"ts":35476,"vv":5302664,"lula":64.981281107,"flavio":29.453874505,"lv":3445739,"fv":1561840},"CE":{"pct":64.54870608,"hora":"19h26","st":15340,"ts":23765,"vv":3605123,"lula":61.588439562,"flavio":32.617500152,"lv":2220339,"fv":1175901},"DF":{"pct":99.512125126,"hora":"19h26","st":6935,"ts":6969,"vv":1762818,"lula":38.123334343,"flavio":51.294574936,"lv":672045,"fv":904230},"ES":{"pct":98.720032507,"hora":"19h25","st":9718,"ts":9844,"vv":2219375,"lula":37.656051816,"flavio":54.879819769,"lv":835729,"fv":1217989},"GO":{"pct":91.138594925,"hora":"19h31","st":14296,"ts":15686,"vv":3480204,"lula":30.621998021,"flavio":54.046199591,"lv":1065708,"fv":1880918},"MA":{"pct":72.387111037,"hora":"19h25","st":13097,"ts":18093,"vv":2837471,"lula":62.541079715,"flavio":32.200716765,"lv":1774585,"fv":913686},"MT":{"pct":95.474840111,"hora":"18h30","st":7912,"ts":8287,"vv":1901821,"lula":28.912132109,"flavio":65.366929906,"lv":549857,"fv":1243162},"PA":{"pct":83.204494166,"hora":"19h31","st":17329,"ts":20827,"vv":4023861,"lula":48.284744428,"flavio":45.830111925,"lv":1942911,"fv":1844140},"PB":{"pct":97.750186706,"hora":"19h31","st":10471,"ts":10712,"vv":2453666,"lula":61.206415217,"flavio":33.15068147,"lv":1501801,"fv":813407},"PR":{"pct":99.171026453,"hora":"19h30","st":26917,"ts":27142,"vv":6528607,"lula":31.134604978,"flavio":59.957583601,"lv":2032656,"fv":3914395},"PI":{"pct":84.518337408,"hora":"19h31","st":8642,"ts":10225,"vv":1807554,"lula":70.312643495,"flavio":24.639651153,"lv":1270939,"fv":445375},"RJ":{"pct":69.714664897,"hora":"19h26","st":26265,"ts":37675,"vv":6293145,"lula":39.106694665,"flavio":53.413674721,"lv":2461041,"fv":3361400},"RN":{"pct":80.209488601,"hora":"19h26","st":6509,"ts":8115,"vv":1633405,"lula":59.736868688,"flavio":34.758372847,"lv":975745,"fv":567745},"RS":{"pct":96.602170835,"hora":"19h26","st":26611,"ts":27547,"vv":6224215,"lula":35.804049185,"flavio":55.538618123,"lv":2228521,"fv":3456843},"RO":{"pct":98.084291188,"hora":"18h30","st":4608,"ts":4698,"vv":948542,"lula":25.978080043,"flavio":67.35937892,"lv":246413,"fv":638932},"RR":{"pct":98.156682028,"hora":"18h28","st":1491,"ts":1519,"vv":319403,"lula":22.393966243,"flavio":71.458001334,"lv":71527,"fv":228239},"SP":{"pct":87.109284557,"hora":"19h25","st":90294,"ts":103656,"vv":21587195,"lula":37.910437183,"flavio":52.249720262,"lv":8183800,"fv":11279249},"SE":{"pct":91.23754854,"hora":"19h26","st":5404,"ts":5923,"vv":1228845,"lula":62.017015978,"flavio":31.213049652,"lv":762093,"fv":383560},"TO":{"pct":98.813868613,"hora":"19h31","st":4332,"ts":4384,"vv":918383,"lula":43.506249571,"flavio":50.358510556,"lv":399554,"fv":462484},"MS":{"pct":99.226006192,"hora":"18h29","st":7051,"ts":7106,"vv":1480621,"lula":34.503292875,"flavio":58.756764898,"lv":510863,"fv":869965},"MG":{"pct":78.35273328,"hora":"19h25","st":40792,"ts":52062,"vv":9381943,"lula":42.413346574,"flavio":48.917734844,"lv":3979196,"fv":4589434},"PE":{"pct":71.243813615,"hora":"20h16","st":15259,"ts":21418,"vv":3887323,"lula":62.496170244,"flavio":31.88250629,"lv":2429428,"fv":1239376},"SC":{"pct":93.841625303,"hora":"19h31","st":16259,"ts":17326,"vv":4216075,"lula":25.066394692,"flavio":66.569830945,"lv":1056818,"fv":2806634}};
-const BR = {"pct":64.805267122,"hora":"19h06","st":323539,"ts":499248,"vv":75762826,"lula":42.247438077,"flavio":49.58486501,"lv":32007853,"fv":37566895};
+const ESTADOS = {"AC":{"pct":98.061674009,"hora":"17h28","st":2226,"ts":2270,"vv":458909,"lula":28.661673665,"flavio":64.610412958,"lv":131531,"fv":296503},"AL":{"pct":57.006055485,"hora":"19h31","st":4048,"ts":7101,"vv":972424,"lula":56.965377243,"flavio":38.527226806,"lv":553945,"fv":374648},"AP":{"pct":83.594566353,"hora":"19h31","st":1600,"ts":1914,"vv":373205,"lula":46.337267721,"flavio":45.117562734,"lv":172933,"fv":168381},"AM":{"pct":85.019002084,"hora":"18h31","st":6935,"ts":8157,"vv":1847219,"lula":45.642287135,"flavio":47.157104815,"lv":843113,"fv":871095},"BA":{"pct":67.101702559,"hora":"19h31","st":23805,"ts":35476,"vv":5590186,"lula":64.932741057,"flavio":29.513275587,"lv":3629861,"fv":1649847},"CE":{"pct":68.440984641,"hora":"19h32","st":16265,"ts":23765,"vv":3833114,"lula":61.701739108,"flavio":32.526061056,"lv":2365098,"fv":1246761},"DF":{"pct":99.512125126,"hora":"19h26","st":6935,"ts":6969,"vv":1762818,"lula":38.123334343,"flavio":51.294574936,"lv":672045,"fv":904230},"ES":{"pct":99.268590004,"hora":"19h31","st":9772,"ts":9844,"vv":2233268,"lula":37.669370626,"flavio":54.86461992,"lv":841258,"fv":1225274},"GO":{"pct":91.27884738,"hora":"19h31","st":14318,"ts":15686,"vv":3486047,"lula":30.63145735,"flavio":54.034125185,"lv":1067827,"fv":1883655},"MA":{"pct":75.493284696,"hora":"19h32","st":13659,"ts":18093,"vv":2969385,"lula":62.570229189,"flavio":32.18447591,"lv":1857951,"fv":955681},"MT":{"pct":95.752383251,"hora":"18h31","st":7935,"ts":8287,"vv":1907934,"lula":28.917247662,"flavio":65.368246491,"lv":551722,"fv":1247183},"PA":{"pct":83.204494166,"hora":"19h31","st":17329,"ts":20827,"vv":4023861,"lula":48.284744428,"flavio":45.830111925,"lv":1942911,"fv":1844140},"PB":{"pct":97.750186706,"hora":"19h31","st":10471,"ts":10712,"vv":2453666,"lula":61.206415217,"flavio":33.15068147,"lv":1501801,"fv":813407},"PR":{"pct":99.17471078,"hora":"19h31","st":26918,"ts":27142,"vv":6528816,"lula":31.136089606,"flavio":59.956307545,"lv":2032818,"fv":3914437},"PI":{"pct":84.518337408,"hora":"19h31","st":8642,"ts":10225,"vv":1807554,"lula":70.312643495,"flavio":24.639651153,"lv":1270939,"fv":445375},"RJ":{"pct":73.470471135,"hora":"19h32","st":27680,"ts":37675,"vv":6663420,"lula":39.127249971,"flavio":53.383217627,"lv":2607213,"fv":3557148},"RN":{"pct":83.561306223,"hora":"19h32","st":6781,"ts":8115,"vv":1708778,"lula":59.699914208,"flavio":34.774909321,"lv":1020139,"fv":594226},"RS":{"pct":97.408066214,"hora":"19h32","st":26833,"ts":27547,"vv":6272777,"lula":35.768783108,"flavio":55.579418812,"lv":2243696,"fv":3486373},"RO":{"pct":98.084291188,"hora":"18h30","st":4608,"ts":4698,"vv":948542,"lula":25.978080043,"flavio":67.35937892,"lv":246413,"fv":638932},"RR":{"pct":98.156682028,"hora":"18h28","st":1491,"ts":1519,"vv":319403,"lula":22.393966243,"flavio":71.458001334,"lv":71527,"fv":228239},"SP":{"pct":87.109284557,"hora":"19h25","st":90294,"ts":103656,"vv":21587195,"lula":37.910437183,"flavio":52.249720262,"lv":8183800,"fv":11279249},"SE":{"pct":93.010298835,"hora":"19h30","st":5509,"ts":5923,"vv":1255414,"lula":62.137748982,"flavio":31.11284405,"lv":780086,"fv":390595},"TO":{"pct":98.813868613,"hora":"19h31","st":4332,"ts":4384,"vv":918383,"lula":43.506249571,"flavio":50.358510556,"lv":399554,"fv":462484},"MS":{"pct":99.282296651,"hora":"18h31","st":7055,"ts":7106,"vv":1481367,"lula":34.516969799,"flavio":58.744389473,"lv":511323,"fv":870220},"MG":{"pct":78.35273328,"hora":"19h25","st":40792,"ts":52062,"vv":9381943,"lula":42.413346574,"flavio":48.917734844,"lv":3979196,"fv":4589434},"PE":{"pct":75.058362125,"hora":"20h16","st":16076,"ts":21418,"vv":4114744,"lula":62.544765847,"flavio":31.839696467,"lv":2573557,"fv":1310122},"SC":{"pct":93.841625303,"hora":"19h31","st":16259,"ts":17326,"vv":4216075,"lula":25.066394692,"flavio":66.569830945,"lv":1056818,"fv":2806634}};
+const BR = {"pct":64.805267122,"hora":"19h06","st":323539,"ts":499248,"vv":75762826,"lula":42.247438077,"flavio":49.58486501,"lv":32007853,"fv":37566895,"hms":"19:06:33","data":"04/10/2026"};
+const EXTERIOR = null;
 /*FIM*/
 
 const fmt = v => v.toFixed(2).replace(".", ",");
@@ -489,7 +513,12 @@ renderMap(); resumo();
   document.getElementById("lede").innerHTML = `Com <b>${fmt(a[0])}%</b> das seções totalizadas, <b>${lider}</b> lidera por ${fmt(Math.abs(a[3] - a[2]))} pontos. Em 2022, no mesmo ponto, Bolsonaro liderava por ${fmt(Math.abs(b[3] - b[2]))} e Lula virou com cerca de 70% apurado.`;
   document.getElementById("progFill").style.width = a[0] + "%";
   document.getElementById("progTxt").textContent = `${fmt(a[0])}% apurado`;
-  if (BR) document.getElementById("upd").textContent = `· TSE, totalizado às ${BR.hora}`;
+  if (BR) {
+    document.getElementById("upd").textContent = `· TSE, totalizado às ${BR.hora}`;
+    const ub = document.getElementById("updbadge");
+    ub.innerHTML = `Última atualização do TSE <b>${BR.hms || BR.hora}</b>${BR.data ? " · " + BR.data : ""}`;
+    ub.hidden = false;
+  }
 })();
 // ---- barras por estado ----
 (function () {
@@ -589,5 +618,24 @@ renderMap(); resumo();
   }
   drawDots();
   let t; new ResizeObserver(() => { clearTimeout(t); t = setTimeout(drawDots, 120); }).observe(svgD);
+})();
+// ---- exterior ----
+(function () {
+  const fig = document.getElementById("exterior");
+  if (!EXTERIOR) { fig.hidden = true; return; }
+  const t = EXTERIOR.total, f1 = v => v.toFixed(1).replace(".", ",");
+  const cid = EXTERIOR.cidades;
+  const nl = cid.filter(c => c.lula > c.flavio).length;
+  document.getElementById("ext-sub").textContent = `${fmt(t.pct)}% das seções do exterior apuradas · ${votos(t.vv)} votos válidos · Lula vence em ${nl} de ${cid.length} cidades.`;
+  const bar = (f, l) => `<div class="split" aria-hidden="true"><div style="width:${f}%;background:var(--flavio)"></div><div style="flex:1;background:var(--grid)"></div><div style="width:${l}%;background:var(--lula)"></div></div>`;
+  document.getElementById("extcmp").innerHTML = `
+    <div class="yr"><h3>2026 · ${fmt(t.pct)}% apurado</h3>
+      <div class="rowx"><span>Lula</span><b>${fmt(t.lula)}%</b></div><div class="rowx"><span>Flávio Bolsonaro</span><b>${fmt(t.flavio)}%</b></div>${bar(t.flavio, t.lula)}</div>
+    <div class="yr"><h3>2022 · resultado final</h3>
+      <div class="rowx"><span>Lula</span><b>47,17%</b></div><div class="rowx"><span>Jair Bolsonaro</span><b>41,61%</b></div>${bar(41.61, 47.17)}</div>
+    <div class="kicker" style="font-size:13px;color:var(--muted)">Lula ${t.lula - 47.17 >= 0 ? "ganha" : "perde"} ${f1(Math.abs(t.lula - 47.17))} p.p. em relação a 2022 no exterior; o candidato do PL ${t.flavio - 41.61 >= 0 ? "ganha" : "perde"} ${f1(Math.abs(t.flavio - 41.61))} p.p.</div>`;
+  const top = cid.slice().sort((a, b) => b.vv - a.vv).slice(0, 15);
+  document.getElementById("exttab").innerHTML = `<thead><tr><th>Cidade</th><th>Válidos</th><th>Lula</th><th>Flávio</th><th>Apurado</th></tr></thead><tbody>${top.map(c =>
+    `<tr><td>${c.nome}</td><td>${votos(c.vv)}</td><td class="${c.lula > c.flavio ? "lead-l" : ""}">${f1(c.lula)}%</td><td class="${c.flavio > c.lula ? "lead-f" : ""}">${f1(c.flavio)}%</td><td>${Math.round(c.pct)}%</td></tr>`).join("")}</tbody>`;
 })();
 </script>
