@@ -67,18 +67,19 @@ th:first-child, td:first-child { text-align: left; }
 
 /* mapa por estado */
 .duo { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); gap: 16px; align-items: start; }
-.duo > figure { align-content: start; }
+.duo > figure, .col > figure { align-content: start; }
+.col { display: grid; gap: 16px; min-width: 0; }
 @media (max-width: 1100px) { .duo { grid-template-columns: 1fr; } }
 .mapgrid { display: grid; gap: 14px; align-content: start; }
-.brmap { max-height: 420px; }
+.brmap { max-height: 300px; }
 .paste summary { font-size: 13px; }
 .paste[open] { display: grid; gap: 8px; }
 figcaption a { color: var(--muted); }
 .brmap { width: 100%; max-width: 560px; margin: 0 auto; display: block; }
 .brmap path { stroke: var(--panel); stroke-width: 1.2; stroke-linejoin: round; cursor: pointer; transition: opacity .15s; }
 .brmap path:hover, .brmap path:focus-visible { stroke: var(--fg); stroke-width: 2; outline: none; }
-.brmap .rlabel { font: 700 19px var(--display); fill: var(--fg); paint-order: stroke; stroke: var(--panel); stroke-width: 3px; pointer-events: none; text-anchor: middle; }
-.brmap .rlabel tspan.p { font-weight: 600; font-size: 17px; }
+.brmap .rlabel { font: 700 26px var(--display); fill: var(--fg); paint-order: stroke; stroke: var(--panel); stroke-width: 5px; pointer-events: none; text-anchor: middle; }
+.brmap .rlabel tspan.p { font-weight: 600; font-size: 23px; }
 .reglist { display: grid; gap: 6px; }
 .reglist .r { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
 .reglist small { color: var(--muted); }
@@ -100,13 +101,18 @@ figcaption a { color: var(--muted); }
 .sectionhead { display: grid; gap: 4px; padding-inline: 6px; }
 .sectionhead h2 { margin: 0; font-size: 18px; font-weight: 700; letter-spacing: -.01em; }
 .sectionhead p { margin: 0; font-size: 13px; color: var(--muted); }
-.bars { columns: 3 320px; column-gap: 28px; padding-inline: 6px; }
-.bar { break-inside: avoid; margin-bottom: 6px; display: grid; grid-template-columns: 34px 1fr 54px; align-items: center; gap: 8px; font-size: 13px; font-variant-numeric: tabular-nums; }
+.bars { columns: 2 300px; column-gap: 28px; padding-inline: 6px; }
+.bar { break-inside: avoid; margin-bottom: 6px; display: grid; grid-template-columns: 30px minmax(60px, 1fr) 50px 92px; align-items: center; gap: 8px; font-size: 13px; font-variant-numeric: tabular-nums; }
 .bar b { font-weight: 600; }
 .bar .track { position: relative; height: 14px; background: var(--grid); border-radius: 99px; overflow: hidden; }
 .bar .fill { position: absolute; inset: 0 auto 0 0; background: var(--s4); border-radius: 99px; }
 .bar .nat { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--fg); opacity: .55; }
-.bar span:last-child { text-align: right; }
+.bar .pa { text-align: right; }
+.bar .lead { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; white-space: nowrap; }
+.bar .lead i { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.tally { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; padding-inline: 6px; }
+.tally span { display: inline-flex; align-items: center; gap: 6px; }
+.tally i { width: 10px; height: 10px; border-radius: 50%; }
 .note { font-size: 12px; color: var(--muted); padding-inline: 6px; line-height: 1.5; }
 </style>
 
@@ -120,6 +126,7 @@ figcaption a { color: var(--muted); }
   <section class="score" aria-label="Placar" id="score"></section>
 
   <div class="duo">
+  <div class="col">
   <figure>
     <div class="legend" aria-hidden="true">
       <span><svg width="26" height="8"><line x1="0" y1="4" x2="26" y2="4" stroke="var(--lula)" stroke-width="3"/></svg>Lula 2026</span>
@@ -134,6 +141,16 @@ figcaption a { color: var(--muted); }
     <figcaption>Eixo horizontal proporcional ao % de seções totalizadas. A linha pontilhada marca 50% dos votos válidos, o necessário para vencer no 1º turno.</figcaption>
   </figure>
 
+  <figure id="porestado">
+    <div class="sectionhead">
+      <h2>Urnas apuradas por estado</h2>
+      <p id="pe-sub">% das seções totalizadas em cada UF, do mais adiantado ao mais atrasado. A cor da barra indica quem lidera no estado.</p>
+    </div>
+    <div class="tally" id="tally"></div>
+    <div class="bars" id="bars"></div>
+    <p class="note">2022: o TSE não publica mais o andamento da apuração por estado daquela noite, só o resultado final (100% em todas as UFs), então não há como comparar estado a estado. Se você tiver prints ou dados de 2022 por estado num mesmo horário, eles entram aqui ao lado de 2026.</p>
+  </figure>
+  </div>
   <figure id="estados">
     <div class="sectionhead">
       <h2>Apuração por estado</h2>
@@ -157,14 +174,6 @@ figcaption a { color: var(--muted); }
   </figure>
   </div>
 
-  <figure id="porestado">
-    <div class="sectionhead">
-      <h2>Urnas apuradas por estado</h2>
-      <p id="pe-sub">% das seções totalizadas em cada UF, do mais adiantado ao mais atrasado. O traço marca a média nacional.</p>
-    </div>
-    <div class="bars" id="bars"></div>
-    <p class="note">2022: o TSE não publica mais o andamento da apuração por estado daquela noite, só o resultado final (100% em todas as UFs), então não há como comparar estado a estado. Se você tiver prints ou dados de 2022 por estado num mesmo horário, eles entram aqui ao lado de 2026.</p>
-  </figure>
 
   <details>
     <summary>Ver os dados em tabela</summary>
@@ -182,9 +191,9 @@ figcaption a { color: var(--muted); }
 <script>
 const D22 = [[0.09,"17h06",51.18,36.73],[0.88,"17h43",41.15,48.40],[1.99,"18h07",41.46,48.41],[8.10,"18h31",42.64,48.51],[13.20,"18h42",43.23,48.04],[20.26,"18h55",43.32,47.93],[33.18,"19h14",43.75,47.45],[44.17,"19h32",44.32,46.84],[60.33,"19h53",45.20,46.01],[70.00,"20h06",45.75,45.51],[85.00,"20h25",46.64,44.73],[93.00,"20h47",47.46,44.03],[95.99,"21h16",47.75,43.79],[98.21,"21h55",48.05,43.52],[99.75,"23h33",48.36,43.25],[100,"final",48.43,43.20]];
 /*DADOS*/
-const D26 = [[4.97,"",41.24,50.31],[9.08,"17h52",40.95,50.79],[10.08,"",40.78,50.96],[12.45,"",40.67,51.09],[14.24,"",40.67,51.17],[21.96,"18h16",40.82,51.07],[24.45,"18h19",40.97,50.94],[27.88,"",41.27,50.66],[31.9,"18h27",41.14,50.74],[36.6,"18h32",41.23,50.63],[41.57,"18h38",41.44,50.41]];
-const ESTADOS = {"AC":{"pct":86.343612335,"hora":"16h48","st":1960,"ts":2270,"vv":400795,"lula":28.513579261,"flavio":64.596863733,"lv":114281,"fv":258901},"AL":{"pct":21.687086326,"hora":"18h48","st":1540,"ts":7101,"vv":347803,"lula":58.333596892,"flavio":37.238321694,"lv":202886,"fv":129516},"AP":{"pct":51.044932079,"hora":"18h47","st":977,"ts":1914,"vv":206882,"lula":48.56246556,"flavio":43.345481966,"lv":100467,"fv":89674},"AM":{"pct":58.514159618,"hora":"17h47","st":4773,"ts":8157,"vv":1275765,"lula":42.79745878,"flavio":49.464125446,"lv":545995,"fv":631046},"BA":{"pct":31.347953546,"hora":"18h47","st":11121,"ts":35476,"vv":2518973,"lula":64.397196794,"flavio":29.815643121,"lv":1622148,"fv":751048},"CE":{"pct":29.400378708,"hora":"18h48","st":6987,"ts":23765,"vv":1582551,"lula":60.837217884,"flavio":33.231662044,"lv":962780,"fv":525908},"DF":{"pct":96.283541398,"hora":"18h48","st":6710,"ts":6969,"vv":1699804,"lula":38.158870081,"flavio":51.246673146,"lv":648626,"fv":871093},"ES":{"pct":85.514018692,"hora":"18h48","st":8418,"ts":9844,"vv":1893068,"lula":37.065704983,"flavio":55.476982338,"lv":701679,"fv":1050217},"GO":{"pct":60.06630116,"hora":"18h48","st":9422,"ts":15686,"vv":2256646,"lula":29.515706052,"flavio":55.349443377,"lv":666065,"fv":1249041},"MA":{"pct":42.358923341,"hora":"18h49","st":7664,"ts":18093,"vv":1607145,"lula":61.46097583,"flavio":33.145733583,"lv":987767,"fv":532700},"MT":{"pct":73.886810667,"hora":"17h48","st":6123,"ts":8287,"vv":1463542,"lula":28.383743002,"flavio":65.744269724,"lv":415408,"fv":962195},"PA":{"pct":53.344216642,"hora":"18h47","st":11110,"ts":20827,"vv":2556153,"lula":47.902101322,"flavio":45.743427721,"lv":1224451,"fv":1169272},"PB":{"pct":81.05862584,"hora":"18h47","st":8683,"ts":10712,"vv":2009970,"lula":60.803544332,"flavio":33.439056304,"lv":1222133,"fv":672115},"PR":{"pct":88.125414487,"hora":"18h47","st":23919,"ts":27142,"vv":5788216,"lula":30.93084294,"flavio":60.071807963,"lv":1790344,"fv":3477086},"PI":{"pct":56.332518337,"hora":"18h48","st":5760,"ts":10225,"vv":1195567,"lula":68.871924367,"flavio":25.840960816,"lv":823410,"fv":308946},"RJ":{"pct":29.552753816,"hora":"18h48","st":11134,"ts":37675,"vv":2536237,"lula":39.283552759,"flavio":53.25223944,"lv":996324,"fv":1350603},"RN":{"pct":46.173752311,"hora":"18h48","st":3747,"ts":8115,"vv":895543,"lula":60.228598738,"flavio":34.325543274,"lv":539373,"fv":307400},"RS":{"pct":70.788107598,"hora":"18h47","st":19500,"ts":27547,"vv":4549380,"lula":35.549723259,"flavio":55.808593698,"lv":1617292,"fv":2538945},"RO":{"pct":76.117496807,"hora":"17h47","st":3576,"ts":4698,"vv":736424,"lula":26.717896212,"flavio":66.391100779,"lv":196757,"fv":488920},"RR":{"pct":58.986175115,"hora":"17h47","st":896,"ts":1519,"vv":185441,"lula":23.157769857,"flavio":71.148235827,"lv":42944,"fv":131938},"SP":{"pct":45.85938103,"hora":"18h48","st":47536,"ts":103656,"vv":11152610,"lula":36.435793953,"flavio":53.828063565,"lv":4063542,"fv":6003234},"SE":{"pct":53.959142327,"hora":"18h48","st":3196,"ts":5923,"vv":700367,"lula":60.659340032,"flavio":32.423572213,"lv":424838,"fv":227084},"TO":{"pct":90.921532847,"hora":"18h49","st":3986,"ts":4384,"vv":842500,"lula":43.426824926,"flavio":50.387774481,"lv":365871,"fv":424517},"MS":{"pct":91.063889671,"hora":"17h48","st":6471,"ts":7106,"vv":1358694,"lula":33.780380277,"flavio":59.319537733,"lv":458972,"fv":805971},"MG":{"pct":39.946602128,"hora":"18h44","st":20797,"ts":52062,"vv":4832584,"lula":41.703589632,"flavio":49.424179694,"lv":2015361,"fv":2388465},"PE":{"pct":36.459986927,"hora":"19h46","st":7809,"ts":21418,"vv":1879491,"lula":61.452967851,"flavio":32.763977055,"lv":1155003,"fv":615796},"SC":{"pct":52.810804571,"hora":"18h48","st":9150,"ts":17326,"vv":2345876,"lula":26.12380194,"flavio":65.357930257,"lv":612832,"fv":1533216}};
-const BR = {"pct":41.569119956,"hora":"18h38","st":207533,"ts":499248,"vv":48031741,"lula":41.437692213,"flavio":50.410304719,"lv":19903245,"fv":24212947};
+const D26 = [[4.97,"",41.24,50.31],[9.08,"17h52",40.95,50.79],[10.08,"",40.78,50.96],[12.45,"",40.67,51.09],[14.24,"",40.67,51.17],[21.96,"18h16",40.82,51.07],[24.45,"18h19",40.97,50.94],[27.88,"",41.27,50.66],[31.9,"18h27",41.14,50.74],[36.6,"18h32",41.23,50.63],[41.57,"18h38",41.44,50.41],[47.26,"18h44",41.63,50.2]];
+const ESTADOS = {"AC":{"pct":86.343612335,"hora":"16h48","st":1960,"ts":2270,"vv":400795,"lula":28.513579261,"flavio":64.596863733,"lv":114281,"fv":258901},"AL":{"pct":22.348964935,"hora":"18h49","st":1587,"ts":7101,"vv":359884,"lula":58.230429805,"flavio":37.341198831,"lv":209562,"fv":134385},"AP":{"pct":53.343782654,"hora":"18h49","st":1021,"ts":1914,"vv":218661,"lula":48.342411312,"flavio":43.473230251,"lv":105706,"fv":95059},"AM":{"pct":60.353070982,"hora":"17h49","st":4923,"ts":8157,"vv":1316891,"lula":42.944176853,"flavio":49.34121351,"lv":565528,"fv":649770},"BA":{"pct":33.354944188,"hora":"18h49","st":11833,"ts":35476,"vv":2685283,"lula":64.190105847,"flavio":30.024693859,"lv":1723686,"fv":806248},"CE":{"pct":30.944666526,"hora":"18h49","st":7354,"ts":23765,"vv":1673491,"lula":60.820823058,"flavio":33.272542249,"lv":1017831,"fv":556813},"DF":{"pct":96.355287703,"hora":"18h49","st":6715,"ts":6969,"vv":1701228,"lula":38.160904946,"flavio":51.245276941,"lv":649204,"fv":871799},"ES":{"pct":86.418122714,"hora":"18h49","st":8507,"ts":9844,"vv":1915588,"lula":37.029465626,"flavio":55.510266299,"lv":709332,"fv":1063348},"GO":{"pct":61.781206171,"hora":"18h49","st":9691,"ts":15686,"vv":2322697,"lula":29.493214139,"flavio":55.350439597,"lv":685038,"fv":1285623},"MA":{"pct":42.502625325,"hora":"18h49","st":7690,"ts":18093,"vv":1612713,"lula":61.471569957,"flavio":33.140676611,"lv":991360,"fv":534464},"MT":{"pct":74.996983227,"hora":"17h49","st":6215,"ts":8287,"vv":1487016,"lula":28.360622885,"flavio":65.781067588,"lv":421727,"fv":978175},"PA":{"pct":55.408844289,"hora":"18h49","st":11540,"ts":20827,"vv":2655328,"lula":48.009398462,"flavio":45.66942389,"lv":1274807,"fv":1212673},"PB":{"pct":82.552277819,"hora":"18h49","st":8843,"ts":10712,"vv":2050352,"lula":60.7640054,"flavio":33.482104536,"lv":1245876,"fv":686501},"PR":{"pct":89.057549186,"hora":"18h49","st":24172,"ts":27142,"vv":5849682,"lula":30.925356284,"flavio":60.076581941,"lv":1809035,"fv":3514289},"PI":{"pct":57.926650367,"hora":"18h49","st":5923,"ts":10225,"vv":1228480,"lula":68.964329904,"flavio":25.77315056,"lv":847213,"fv":316618},"RJ":{"pct":30.821499668,"hora":"18h49","st":11612,"ts":37675,"vv":2649904,"lula":39.186136554,"flavio":53.353291289,"lv":1038395,"fv":1413811},"RN":{"pct":47.652495379,"hora":"18h49","st":3867,"ts":8115,"vv":925677,"lula":60.207394156,"flavio":34.343945026,"lv":557326,"fv":317914},"RS":{"pct":73.075107997,"hora":"18h49","st":20130,"ts":27547,"vv":4702718,"lula":35.599476728,"flavio":55.744486486,"lv":1674143,"fv":2621506},"RO":{"pct":77.479778629,"hora":"17h48","st":3640,"ts":4698,"vv":750334,"lula":26.654396575,"flavio":66.462268803,"lv":199997,"fv":498689},"RR":{"pct":61.026991442,"hora":"17h49","st":927,"ts":1519,"vv":191555,"lula":23.657957245,"flavio":70.720158701,"lv":45318,"fv":135468},"SP":{"pct":45.85938103,"hora":"18h48","st":47536,"ts":103656,"vv":11152610,"lula":36.435793953,"flavio":53.828063565,"lv":4063542,"fv":6003234},"SE":{"pct":56.289042715,"hora":"18h49","st":3334,"ts":5923,"vv":731674,"lula":60.794834858,"flavio":32.31616813,"lv":444820,"fv":236449},"TO":{"pct":90.944343066,"hora":"18h49","st":3987,"ts":4384,"vv":842689,"lula":43.43073186,"flavio":50.384661482,"lv":365986,"fv":424586},"MS":{"pct":92.034900084,"hora":"17h49","st":6540,"ts":7106,"vv":1371614,"lula":33.801492257,"flavio":59.326749362,"lv":463626,"fv":813734},"MG":{"pct":44.579539779,"hora":"18h49","st":23209,"ts":52062,"vv":5370018,"lula":41.824403568,"flavio":49.329778783,"lv":2245978,"fv":2649018},"PE":{"pct":37.949388365,"hora":"19h46","st":8128,"ts":21418,"vv":1961148,"lula":61.551754381,"flavio":32.671272132,"lv":1207121,"fv":640732},"SC":{"pct":55.465773981,"hora":"18h49","st":9610,"ts":17326,"vv":2467366,"lula":26.012557521,"flavio":65.470992143,"lv":641825,"fv":1615409}};
+const BR = {"pct":47.257274942,"hora":"18h44","st":235931,"ts":499248,"vv":54746502,"lula":41.631478117,"flavio":50.20283853,"lv":22791778,"fv":27484298};
 /*FIM*/
 
 const W = 980, H = 470, m = {l: 44, r: 64, t: 12, b: 40};
@@ -288,7 +297,7 @@ function renderMap() {
     d.ufs.split(" ").forEach(uf => { const b = map.querySelector(`[data-uf="${uf}"]`).getBBox(); x0 = Math.min(x0, b.x); y0 = Math.min(y0, b.y); x1 = Math.max(x1, b.x + b.width); y1 = Math.max(y1, b.y + b.height); });
     const off = {"Nordeste": [25, -10], "Sudeste": [10, 0], "Sul": [5, 10], "Norte": [0, -10], "Centro-Oeste": [0, 0]}[r];
     const t = el("text", {class: "rlabel", x: (x0 + x1) / 2 + off[0], y: (y0 + y1) / 2 + off[1]}, map);
-    t.innerHTML = `<tspan x="${(x0 + x1) / 2 + off[0]}">${r}</tspan><tspan class="p" x="${(x0 + x1) / 2 + off[0]}" dy="20">${fmt(d.pct)}%</tspan>`;
+    t.innerHTML = `<tspan x="${(x0 + x1) / 2 + off[0]}">${r}</tspan><tspan class="p" x="${(x0 + x1) / 2 + off[0]}" dy="26">${fmt(d.pct)}%</tspan>`;
   }
 }
 function showUF(uf) {
@@ -346,10 +355,14 @@ renderMap(); resumo();
   const nat = BR ? BR.pct : null;
   document.getElementById("bars").innerHTML = ufs.map(uf => {
     const d = ESTADOS[uf];
-    return `<div class="bar" title="${NOMES[uf]}: ${fmt(d.pct)}% apurado"><b>${uf}</b>
-      <div class="track"><div class="fill" style="width:${d.pct}%"></div>${nat != null ? `<div class="nat" style="left:calc(${nat}% - 1px)"></div>` : ""}</div>
-      <span>${fmt(d.pct)}%</span></div>`;
+    const f = d.flavio >= d.lula, cor = f ? "var(--flavio)" : "var(--lula)";
+    return `<div class="bar" title="${NOMES[uf]}: ${fmt(d.pct)}% apurado · Flávio ${fmt(d.flavio)}% × Lula ${fmt(d.lula)}%"><b>${uf}</b>
+      <div class="track"><div class="fill" style="width:${d.pct}%;background:${cor}"></div>${nat != null ? `<div class="nat" style="left:calc(${nat}% - 1px)"></div>` : ""}</div>
+      <span class="pa">${fmt(d.pct)}%</span>
+      <span class="lead"><i style="background:${cor}"></i>${f ? "Flávio" : "Lula"} ${fmt(f ? d.flavio : d.lula).replace(/(,\d)\d$/, "$1")}%</span></div>`;
   }).join("");
-  if (nat != null) document.getElementById("pe-sub").textContent = `% das seções totalizadas em cada UF, do mais adiantado ao mais atrasado. O traço marca o Brasil (${fmt(nat)}%).`;
+  if (nat != null) document.getElementById("pe-sub").textContent = `% das seções totalizadas em cada UF, do mais adiantado ao mais atrasado. A cor indica quem lidera; o traço marca o Brasil (${fmt(nat)}%).`;
+  const nf = ufs.filter(uf => ESTADOS[uf].flavio >= ESTADOS[uf].lula).length;
+  document.getElementById("tally").innerHTML = `<span><i style="background:var(--flavio)"></i>Flávio lidera em <b>${nf}</b> estados</span><span><i style="background:var(--lula)"></i>Lula lidera em <b>${ufs.length - nf}</b></span>`;
 })();
 </script>
