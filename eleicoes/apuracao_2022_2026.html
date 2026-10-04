@@ -1,0 +1,187 @@
+<title>Apuração 2022 × 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: boletim de apuração. Cabeçalho, placar 2026 x 2022 no mesmo ponto, gráfico, tabela. */
+:root {
+  --bg: #f6f7f9; --panel: #ffffff; --fg: #161b26; --muted: #5d6576; --faint: #8a91a0;
+  --grid: #e3e6ec; --rule: #cfd4dd;
+  --lula: #b5173a; --flavio: #1f4e8c;
+  --display: "Archivo", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #10141c; --panel: #171c26; --fg: #e8ebf1; --muted: #a2a9b8; --faint: #747c8c;
+  --grid: #262d3a; --rule: #333b4a; --lula: #f0607b; --flavio: #6b9ce0; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #10141c; --panel: #171c26; --fg: #e8ebf1; --muted: #a2a9b8; --faint: #747c8c;
+  --grid: #262d3a; --rule: #333b4a; --lula: #f0607b; --flavio: #6b9ce0; color-scheme: dark }
+
+body { background: var(--bg); color: var(--fg); font-family: var(--display); }
+.wrap { max-width: 1040px; margin: 0 auto; padding-inline: 16px; padding-block: 28px 40px; display: grid; gap: 22px; }
+header { display: grid; gap: 6px; }
+.eyebrow { font: 500 12px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.live { display: inline-flex; align-items: center; gap: 6px; padding: 2px 8px; border: 1px solid var(--rule); border-radius: 99px; }
+.live::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--lula); }
+h1 { font-weight: 800; font-size: clamp(24px, 4vw, 34px); line-height: 1.1; margin: 0; text-wrap: balance; }
+.lede { color: var(--muted); font-size: 15px; line-height: 1.5; max-width: 65ch; margin: 0; }
+
+.score { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.card { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 14px 16px; display: grid; gap: 10px; min-width: 0; }
+.card h2 { font: 500 12px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 0; }
+.rows { display: grid; gap: 6px; }
+.row { display: grid; grid-template-columns: 10px 1fr auto; align-items: center; gap: 8px; font-size: 15px; }
+.sw { width: 10px; height: 10px; border-radius: 2px; }
+.num { font: 500 16px var(--mono); font-variant-numeric: tabular-nums; }
+.margin { font: 400 13px var(--mono); color: var(--muted); border-top: 1px solid var(--grid); padding-top: 8px; }
+
+figure { margin: 0; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 14px 12px 10px; display: grid; gap: 8px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--muted); padding-inline: 6px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.chartbox { position: relative; }
+svg { display: block; width: 100%; height: auto; overflow: visible; }
+svg text { font-family: var(--mono); font-size: 11px; fill: var(--muted); }
+.tip { position: absolute; pointer-events: none; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px; font: 12px var(--mono); box-shadow: 0 4px 14px rgb(0 0 0 / .12); min-width: 190px; display: grid; gap: 4px; font-variant-numeric: tabular-nums; }
+.tip b { font-family: var(--display); font-size: 13px; }
+.tip .r { display: flex; justify-content: space-between; gap: 12px; }
+figcaption { font-size: 12px; color: var(--faint); line-height: 1.5; padding-inline: 6px; }
+
+details { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 10px 16px; }
+summary { cursor: pointer; font-weight: 600; font-size: 14px; }
+summary:focus-visible { outline: 2px solid var(--flavio); outline-offset: 3px; }
+.tables { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 12px; }
+.tables > div { overflow-x: auto; min-width: 0; }
+table { border-collapse: collapse; width: 100%; font: 13px var(--mono); font-variant-numeric: tabular-nums; }
+caption { text-align: left; font: 600 13px var(--display); padding-bottom: 6px; }
+th, td { padding: 4px 8px; text-align: right; border-bottom: 1px solid var(--grid); }
+th { color: var(--muted); font-weight: 500; }
+th:first-child, td:first-child { text-align: left; }
+.sources { font-size: 12px; color: var(--faint); line-height: 1.6; }
+.sources a { color: var(--muted); }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow"><span class="live">Apuração em andamento</span><span>1º turno · Presidente</span></div>
+    <h1>Apuração 2022 × 2026</h1>
+    <p class="lede">Percentual dos votos válidos conforme as seções são totalizadas pelo TSE. Em 2022, Lula virou com cerca de 70% apurado. Em 2026, Flávio Bolsonaro abriu acima de 50%.</p>
+  </header>
+
+  <section class="score" aria-label="Placar">
+    <div class="card">
+      <h2>2026 · 21,96% das seções · 18h16</h2>
+      <div class="rows">
+        <div class="row"><span class="sw" style="background:var(--flavio)"></span>Flávio Bolsonaro (PL)<span class="num">51,07%</span></div>
+        <div class="row"><span class="sw" style="background:var(--lula)"></span>Lula (PT)<span class="num">40,82%</span></div>
+      </div>
+      <div class="margin">Diferença: 10,25 p.p. a favor de Flávio · 12.915.526 × 10.324.360 votos</div>
+    </div>
+    <div class="card">
+      <h2>2022 · 20,26% das seções · 18h55</h2>
+      <div class="rows">
+        <div class="row"><span class="sw" style="background:var(--flavio)"></span>Jair Bolsonaro (PL)<span class="num">47,93%</span></div>
+        <div class="row"><span class="sw" style="background:var(--lula)"></span>Lula (PT)<span class="num">43,32%</span></div>
+      </div>
+      <div class="margin">Diferença: 4,61 p.p. · resultado final: Lula 48,43% × 43,20%</div>
+    </div>
+  </section>
+
+  <figure>
+    <div class="legend" aria-hidden="true">
+      <span><svg width="26" height="8"><line x1="0" y1="4" x2="26" y2="4" stroke="var(--lula)" stroke-width="3"/></svg>Lula 2026</span>
+      <span><svg width="26" height="8"><line x1="0" y1="4" x2="26" y2="4" stroke="var(--flavio)" stroke-width="3"/></svg>Flávio Bolsonaro 2026</span>
+      <span><svg width="26" height="8"><line x1="0" y1="4" x2="26" y2="4" stroke="var(--lula)" stroke-width="2" stroke-dasharray="5 4" opacity=".6"/></svg>Lula 2022</span>
+      <span><svg width="26" height="8"><line x1="0" y1="4" x2="26" y2="4" stroke="var(--flavio)" stroke-width="2" stroke-dasharray="5 4" opacity=".6"/></svg>Jair Bolsonaro 2022</span>
+    </div>
+    <div class="chartbox" id="box">
+      <svg id="chart" viewBox="0 0 980 470" role="img" aria-label="Gráfico de linhas: percentual dos votos válidos por percentual de seções totalizadas, 2022 e 2026"></svg>
+      <div class="tip" id="tip" hidden></div>
+    </div>
+    <figcaption>Eixo horizontal proporcional ao % de seções totalizadas. A linha pontilhada marca 50% dos votos válidos, o necessário para vencer no 1º turno.</figcaption>
+  </figure>
+
+  <details>
+    <summary>Ver os dados em tabela</summary>
+    <div class="tables" id="tables"></div>
+  </details>
+
+  <p class="sources">Fontes: parciais do TSE. 2022: publicadas ao vivo pela Bloomberg Línea (02/10/2022), resultado final do TSE. 2026: painel do TSE (21,96%, 18h16:49) e boletins citados por
+    <a href="https://agendadopoder.com.br/flavio-bolsonaro-tem-5031-e-lula-4124-com-497-apurado/" target="_blank" rel="noopener">Agenda do Poder</a>,
+    <a href="https://www.mixvale.com.br/2026/10/04/flavio-bolsonaro-abre-apuracao-com-5079-dos-votos-validos-contra-4095-de-lula-no-tse/" target="_blank" rel="noopener">Mix Vale</a>,
+    <a href="https://www.infomoney.com.br/politica/com-1008-das-urnas-apuradas-flavio-lidera-com-5096-contra-4078-de-lula/" target="_blank" rel="noopener">InfoMoney</a> e
+    <a href="https://www.latintimes.com/live-lula-vs-flavio-bolsonaro-what-tonights-first-round-results-brazil-could-mean-oct-25-599811" target="_blank" rel="noopener">Latin Times</a> (04/10/2026).
+    Painel oficial: <a href="https://resultados.tse.jus.br/oficial/app/index.html#/eleicao/6257/uf/br/cargo/1/vis/nominal/resultados" target="_blank" rel="noopener">resultados.tse.jus.br</a>.</p>
+</div>
+
+<script>
+const D22 = [[0.09,"17h06",51.18,36.73],[0.88,"17h43",41.15,48.40],[1.99,"18h07",41.46,48.41],[8.10,"18h31",42.64,48.51],[13.20,"18h42",43.23,48.04],[20.26,"18h55",43.32,47.93],[33.18,"19h14",43.75,47.45],[44.17,"19h32",44.32,46.84],[60.33,"19h53",45.20,46.01],[70.00,"20h06",45.75,45.51],[85.00,"20h25",46.64,44.73],[93.00,"20h47",47.46,44.03],[95.99,"21h16",47.75,43.79],[98.21,"21h55",48.05,43.52],[99.75,"23h33",48.36,43.25],[100,"final",48.43,43.20]];
+const D26 = [[4.97,"",41.24,50.31],[9.08,"17h52",40.95,50.79],[10.08,"",40.78,50.96],[12.00,"",40.71,51.09],[14.24,"",40.67,51.17],[21.96,"18h16",40.82,51.07]];
+
+const W = 980, H = 470, m = {l: 44, r: 64, t: 12, b: 40};
+const X = v => m.l + v / 100 * (W - m.l - m.r);
+const Y0 = 35, Y1 = 53, Y = v => m.t + (Y1 - v) / (Y1 - Y0) * (H - m.t - m.b);
+const fmt = v => v.toFixed(2).replace(".", ",");
+const ns = "http://www.w3.org/2000/svg";
+const svg = document.getElementById("chart");
+const el = (tag, at, parent = svg) => { const e = document.createElementNS(ns, tag); for (const k in at) e.setAttribute(k, at[k]); parent.appendChild(e); return e; };
+
+// grade e eixos
+for (let y = 36; y <= 52; y += 2) {
+  el("line", {x1: m.l, x2: W - m.r, y1: Y(y), y2: Y(y), stroke: "var(--grid)", "stroke-width": 1});
+  el("text", {x: m.l - 8, y: Y(y) + 4, "text-anchor": "end"}).textContent = y + "%";
+}
+for (let x = 0; x <= 100; x += 20) {
+  el("line", {x1: X(x), x2: X(x), y1: m.t, y2: H - m.b, stroke: "var(--grid)", "stroke-width": 1});
+  el("text", {x: X(x), y: H - m.b + 18, "text-anchor": "middle"}).textContent = x + "%";
+}
+el("text", {x: (m.l + W - m.r) / 2, y: H - 4, "text-anchor": "middle"}).textContent = "% das seções totalizadas";
+el("line", {x1: m.l, x2: W - m.r, y1: Y(50), y2: Y(50), stroke: "var(--faint)", "stroke-width": 1, "stroke-dasharray": "2 4"});
+el("text", {x: X(60), y: Y(50) - 6}).textContent = "50% · vence no 1º turno";
+
+const path = (d, i) => d.map((p, j) => (j ? "L" : "M") + X(p[0]).toFixed(1) + " " + Y(p[i]).toFixed(1)).join(" ");
+const series = [
+  {d: D22, i: 2, c: "var(--lula)", w: 2, dash: "6 5", op: .55, r: 3.5},
+  {d: D22, i: 3, c: "var(--flavio)", w: 2, dash: "6 5", op: .55, r: 3.5},
+  {d: D26, i: 2, c: "var(--lula)", w: 3, dash: "", op: 1, r: 4.5},
+  {d: D26, i: 3, c: "var(--flavio)", w: 3, dash: "", op: 1, r: 4.5},
+];
+for (const s of series) {
+  const g = el("g", {opacity: s.op});
+  el("path", {d: path(s.d, s.i), fill: "none", stroke: s.c, "stroke-width": s.w, "stroke-dasharray": s.dash, "stroke-linejoin": "round"}, g);
+  for (const p of s.d) el("circle", {cx: X(p[0]), cy: Y(p[s.i]), r: s.r, fill: s.c, stroke: "var(--panel)", "stroke-width": 1.5}, g);
+}
+// rótulos das pontas
+const endLabel = (d, i, dy = 4) => { const p = d[d.length - 1]; el("text", {x: X(p[0]) + 9, y: Y(p[i]) + dy, style: "fill:var(--fg)"}).textContent = fmt(p[i]) + "%"; };
+endLabel(D26, 2); endLabel(D26, 3); endLabel(D22, 2); endLabel(D22, 3);
+// virada de 2022
+el("text", {x: X(70), y: Y(45.6) + 26, "text-anchor": "middle"}).textContent = "virada 2022 (70%)";
+
+// hover
+const cross = el("line", {y1: m.t, y2: H - m.b, stroke: "var(--faint)", "stroke-width": 1, visibility: "hidden"});
+const hit = el("rect", {x: m.l, y: m.t, width: W - m.l - m.r, height: H - m.t - m.b, fill: "transparent"});
+const tip = document.getElementById("tip"), box = document.getElementById("box");
+const pts = [...D22.map(p => ({p, y: 2022})), ...D26.map(p => ({p, y: 2026}))];
+function show(evt) {
+  const r = svg.getBoundingClientRect(), sx = (evt.clientX - r.left) * W / r.width;
+  let best = pts[0], bd = Infinity;
+  for (const q of pts) { const d = Math.abs(X(q.p[0]) - sx); if (d < bd || (d === bd && q.y === 2026)) { bd = d; best = q; } }
+  const [pct, hora, lula, bol] = best.p, nome = best.y === 2026 ? "Flávio Bolsonaro" : "Jair Bolsonaro";
+  cross.setAttribute("x1", X(pct)); cross.setAttribute("x2", X(pct)); cross.setAttribute("visibility", "visible");
+  const dif = bol - lula;
+  tip.innerHTML = `<b>${best.y} · ${fmt(pct)}% apurado${hora ? " · " + hora : ""}</b>
+    <div class="r"><span>${nome}</span><span>${fmt(bol)}%</span></div>
+    <div class="r"><span>Lula</span><span>${fmt(lula)}%</span></div>
+    <div class="r" style="color:var(--muted)"><span>Diferença</span><span>${fmt(Math.abs(dif))} p.p. ${dif > 0 ? "Bolsonaro" : "Lula"}</span></div>`;
+  tip.hidden = false;
+  const bx = box.getBoundingClientRect(), px = X(pct) / W * r.width, tw = tip.offsetWidth;
+  tip.style.left = Math.max(0, Math.min(px + 12 + tw > bx.width ? px - tw - 12 : px + 12, bx.width - tw)) + "px";
+  tip.style.top = "8px";
+}
+hit.addEventListener("pointermove", show);
+hit.addEventListener("pointerdown", show);
+hit.addEventListener("pointerleave", () => { tip.hidden = true; cross.setAttribute("visibility", "hidden"); });
+
+// tabelas
+const tbl = (d, ano, nome) => `<div><table><caption>${ano}</caption><thead><tr><th>% seções</th><th>Horário</th><th>Lula</th><th>${nome}</th></tr></thead><tbody>${d.map(p => `<tr><td>${fmt(p[0])}%</td><td>${p[1] || "–"}</td><td>${fmt(p[2])}%</td><td>${fmt(p[3])}%</td></tr>`).join("")}</tbody></table></div>`;
+document.getElementById("tables").innerHTML = tbl(D26, "2026 (parcial)", "Flávio") + tbl(D22, "2022", "Bolsonaro");
+</script>
