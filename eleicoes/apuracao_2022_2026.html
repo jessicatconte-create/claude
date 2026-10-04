@@ -1,37 +1,15 @@
 <title>Apuração 2022 × 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
-<script>
-(function () {
-  const root = document.documentElement;
-  let t = "dark"; try { t = localStorage.getItem("tema") || "dark"; } catch (e) {}
-  root.setAttribute("data-theme", t);
-  document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("themebtn").addEventListener("click", () => {
-      t = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
-      root.setAttribute("data-theme", t);
-      try { localStorage.setItem("tema", t); } catch (e) {}
-    });
-  });
-})();
-</script>
 <style>
 /* Layout: boletim de apuração. Cabeçalho, placar 2026 x 2022 no mesmo ponto, gráfico, tabela. */
 :root {
-  --bg: #f6f7f9; --panel: #ffffff; --fg: #161b26; --muted: #5d6576; --faint: #8a91a0;
-  --grid: #e3e6ec; --rule: #cfd4dd;
-  --lula: #b5173a; --flavio: #1f4e8c;
-  --nodata: #eef0f4; --s1: #dcefe2; --s2: #a9d6b6; --s3: #6fb886; --s4: #3a8f58; --s5: #1d6338;
+  --bg: #10141c; --panel: #171c26; --fg: #e8ebf1; --muted: #a2a9b8; --faint: #747c8c;
+  --grid: #262d3a; --rule: #333b4a; --lula: #f0607b; --flavio: #6b9ce0; --nodata: #1f2530; --s1: #1f3a2a; --s2: #2a5a3c; --s3: #3f8257; --s4: #62ab7a; --s5: #9bd3ac; color-scheme: dark;
   --display: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   --radius: 16px;
 }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bg: #10141c; --panel: #171c26; --fg: #e8ebf1; --muted: #a2a9b8; --faint: #747c8c;
-  --grid: #262d3a; --rule: #333b4a; --lula: #f0607b; --flavio: #6b9ce0; --nodata: #1f2530; --s1: #1f3a2a; --s2: #2a5a3c; --s3: #3f8257; --s4: #62ab7a; --s5: #9bd3ac; color-scheme: dark } }
-:root[data-theme="dark"] {
-  --bg: #10141c; --panel: #171c26; --fg: #e8ebf1; --muted: #a2a9b8; --faint: #747c8c;
-  --grid: #262d3a; --rule: #333b4a; --lula: #f0607b; --flavio: #6b9ce0; --nodata: #1f2530; --s1: #1f3a2a; --s2: #2a5a3c; --s3: #3f8257; --s4: #62ab7a; --s5: #9bd3ac; color-scheme: dark }
 
 body { background: var(--bg); color: var(--fg); font-family: var(--display); font-feature-settings: "tnum", "cv11"; -webkit-font-smoothing: antialiased; }
 .wrap { max-width: 1400px; margin: 0 auto; padding-inline: 16px; padding-block: 28px 40px; display: grid; gap: 22px; }
@@ -234,7 +212,7 @@ figcaption a { color: var(--muted); }
 
 <div class="wrap">
   <header class="top">
-    <div class="eyebrow"><span class="live">Apuração em andamento</span><span>1º turno · Presidente da República</span><button type="button" class="themebtn" id="themebtn" aria-label="Alternar tema claro/escuro">◐ Tema</button></div>
+    <div class="eyebrow"><span class="live">Apuração em andamento</span><span>1º turno · Presidente da República</span></div>
     <h1>Apuração 2022 × 2026</h1>
     <p class="lede" id="lede">Percentual dos votos válidos conforme as seções são totalizadas pelo TSE.</p>
   </header>
