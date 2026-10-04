@@ -7,16 +7,17 @@
   --bg: #f6f7f9; --panel: #ffffff; --fg: #161b26; --muted: #5d6576; --faint: #8a91a0;
   --grid: #e3e6ec; --rule: #cfd4dd;
   --lula: #b5173a; --flavio: #1f4e8c;
+  --nodata: #eef0f4; --s1: #dcefe2; --s2: #a9d6b6; --s3: #6fb886; --s4: #3a8f58; --s5: #1d6338;
   --display: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   --radius: 16px;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --bg: #10141c; --panel: #171c26; --fg: #e8ebf1; --muted: #a2a9b8; --faint: #747c8c;
-  --grid: #262d3a; --rule: #333b4a; --lula: #f0607b; --flavio: #6b9ce0; color-scheme: dark } }
+  --grid: #262d3a; --rule: #333b4a; --lula: #f0607b; --flavio: #6b9ce0; --nodata: #1f2530; --s1: #1f3a2a; --s2: #2a5a3c; --s3: #3f8257; --s4: #62ab7a; --s5: #9bd3ac; color-scheme: dark } }
 :root[data-theme="dark"] {
   --bg: #10141c; --panel: #171c26; --fg: #e8ebf1; --muted: #a2a9b8; --faint: #747c8c;
-  --grid: #262d3a; --rule: #333b4a; --lula: #f0607b; --flavio: #6b9ce0; color-scheme: dark }
+  --grid: #262d3a; --rule: #333b4a; --lula: #f0607b; --flavio: #6b9ce0; --nodata: #1f2530; --s1: #1f3a2a; --s2: #2a5a3c; --s3: #3f8257; --s4: #62ab7a; --s5: #9bd3ac; color-scheme: dark }
 
 body { background: var(--bg); color: var(--fg); font-family: var(--display); font-feature-settings: "tnum", "cv11"; -webkit-font-smoothing: antialiased; }
 .wrap { max-width: 1040px; margin: 0 auto; padding-inline: 16px; padding-block: 28px 40px; display: grid; gap: 22px; }
@@ -62,6 +63,35 @@ th { color: var(--muted); font-weight: 500; }
 th:first-child, td:first-child { text-align: left; }
 .sources { font-size: 12px; color: var(--faint); line-height: 1.6; }
 .sources a { color: var(--muted); }
+
+/* mapa por estado */
+.mapgrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, 300px); gap: 20px; align-items: start; }
+@media (max-width: 720px) { .mapgrid { grid-template-columns: 1fr; } }
+.tiles { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; max-width: 520px; width: 100%; margin: 0 auto; }
+.tile { aspect-ratio: 1; border-radius: 12px; display: grid; place-content: center; text-align: center; gap: 2px; border: 0; padding: 0; font: inherit; cursor: default; color: var(--fg); background: var(--nodata); position: relative; min-width: 0; }
+.tile b { font-size: clamp(11px, 2.2vw, 14px); font-weight: 700; letter-spacing: .02em; }
+.tile span { font-size: clamp(9px, 1.7vw, 11px); font-variant-numeric: tabular-nums; opacity: .85; }
+.tile.empty { background-image: repeating-linear-gradient(45deg, transparent 0 5px, var(--grid) 5px 6px); color: var(--faint); }
+.tile.dark { color: #fff; }
+.tile:focus-visible, .tile:hover { outline: 2px solid var(--fg); outline-offset: 1px; }
+.scale { display: grid; gap: 6px; font-size: 12px; color: var(--muted); }
+.ramp { height: 10px; border-radius: 99px; background: linear-gradient(90deg, var(--s1), var(--s5)); }
+.ramp-l { display: flex; justify-content: space-between; font-variant-numeric: tabular-nums; }
+.side { display: grid; gap: 14px; min-width: 0; }
+.detail { background: var(--bg); border-radius: 12px; padding: 12px 14px; display: grid; gap: 6px; font-size: 13px; min-height: 96px; }
+.detail h3 { margin: 0; font-size: 15px; }
+.detail .r { display: flex; justify-content: space-between; gap: 10px; font-variant-numeric: tabular-nums; }
+.paste { display: grid; gap: 8px; }
+.paste label { font-size: 13px; font-weight: 600; }
+.paste textarea { width: 100%; box-sizing: border-box; min-height: 90px; border-radius: 12px; border: 1px solid var(--rule); background: var(--bg); color: var(--fg); font: 12px ui-monospace, Menlo, monospace; padding: 10px; resize: vertical; }
+.paste .btns { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn { border: 1px solid var(--rule); background: var(--panel); color: var(--fg); border-radius: 99px; padding: 7px 14px; font: 600 13px var(--display); cursor: pointer; }
+.btn.primary { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.btn:focus-visible { outline: 2px solid var(--flavio); outline-offset: 2px; }
+.msg { font-size: 12px; color: var(--muted); min-height: 1em; }
+.sectionhead { display: grid; gap: 4px; padding-inline: 6px; }
+.sectionhead h2 { margin: 0; font-size: 18px; font-weight: 700; letter-spacing: -.01em; }
+.sectionhead p { margin: 0; font-size: 13px; color: var(--muted); }
 </style>
 
 <div class="wrap">
@@ -102,6 +132,27 @@ th:first-child, td:first-child { text-align: left; }
       <div class="tip" id="tip" hidden></div>
     </div>
     <figcaption>Eixo horizontal proporcional ao % de seções totalizadas. A linha pontilhada marca 50% dos votos válidos, o necessário para vencer no 1º turno.</figcaption>
+  </figure>
+
+  <figure id="estados">
+    <div class="sectionhead">
+      <h2>Apuração por estado</h2>
+      <p>% das seções totalizadas em cada UF. Toque num estado para ver o placar.</p>
+    </div>
+    <div class="mapgrid">
+      <div class="tiles" id="tiles" role="group" aria-label="Mapa em grade dos estados"></div>
+      <div class="side">
+        <div class="scale"><span>% das seções totalizadas</span><div class="ramp"></div><div class="ramp-l"><span>0%</span><span>50%</span><span>100%</span></div></div>
+        <div class="detail" id="detail" aria-live="polite"></div>
+        <div class="paste">
+          <label for="pasteBox">Colar dados por estado (CSV)</label>
+          <textarea id="pasteBox" placeholder="Formato (exemplo fictício):&#10;uf,pct_secoes,hora,lula,flavio&#10;SP,32.10,18h20,38.50,53.20"></textarea>
+          <div class="btns"><button class="btn primary" id="apply" type="button">Atualizar mapa</button><button class="btn" id="clear" type="button">Limpar</button></div>
+          <div class="msg" id="msg"></div>
+        </div>
+      </div>
+    </div>
+    <figcaption>Gerado pelo <code>monitor_tse.py</code> (arquivo dados_estados_2026.csv) ou copiado do painel do TSE, um estado por linha. Estados sem dado aparecem hachurados.</figcaption>
   </figure>
 
   <details>
@@ -188,4 +239,66 @@ hit.addEventListener("pointerleave", () => { tip.hidden = true; cross.setAttribu
 // tabelas
 const tbl = (d, ano, nome) => `<div><table><caption>${ano}</caption><thead><tr><th>% seções</th><th>Horário</th><th>Lula</th><th>${nome}</th></tr></thead><tbody>${d.map(p => `<tr><td>${fmt(p[0])}%</td><td>${p[1] || "–"}</td><td>${fmt(p[2])}%</td><td>${fmt(p[3])}%</td></tr>`).join("")}</tbody></table></div>`;
 document.getElementById("tables").innerHTML = tbl(D26, "2026 (parcial)", "Flávio") + tbl(D22, "2022", "Bolsonaro");
+// ---- mapa por estado ----
+const GRID = {RR:[2,0],AP:[4,0],AM:[1,1],PA:[3,1],MA:[4,1],CE:[5,1],RN:[6,1],AC:[0,2],RO:[1,2],MT:[2,2],TO:[3,2],PI:[4,2],PE:[5,2],PB:[6,2],GO:[3,3],BA:[4,3],SE:[5,3],AL:[6,3],MS:[2,4],DF:[3,4],MG:[4,4],ES:[5,4],PR:[2,5],SP:[3,5],RJ:[4,5],SC:[2,6],RS:[2,7]};
+const NOMES = {AC:"Acre",AL:"Alagoas",AP:"Amapá",AM:"Amazonas",BA:"Bahia",CE:"Ceará",DF:"Distrito Federal",ES:"Espírito Santo",GO:"Goiás",MA:"Maranhão",MT:"Mato Grosso",MS:"Mato Grosso do Sul",MG:"Minas Gerais",PA:"Pará",PB:"Paraíba",PR:"Paraná",PE:"Pernambuco",PI:"Piauí",RJ:"Rio de Janeiro",RN:"Rio Grande do Norte",RS:"Rio Grande do Sul",RO:"Rondônia",RR:"Roraima",SC:"Santa Catarina",SP:"São Paulo",SE:"Sergipe",TO:"Tocantins"};
+// Único dado estadual encontrado em reportagens (horário não informado).
+const INICIAL = {PR: {pct: 19, hora: "", lula: 31, flavio: 58}};
+let EST = INICIAL;
+try { const saved = localStorage.getItem("estados2026"); if (saved) EST = JSON.parse(saved); } catch (e) {}
+
+const tilesEl = document.getElementById("tiles"), detail = document.getElementById("detail");
+const step = p => p == null ? null : p < 20 ? 1 : p < 40 ? 2 : p < 60 ? 3 : p < 80 ? 4 : 5;
+function renderTiles() {
+  tilesEl.innerHTML = "";
+  for (let r = 0; r < 8; r++) for (let c = 0; c < 7; c++) {
+    const uf = Object.keys(GRID).find(k => GRID[k][0] === c && GRID[k][1] === r);
+    if (!uf) { tilesEl.appendChild(document.createElement("div")); continue; }
+    const d = EST[uf], b = document.createElement("button");
+    b.type = "button"; b.className = "tile";
+    if (d) { const st = step(d.pct); b.style.background = `var(--s${st})`; if (st >= 4) b.classList.add("dark"); }
+    else b.classList.add("empty");
+    b.innerHTML = `<b>${uf}</b><span>${d ? fmt(d.pct).replace(",00", "") + "%" : "–"}</span>`;
+    b.setAttribute("aria-label", `${NOMES[uf]}: ${d ? fmt(d.pct) + "% apurado" : "sem dado"}`);
+    b.addEventListener("click", () => showUF(uf));
+    b.addEventListener("pointerenter", () => showUF(uf));
+    tilesEl.appendChild(b);
+  }
+}
+function showUF(uf) {
+  const d = EST[uf];
+  detail.innerHTML = d
+    ? `<h3>${NOMES[uf]}</h3><div class="r"><span>Seções totalizadas</span><span>${fmt(d.pct)}%${d.hora ? " · " + d.hora : ""}</span></div>
+       <div class="r"><span>Flávio Bolsonaro</span><span>${d.flavio != null ? fmt(d.flavio) + "%" : "–"}</span></div>
+       <div class="r"><span>Lula</span><span>${d.lula != null ? fmt(d.lula) + "%" : "–"}</span></div>`
+    : `<h3>${NOMES[uf]}</h3><span style="color:var(--muted)">Sem dado ainda. Cole a linha deste estado no campo abaixo.</span>`;
+}
+function resumo() {
+  const n = Object.keys(EST).length;
+  detail.innerHTML = `<h3>${n} de 27 estados com dado</h3><span style="color:var(--muted)">${n < 27 ? "Cole o CSV por estado abaixo para completar o mapa." : "Passe o mouse ou toque num estado."}</span>`;
+}
+const msg = document.getElementById("msg"), pasteBox = document.getElementById("pasteBox");
+document.getElementById("apply").addEventListener("click", () => {
+  const out = {}, erros = [];
+  pasteBox.value.trim().split(/\r?\n/).forEach((ln, i) => {
+    const c = ln.split(/[,;\t]/).map(x => x.trim());
+    const uf = (c[0] || "").toUpperCase();
+    if (!GRID[uf]) { if (i > 0 || !/uf/i.test(c[0])) erros.push(i + 1); return; }
+    const n = x => x === undefined || x === "" ? null : parseFloat(x.replace("%", "").replace(",", "."));
+    const pct = n(c[1]);
+    if (pct == null || isNaN(pct)) { erros.push(i + 1); return; }
+    out[uf] = {pct, hora: c[2] || "", lula: n(c[3]), flavio: n(c[4])};
+  });
+  if (!Object.keys(out).length) { msg.textContent = "Nenhuma linha válida. Use: uf,pct_secoes,hora,lula,flavio"; return; }
+  EST = Object.assign({}, EST, out);
+  try { localStorage.setItem("estados2026", JSON.stringify(EST)); } catch (e) {}
+  renderTiles(); resumo();
+  msg.textContent = `${Object.keys(out).length} estado(s) atualizado(s)` + (erros.length ? `; linhas ignoradas: ${erros.join(", ")}` : "");
+});
+document.getElementById("clear").addEventListener("click", () => {
+  EST = INICIAL; pasteBox.value = ""; msg.textContent = "Mapa voltou aos dados publicados.";
+  try { localStorage.removeItem("estados2026"); } catch (e) {}
+  renderTiles(); resumo();
+});
+renderTiles(); resumo();
 </script>

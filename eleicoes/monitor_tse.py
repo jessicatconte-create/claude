@@ -2,6 +2,7 @@
 
 A cada INTERVALO segundos baixa o boletim nacional; quando o % de seções
 totalizadas muda, acrescenta uma linha em dados_2026.csv e regenera o gráfico.
+Também grava dados_estados_2026.csv com o % apurado e o placar de cada UF.
 
 Uso:  pip install requests pandas matplotlib
       python monitor_tse.py
@@ -19,12 +20,15 @@ URLS = [
 INTERVALO = 30
 CSV = "dados_2026.csv"
 LULA, BOLSONARO = "LULA", "FLAVIO BOLSONARO"
+CSV_UF = "dados_estados_2026.csv"
+UFS = "ac al ap am ba ce df es go ma mt ms mg pa pb pr pe pi rj rn rs ro rr sc sp se to".split()
 
 num = lambda s: float(str(s).replace(".", "").replace(",", ".")) if "," in str(s) else float(s)
 
 
-def boletim():
+def boletim(uf="br"):
     for url in URLS:
+        url = url.replace("/br/br-", f"/{uf}/{uf}-")
         try:
             r = requests.get(url, timeout=15, headers={"User-Agent": "Mozilla/5.0"})
             if r.ok:
@@ -56,6 +60,16 @@ while True:
                 csv.writer(f).writerow([f"{pst:.2f}", hora, f"{lula:.2f}", f"{bol:.2f}"])
             subprocess.run([sys.executable, "grafico.py"])
             print(f"{hora}  {pst:.2f}% apurado  Flávio {bol:.2f}%  Lula {lula:.2f}%")
+        # por estado: arquivo pronto para colar no campo "Colar dados por estado" da página
+        linhas = []
+        for uf in UFS:
+            ju = boletim(uf)
+            if ju:
+                p, h, l, b = ler(ju)
+                linhas.append([uf.upper(), f"{p:.2f}", h, f"{l:.2f}", f"{b:.2f}"])
+        with open(CSV_UF, "w", newline="") as f:
+            w = csv.writer(f); w.writerow(["uf", "pct_secoes", "hora", "lula", "flavio"]); w.writerows(linhas)
+        print(f"   {len(linhas)} estados salvos em {CSV_UF}")
     else:
         print("TSE não respondeu; tentando de novo", file=sys.stderr)
     time.sleep(INTERVALO)
