@@ -364,6 +364,12 @@ details.how p { margin: 0 0 6px; line-height: 1.5; }
 .y22 { padding-top: 26px !important; gap: 22px !important; border-top-color: var(--grid) !important; }
 .now .cand .vt { font-size: 11px; }
 .ppd { display: block; color: var(--muted); font-size: 11px; }
+.absc { width: 100%; height: auto; display: block; overflow: visible; }
+.absc text { font: 12px var(--display); fill: var(--muted); }
+:root { --a1: #7d8491; --a2: #e8a33d; }
+.abs-leg { display: flex; gap: 16px; font-size: 12px; color: var(--muted); padding-inline: 6px; }
+.abs-leg span { display: inline-flex; align-items: center; gap: 6px; }
+.abs-leg i { width: 10px; height: 10px; border-radius: 3px; }
 </style>
 
 <div class="wrap">
@@ -468,6 +474,17 @@ details.how p { margin: 0 0 6px; line-height: 1.5; }
     </div>
     <div class="tw"><table class="pt" id="outtab"></table></div>
     <figcaption id="outcap">JSON oficial do TSE (eleição estadual). A situação vem do TSE quando o resultado é declarado; antes disso, é calculada: no Senado, se o candidato está entre as 2 vagas; na Câmara, se tem votos acima do quociente eleitoral estimado ou abaixo do mínimo de 10% dele. Deputados são eleitos pelo sistema proporcional: a vaga depende também dos votos do partido ou federação, não só da posição individual.</figcaption>
+  </figure>
+
+  <figure id="abstencao">
+    <div class="sectionhead">
+      <h2>Abstenção · 2006–2026</h2>
+      <p>Eleitores que não votaram para presidente, em milhões, no 1º e no 2º turno.</p>
+    </div>
+    <div class="abs-leg"><span><i style="background:var(--a1)"></i>1º turno</span><span><i style="background:var(--a2)"></i>2º turno</span></div>
+    <svg class="absc" id="absc" role="img" aria-label="Abstenção em milhões de eleitores por eleição, 1º e 2º turno"></svg>
+    <details class="how"><summary>Ver em tabela</summary><div class="tw"><table class="pt" id="abstab"></table></div></details>
+    <figcaption>2026: TSE, 1º turno com apuração quase completa. 2006–2022: valores do TSE (arredondados ao milhão até 2018); confira no portal do TSE antes de citar.</figcaption>
   </figure>
 
   <figure id="pesquisas">
@@ -1118,7 +1135,7 @@ const f1n = v => v.toFixed(1).replace(".", ",");
     [2022, "Lula", "Bolsonaro", 48.4, 43.2, 57259504, 51072345, 50.9, 60345999, 58206354],
   ];
   // abstenção (% do eleitorado) no 1º e no 2º turno, TSE
-  const ABST = {1989: [11.9, 14.4], 2002: [17.7, 20.5], 2006: [16.8, 18.9], 2010: [18.1, 21.3], 2014: [19.4, 21.1], 2018: [20.3, 21.3], 2022: [20.95, 20.59]};
+  const ABST = {1989: [11.9, 14.4], 2002: [17.7, 20.5], 2006: [16.8, 18.9], 2010: [18.1, 21.5], 2014: [19.4, 21.1], 2018: [20.3, 21.3], 2022: [20.95, 20.59]};
   function historicoBox() {
     const a26 = D26[D26.length - 1];
     const rows = HIST.map(h => `<tr><td>${h[0]}</td><td style="text-align:left">${h[1]} ${f1(h[3])}% × ${h[2]} ${f1(h[4])}%</td><td>${votos(h[5] - h[6])}<small class="ppd">${f1(h[3] - h[4])} p.p.</small></td>
@@ -1229,5 +1246,42 @@ const f1n = v => v.toFixed(1).replace(".", ",");
   document.getElementById("govgrid").innerHTML = html;
   document.getElementById("gov-sub").textContent = `${vence} estados com vencedor no 1º turno (eleito ou acima de 50% até agora) e ${seg} a caminho do 2º turno em 25 de outubro.`;
   document.getElementById("govtally").innerHTML = `<span>2º turno<b>${seg}</b></span>` + Object.entries(part).sort((a, b) => b[1] - a[1]).map(([p, n]) => `<span class="ideo-${ideoDe(p)}">${p}<b>${n}</b></span>`).join("");
+})();
+// ---- abstenção 2006–2026 ----
+(function () {
+  const A = [[2006, 21.09, 16.8, 23.91, 19.0], [2010, 24.61, 18.1, 29.20, 21.5], [2014, 27.70, 19.4, 30.14, 21.1],
+             [2018, 29.94, 20.3, 31.37, 21.3], [2022, 32.77, 20.95, 32.20, 20.59]];
+  const a26 = BR && BR.abst ? [2026, BR.abst / 1e6, BR.abst / BR.est * 100, null, null] : [2026, 33.38, 21.07, null, null];
+  const D = [...A, a26];
+  const svgA = document.getElementById("absc");
+  const f1 = v => v.toFixed(1).replace(".", ",");
+  function draw() {
+    const W = Math.max(320, svgA.clientWidth || 800), H = 280, m = {l: 40, r: 10, t: 24, b: 44};
+    const Y = v => m.t + (1 - v / 40) * (H - m.t - m.b), gw = (W - m.l - m.r) / D.length, bw = Math.min(34, gw * .32);
+    svgA.setAttribute("viewBox", `0 0 ${W} ${H}`); svgA.innerHTML = "";
+    const mk = (t, at) => el(t, at, svgA);
+    for (let v = 0; v <= 40; v += 10) {
+      mk("line", {x1: m.l, x2: W - m.r, y1: Y(v), y2: Y(v), stroke: "var(--grid)", "stroke-width": 1});
+      mk("text", {x: m.l - 6, y: Y(v) + 4, "text-anchor": "end"}).textContent = v + " mi";
+    }
+    D.forEach(([ano, t1, p1, t2, p2], i) => {
+      const cx = m.l + gw * (i + .5);
+      const bar = (x, v, cor, pc, lab) => {
+        const g = mk("g", {});
+        const r = el("rect", {x, y: Y(v), width: bw, height: Y(0) - Y(v), rx: 4, fill: cor}, g);
+        const t = document.createElementNS(ns, "title"); t.textContent = `${ano} · ${lab}: ${f1(v)} milhões (${f1(pc)}% do eleitorado)`; r.appendChild(t);
+        el("text", {x: x + bw / 2, y: Y(v) - 6, "text-anchor": "middle", style: "fill:var(--fg)"}, g).textContent = f1(v);
+      };
+      bar(cx - bw - 2, t1, "var(--a1)", p1, "1º turno");
+      if (t2 != null) bar(cx + 2, t2, "var(--a2)", p2, "2º turno");
+      else { const t = mk("text", {x: cx + 2 + bw / 2, y: Y(0) - 8, "text-anchor": "middle"}); t.textContent = "25/10"; }
+      mk("text", {x: cx, y: H - m.b + 18, "text-anchor": "middle", style: "fill:var(--fg)"}).textContent = ano;
+      mk("text", {x: cx, y: H - m.b + 34, "text-anchor": "middle"}).textContent = `${f1(p1)}%${p2 != null ? " → " + f1(p2) + "%" : ""}`;
+    });
+  }
+  draw();
+  let t; new ResizeObserver(() => { clearTimeout(t); t = setTimeout(draw, 120); }).observe(svgA);
+  document.getElementById("abstab").innerHTML = `<thead><tr><th>Ano</th><th>1º turno</th><th>2º turno</th><th>Variação entre turnos</th></tr></thead><tbody>${D.map(([ano, t1, p1, t2, p2]) =>
+    `<tr><td>${ano}</td><td>${f1(t1)} mi · ${f1(p1)}%</td><td>${t2 != null ? `${f1(t2)} mi · ${f1(p2)}%` : "25/10"}</td><td>${t2 != null ? `${t2 >= t1 ? "+" : "−"}${f1(Math.abs(t2 - t1))} mi` : "–"}</td></tr>`).join("")}</tbody>`;
 })();
 </script>
