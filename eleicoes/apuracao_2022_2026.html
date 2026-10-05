@@ -388,6 +388,23 @@ details.how p { margin: 0 0 6px; line-height: 1.5; }
 .sim-pre { display: flex; flex-wrap: wrap; gap: 6px; }
 .sim-pre button { border: 1px solid var(--rule); background: var(--panel); color: var(--fg); border-radius: 99px; padding: 5px 11px; font: 12px var(--display); cursor: pointer; }
 .sim-pre button:focus-visible, .ctl input:focus-visible { outline: 2px solid var(--flavio); outline-offset: 2px; }
+
+.vt { display: grid; gap: 12px; }
+.vt-tot { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.vt-tot div { border: 1px solid var(--rule); border-radius: 14px; padding: 10px 14px; display: grid; gap: 2px; }
+.vt-tot b { font-size: 26px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.vt-tot span { font-size: 12px; color: var(--muted); }
+.vt-it { border: 1px solid var(--grid); border-radius: 14px; padding: 12px 14px; display: grid; gap: 10px; }
+.vt-it h3 { margin: 0; font-size: 15px; font-weight: 500; }
+.vt-two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.vt-two p, .vt-you { margin: 0; font-size: 13px; line-height: 1.5; color: var(--muted); }
+.vt-two p b { display: block; font-size: 12px; font-weight: 500; margin-bottom: 2px; }
+.vt-you { color: var(--fg); border-left: 3px solid var(--s4); padding-left: 10px; }
+.vt-sc { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 12px; color: var(--muted); align-items: center; }
+.vt-sc label { display: inline-flex; gap: 6px; align-items: center; }
+.vt-sc select, .vt-sc input { background: var(--bg); color: var(--fg); border: 1px solid var(--rule); border-radius: 8px; font: 13px var(--display); padding: 3px 6px; }
+.vt-sc input { width: 60px; }
+@media (max-width: 640px) { .vt-two { grid-template-columns: 1fr; } }
 </style>
 
 <div class="wrap">
@@ -528,6 +545,48 @@ details.how p { margin: 0 0 6px; line-height: 1.5; }
     <div class="t2" id="t2"></div>
     <figcaption>Pesquisas de 2º turno em votos totais (incluem brancos, nulos e indecisos), exceto quando indicado. As projeções são cenários com hipóteses explícitas, não previsões.</figcaption>
   </figure>
+
+  <figure id="voto">
+    <details class="fold">
+      <summary><div class="sectionhead">
+      <h2>Lula × Flávio · o que pesa pra você</h2>
+      <p>O que cada um já fez, pensando em quem é PJ, ganha R$ 14 mil, mora de aluguel e tem um filho autista. Dê um peso a cada tema e uma nota de 0 a 10 a cada candidato; o placar soma pra você.</p>
+    </div></summary>
+    <div class="vt">
+    <div class="vt-tot"><div><span>Lula</span><b id="vt-l" style="color:var(--lula)">–</b><span>média ponderada das suas notas</span></div><div><span>Flávio</span><b id="vt-f" style="color:var(--flavio)">–</b><span>média ponderada das suas notas</span></div></div>
+    <div class="vt-it" data-i="0"><h3>Imposto sobre a sua renda (PJ)</h3><div class="vt-two"><p><b style="color:var(--lula)">Lula</b>Aprovou a isenção do IR para quem ganha até R$ 5 mil (vale desde 2026), paga com um imposto mínimo sobre rendas acima de R$ 600 mil por ano e 10% retidos em dividendos acima de R$ 50 mil por mês de uma mesma empresa. A reforma do consumo (CBS/IBS) começou a transição em 2026, e o Simples foi mantido.</p><p><b style="color:var(--flavio)">Flávio (e o governo do pai, 2019–22)</b>O pai prometeu em 2018 a isenção até R$ 5 mil e não a aprovou. O campo do Flávio defende carga menor e critica a taxação de dividendos; ele ainda não detalhou uma proposta para o IR.</p></div><p class="vt-you">Com R$ 14 mil por mês você fica longe do imposto mínimo e da retenção sobre dividendos. A isenção até R$ 5 mil muda pouco se o seu pró-labore é baixo. O efeito direto é quase neutro; vale acompanhar como fica o imposto sobre serviços do Simples na reforma.</p>
+<div class="vt-sc"><label>Peso pra mim <select data-k="p"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option></select></label><label><span style="color:var(--lula)">Lula</span> <input type="number" min="0" max="10" step="1" data-k="l" placeholder="nota"></label><label><span style="color:var(--flavio)">Flávio</span> <input type="number" min="0" max="10" step="1" data-k="f" placeholder="nota"></label></div></div><div class="vt-it" data-i="1"><h3>Juros, inflação e dólar</h3><div class="vt-two"><p><b style="color:var(--lula)">Lula</b>Inflação de 2023 a 2025 perto de 4% a 5% ao ano e desemprego no menor nível da série. A desconfiança com as contas públicas, porém, levou o dólar a cerca de R$ 6,30 no fim de 2024 e a Selic a 15% em 2025.</p><p><b style="color:var(--flavio)">Flávio (e o governo do pai, 2019–22)</b>No governo do pai, a inflação passou de 10% em 2021 (pandemia e combustíveis) e a Selic chegou a 13,75%. O Flávio sinaliza corte de gastos e privatizações; o mercado reagiu melhor às pesquisas favoráveis a ele.</p></div><p class="vt-you">É o item que mais pesa num orçamento apertado: juros do cartão e de empréstimos, reajuste do aluguel e o custo de um financiamento no futuro. Nenhum dos dois tem fórmula garantida; pense em quem te dá mais confiança de que os juros caem.</p>
+<div class="vt-sc"><label>Peso pra mim <select data-k="p"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option></select></label><label><span style="color:var(--lula)">Lula</span> <input type="number" min="0" max="10" step="1" data-k="l" placeholder="nota"></label><label><span style="color:var(--flavio)">Flávio</span> <input type="number" min="0" max="10" step="1" data-k="f" placeholder="nota"></label></div></div><div class="vt-it" data-i="2"><h3>Moradia (você não tem casa própria)</h3><div class="vt-two"><p><b style="color:var(--lula)">Lula</b>Retomou o Minha Casa Minha Vida e criou em 2025 a faixa 4, para renda familiar de até R$ 12 mil. Em 2025 também ampliou o crédito imobiliário com recursos da poupança (teto do SFH de R$ 2,25 milhões).</p><p><b style="color:var(--flavio)">Flávio (e o governo do pai, 2019–22)</b>O pai trocou o MCMV pelo Casa Verde e Amarela (2021), com menos subsídio para a faixa mais pobre. O Flávio não apresentou um plano próprio de habitação.</p></div><p class="vt-you">Com R$ 14 mil você fica acima da faixa 4 (confira as regras atuais, que mudam). Na prática, o que decide se você consegue comprar é a taxa de juros do financiamento, então este item anda junto com o anterior.</p>
+<div class="vt-sc"><label>Peso pra mim <select data-k="p"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option></select></label><label><span style="color:var(--lula)">Lula</span> <input type="number" min="0" max="10" step="1" data-k="l" placeholder="nota"></label><label><span style="color:var(--flavio)">Flávio</span> <input type="number" min="0" max="10" step="1" data-k="f" placeholder="nota"></label></div></div><div class="vt-it" data-i="3"><h3>Seu filho autista: saúde e terapias</h3><div class="vt-two"><p><b style="color:var(--lula)">Lula</b>Lançou o Novo Viver sem Limite (2023), que amplia os centros de reabilitação do SUS, e sancionou a lei do cordão de girassol (2023). O pacote fiscal de 2024 endureceu as regras do BPC, mas com a sua renda você não teria direito ao benefício de qualquer forma.</p><p><b style="color:var(--flavio)">Flávio (e o governo do pai, 2019–22)</b>O pai sancionou a Lei Romeo Mion (carteira do autista, 2020) e a lei de 2022 que obriga os planos a cobrir tratamentos fora do rol da ANS. No mesmo ano a ANS acabou com o limite de sessões de terapia para autismo.</p></div><p class="vt-you">Se o seu filho tem plano de saúde, são as regras de 2022 que garantem as terapias, e nenhum dos dois propõe revogá-las. Se depende do SUS, conta mais a rede de reabilitação.</p>
+<div class="vt-sc"><label>Peso pra mim <select data-k="p"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option></select></label><label><span style="color:var(--lula)">Lula</span> <input type="number" min="0" max="10" step="1" data-k="l" placeholder="nota"></label><label><span style="color:var(--flavio)">Flávio</span> <input type="number" min="0" max="10" step="1" data-k="f" placeholder="nota"></label></div></div><div class="vt-it" data-i="4"><h3>Seu filho autista: escola</h3><div class="vt-two"><p><b style="color:var(--lula)">Lula</b>Revogou em 2023 o decreto de 2020 e manteve a prioridade da inclusão na escola comum, com atendimento educacional especializado.</p><p><b style="color:var(--flavio)">Flávio (e o governo do pai, 2019–22)</b>O decreto 10.502/2020, do governo do pai, incentivava escolas e classes especiais; o STF o suspendeu. A direita defende que as famílias possam escolher a escola especial.</p></div><p class="vt-you">Depende do que você acha melhor para ele: escola comum com apoio, ou a possibilidade de escolher uma escola especial.</p>
+<div class="vt-sc"><label>Peso pra mim <select data-k="p"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option></select></label><label><span style="color:var(--lula)">Lula</span> <input type="number" min="0" max="10" step="1" data-k="l" placeholder="nota"></label><label><span style="color:var(--flavio)">Flávio</span> <input type="number" min="0" max="10" step="1" data-k="f" placeholder="nota"></label></div></div><div class="vt-it" data-i="5"><h3>Trabalhar como PJ, sem CLT</h3><div class="vt-two"><p><b style="color:var(--lula)">Lula</b>Criou o MEI em 2008. Em 2024 propôs regras para motoristas de aplicativo, que pararam no Congresso.</p><p><b style="color:var(--flavio)">Flávio (e o governo do pai, 2019–22)</b>No governo do pai vieram a reforma da Previdência de 2019, que endureceu a aposentadoria para todos, inclusive autônomos, e a Lei da Liberdade Econômica, que reduziu burocracia para empresas.</p></div><p class="vt-you">Nenhum dos dois tem proposta clara de licença ou de renda para PJ que adoece ou precisa cuidar do filho. Vale cobrar isso dos dois.</p>
+<div class="vt-sc"><label>Peso pra mim <select data-k="p"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option></select></label><label><span style="color:var(--lula)">Lula</span> <input type="number" min="0" max="10" step="1" data-k="l" placeholder="nota"></label><label><span style="color:var(--flavio)">Flávio</span> <input type="number" min="0" max="10" step="1" data-k="f" placeholder="nota"></label></div></div><div class="vt-it" data-i="6"><h3>Mulheres</h3><div class="vt-two"><p><b style="color:var(--lula)">Lula</b>Sancionou a Lei Maria da Penha (2006), a lei de igualdade salarial (2023) e o pacote antifeminicídio (2024), recriou o Ministério das Mulheres e passou a distribuir absorventes gratuitos (2023).</p><p><b style="color:var(--flavio)">Flávio (e o governo do pai, 2019–22)</b>O pai sancionou a lei Sinal Vermelho, que tornou crime a violência psicológica (2021), e vetou os absorventes gratuitos (o Congresso derrubou o veto). O Flávio tem projetos sobre violência contra a mulher no Senado.</p></div><p class="vt-you">O histórico de leis aprovadas é maior do lado do Lula; os dois falam do tema em segurança e violência.</p>
+<div class="vt-sc"><label>Peso pra mim <select data-k="p"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option></select></label><label><span style="color:var(--lula)">Lula</span> <input type="number" min="0" max="10" step="1" data-k="l" placeholder="nota"></label><label><span style="color:var(--flavio)">Flávio</span> <input type="number" min="0" max="10" step="1" data-k="f" placeholder="nota"></label></div></div><div class="vt-it" data-i="7"><h3>Histórico e confiança</h3><div class="vt-two"><p><b style="color:var(--lula)">Lula</b>Três mandatos como presidente. Mensalão e Petrolão em governos do PT; a condenação dele foi anulada pelo STF em 2021 por questão de competência, sem julgamento do mérito.</p><p><b style="color:var(--flavio)">Flávio (e o governo do pai, 2019–22)</b>Senador desde 2019, nunca governou. O caso das rachadinhas foi arquivado depois que o STJ anulou as provas (2021). O pai foi condenado pelo STF em 2025 pela trama golpista e está preso.</p></div><p class="vt-you">Um você julga pelo que já entregou; o outro, pelo mandato no Senado e pela equipe que ele anunciar.</p>
+<div class="vt-sc"><label>Peso pra mim <select data-k="p"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option></select></label><label><span style="color:var(--lula)">Lula</span> <input type="number" min="0" max="10" step="1" data-k="l" placeholder="nota"></label><label><span style="color:var(--flavio)">Flávio</span> <input type="number" min="0" max="10" step="1" data-k="f" placeholder="nota"></label></div></div>
+    </div>
+    <figcaption>Resumo de fatos públicos até meados de 2026, escrito de memória; confira os detalhes antes de decidir. As notas ficam só neste navegador. Não é recomendação de voto: o placar só reflete os pesos e as notas que você dá.</figcaption>
+    </details>
+  </figure>
+<script>
+(() => {
+  const K = "vt-notas", el = document.getElementById("voto");
+  let salvo = {}; try { salvo = JSON.parse(localStorage.getItem(K) || "{}"); } catch (e) {}
+  el.querySelectorAll(".vt-it").forEach(it => it.querySelectorAll("[data-k]").forEach(c => { const v = (salvo[it.dataset.i] || {})[c.dataset.k]; if (v != null) c.value = v; }));
+  const conta = () => {
+    let pl = 0, pf = 0, sl = 0, sf = 0; const novo = {};
+    el.querySelectorAll(".vt-it").forEach(it => {
+      const g = k => it.querySelector(`[data-k="${k}"]`).value, p = +g("p"), l = g("l"), f = g("f");
+      novo[it.dataset.i] = { p, l, f };
+      if (l !== "") { sl += p * Math.min(10, Math.max(0, +l)); pl += p; }
+      if (f !== "") { sf += p * Math.min(10, Math.max(0, +f)); pf += p; }
+    });
+    document.getElementById("vt-l").textContent = pl ? (sl / pl).toFixed(1).replace(".", ",") : "–";
+    document.getElementById("vt-f").textContent = pf ? (sf / pf).toFixed(1).replace(".", ",") : "–";
+    try { localStorage.setItem(K, JSON.stringify(novo)); } catch (e) {}
+  };
+  el.addEventListener("input", conta); el.addEventListener("change", conta); conta();
+})();
+</script>
 
   <figure id="fluxo">
     <div class="sectionhead">
