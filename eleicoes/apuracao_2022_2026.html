@@ -370,6 +370,24 @@ details.how p { margin: 0 0 6px; line-height: 1.5; }
 .abs-leg { display: flex; gap: 16px; font-size: 12px; color: var(--muted); padding-inline: 6px; }
 .abs-leg span { display: inline-flex; align-items: center; gap: 6px; }
 .abs-leg i { width: 10px; height: 10px; border-radius: 3px; }
+.box.sim { background: var(--bg); border-radius: 12px; padding: 18px 20px; display: grid; gap: 18px; }
+.box.sim h3 { margin: 0; font-size: 14px; font-weight: 500; }
+.box.sim .hint { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.sim-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; align-items: start; }
+@media (max-width: 900px) { .sim-grid { grid-template-columns: 1fr; } }
+.ctl { display: grid; gap: 6px; }
+.ctl label { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; }
+.ctl label b { font-weight: 500; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ctl small { font-size: 11px; color: var(--muted); line-height: 1.4; }
+.ctl input[type=range] { width: 100%; accent-color: var(--fg); }
+.sim-ctls { display: grid; gap: 18px; }
+.sim-res { display: grid; gap: 14px; }
+.sim-res .big2 { display: flex; justify-content: space-between; align-items: baseline; font-size: 34px; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.sim-res .big2 small { display: block; font-size: 12px; color: var(--muted); letter-spacing: 0; }
+.sim-res .verdict { font-size: 14px; }
+.sim-pre { display: flex; flex-wrap: wrap; gap: 6px; }
+.sim-pre button { border: 1px solid var(--rule); background: var(--panel); color: var(--fg); border-radius: 99px; padding: 5px 11px; font: 12px var(--display); cursor: pointer; }
+.sim-pre button:focus-visible, .ctl input:focus-visible { outline: 2px solid var(--flavio); outline-offset: 2px; }
 </style>
 
 <div class="wrap">
@@ -506,6 +524,7 @@ details.how p { margin: 0 0 6px; line-height: 1.5; }
       <div class="tw"><table class="pt" id="pt2"></table></div>
       <div class="box resumo" id="t2res"></div>
     </div>
+    <div class="box sim" id="sim"></div>
     <div class="t2" id="t2"></div>
     <figcaption>Pesquisas de 2º turno em votos totais (incluem brancos, nulos e indecisos), exceto quando indicado. As projeções são cenários com hipóteses explícitas, não previsões.</figcaption>
   </figure>
@@ -1283,5 +1302,67 @@ const f1n = v => v.toFixed(1).replace(".", ",");
   let t; new ResizeObserver(() => { clearTimeout(t); t = setTimeout(draw, 120); }).observe(svgA);
   document.getElementById("abstab").innerHTML = `<thead><tr><th>Ano</th><th>1º turno</th><th>2º turno</th><th>Variação entre turnos</th></tr></thead><tbody>${D.map(([ano, t1, p1, t2, p2]) =>
     `<tr><td>${ano}</td><td>${f1(t1)} mi · ${f1(p1)}%</td><td>${t2 != null ? `${f1(t2)} mi · ${f1(p2)}%` : "25/10"}</td><td>${t2 != null ? `${t2 >= t1 ? "+" : "−"}${f1(Math.abs(t2 - t1))} mi` : "–"}</td></tr>`).join("")}</tbody>`;
+})();
+// ---- simulador do 2º turno ----
+(function () {
+  let F = 0, L = 0, V = 0;
+  for (const e of Object.values(ESTADOS)) { const k = e.ts / e.st; F += e.fv * k; L += e.lv * k; V += e.vv * k; }
+  if (!V) return;
+  const O = V - F - L, f1 = v => v.toFixed(1).replace(".", ","), mi = v => (v / 1e6).toFixed(1).replace(".", ",") + " mi";
+  const box = document.getElementById("sim");
+  box.innerHTML = `<h3>Simulador do 2º turno</h3>
+    <div class="sim-pre"><span style="font-size:12px;color:var(--muted);align-self:center">Cenários prontos:</span>
+      <button type="button" data-p="59,10,1,50">Padrão histórico do 2º colocado</button>
+      <button type="button" data-p="31,10,-0.6,50">Como o PT em 2022</button>
+      <button type="button" data-p="70,5,-0.6,60">Como o 2º colocado em 2022</button>
+      <button type="button" data-p="85,15,-1.5,65">Lula mobiliza e converte</button></div>
+    <div class="sim-grid">
+      <div class="sim-ctls">
+        <div class="ctl"><label for="s_conv">Votos dos outros candidatos que vão para Lula <b id="v_conv"></b></label>
+          <input type="range" id="s_conv" min="0" max="100" step="1" value="59">
+          <small>Cury, Renan Santos, Caiado, Zema e demais: ${mi(O)} votos no 1º turno. O que não vai para Lula vai para Flávio.</small></div>
+        <div class="ctl"><label for="s_nulo">Desses, quantos não votam em ninguém no 2º turno <b id="v_nulo"></b></label>
+          <input type="range" id="s_nulo" min="0" max="50" step="1" value="10">
+          <small>Abstenção, branco ou nulo entre quem votou nos outros.</small></div>
+        <div class="ctl"><label for="s_abs">Mudança na abstenção <b id="v_abs"></b></label>
+          <input type="range" id="s_abs" min="-6" max="6" step="0.1" value="1">
+          <small>Negativo = mais gente vai votar. Histórico: de −0,6 mi (2022) a +4,6 mi (2010). No 1º turno: ${BR && BR.abst ? mi(BR.abst) : "33,4 mi"}.</small></div>
+        <div class="ctl"><label for="s_novo">Eleitores que entram ou saem: % para Lula <b id="v_novo"></b></label>
+          <input type="range" id="s_novo" min="0" max="100" step="1" value="50">
+          <small>Como votam os eleitores que deixam de se abster (ou que deixam de votar, se a abstenção subir).</small></div>
+      </div>
+      <div class="sim-res" aria-live="polite">
+        <div class="big2"><span style="color:var(--flavio)" id="r_f"></span><span style="color:var(--lula);text-align:right" id="r_l"></span></div>
+        <div class="bigsplit" aria-hidden="true"><div id="r_bf" style="background:var(--flavio)"></div><div style="flex:1;background:var(--lula)"></div></div>
+        <div class="half" style="height:0"><span></span><em>50%</em></div>
+        <div class="verdict" id="r_v" style="padding-top:14px"></div>
+        <div class="hint" id="r_d"></div>
+      </div>
+    </div>
+    <div class="hint">Parte da projeção do 1º turno em votos válidos: Flávio ${mi(F)}, Lula ${mi(L)}, outros ${mi(O)}. Supõe que eleitores de Flávio e de Lula repetem o voto. Os números são o que você escolher nos controles, não uma previsão.</div>`;
+  const $ = id => document.getElementById(id);
+  function calc() {
+    const conv = +$("s_conv").value / 100, nulo = +$("s_nulo").value / 100, dab = +$("s_abs").value * 1e6, novo = +$("s_novo").value / 100;
+    const Ou = O * (1 - nulo);
+    let fv = F + Ou * (1 - conv), lv = L + Ou * conv;
+    const n = -dab;                                                   // eleitores a mais (ou a menos) votando
+    fv += n * (1 - novo); lv += n * novo;
+    const t = fv + lv, pf2 = fv / t * 100, pl2 = lv / t * 100;
+    $("v_conv").textContent = Math.round(conv * 100) + "%"; $("v_nulo").textContent = Math.round(nulo * 100) + "%";
+    $("v_abs").textContent = (dab > 0 ? "+" : dab < 0 ? "−" : "") + f1(Math.abs(dab / 1e6)) + " mi"; $("v_novo").textContent = Math.round(novo * 100) + "%";
+    $("r_f").innerHTML = `${f1(pf2)}%<small>Flávio · ${votos(Math.round(fv / 1000) * 1000)}</small>`;
+    $("r_l").innerHTML = `${f1(pl2)}%<small>Lula · ${votos(Math.round(lv / 1000) * 1000)}</small>`;
+    $("r_bf").style.width = pf2 + "%";
+    const w = pf2 >= pl2 ? "Flávio" : "Lula";
+    $("r_v").innerHTML = `<b style="font-weight:500;color:${w === "Flávio" ? "var(--flavio)" : "var(--lula)"}">${w} vence</b> por ${votos(Math.round(Math.abs(fv - lv) / 1000) * 1000)} votos (${f1(Math.abs(pf2 - pl2))} p.p.).`;
+    const precisa = Math.max(0, Math.min(100, ((t / 2 - L - n * novo) / Ou) * 100));
+    $("r_d").textContent = `Com esses valores de abstenção, Lula precisaria de ${f1(precisa)}% dos votos dos outros candidatos para empatar.`;
+  }
+  box.querySelectorAll("input").forEach(i => i.addEventListener("input", calc));
+  box.querySelectorAll(".sim-pre button").forEach(b => b.addEventListener("click", () => {
+    const [c, nl, a, nv] = b.dataset.p.split(",");
+    $("s_conv").value = c; $("s_nulo").value = nl; $("s_abs").value = a; $("s_novo").value = nv; calc();
+  }));
+  calc();
 })();
 </script>
