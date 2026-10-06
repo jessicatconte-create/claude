@@ -24,11 +24,11 @@ BOX = {
 
 # Criterios objetivos de status (mesma escala para atividade e entrega)
 STATUS = {
-    "Concluído":    ("#15803D", "Critério de conclusão atendido e validado pela PremieRpet."),
-    "Em andamento": (BLUE,      "Iniciado, dependências em dia, prazo preservado."),
-    "Em atenção":   ("#B45309", "Prazo preservado, mas com dependência pendente, sem dono/data ou fora de sequência."),
-    "Atrasado":     ("#B91C1C", "Prazo vencido, ou dependência vencida que já compromete a data."),
-    "Não iniciado": ("#6B7280", "Início previsto para data futura."),
+    "Concluído":    ("#15803D", "#DCFCE7", "Critério de conclusão atendido e validado pela PremieRpet."),
+    "Em andamento": (BLUE,      "#DBEAFE", "Iniciado, dependências em dia, prazo preservado."),
+    "Em atenção":   ("#B45309", "#FEF3C7", "Prazo preservado, mas com dependência pendente, sem dono/data ou fora de sequência."),
+    "Atrasado":     ("#B91C1C", "#FEE2E2", "Prazo vencido, ou dependência vencida que já compromete a data."),
+    "Não iniciado": ("#4B5563", "#F3F4F6", "Início previsto para data futura."),
 }
 
 META = {
@@ -192,10 +192,10 @@ AGENDA = [
 
 
 # ---------------------------------------------------------------- render
-def st(status, size=12):
-    c = STATUS[status][0]
-    return (f'<span style="color:{c};font-size:{size}px;font-weight:600;white-space:nowrap">'
-            f'&#9679;&nbsp;{status}</span>')
+def st(status, size=11.5):
+    c, bg, _ = STATUS[status]
+    return (f'<span style="display:inline-block;padding:3px 10px;border-radius:999px;background:{bg};'
+            f'color:{c};font-size:{size}px;font-weight:600;line-height:1.4;white-space:nowrap">{status}</span>')
 
 
 def label(text, color):
@@ -207,7 +207,8 @@ def box(title, body, kind="cinza"):
     bg, bd, tc = BOX[kind]
     return (f'<tr><td style="padding:0 32px 18px 32px">'
             f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" '
-            f'style="background:{bg};border:1px solid {bd}"><tr><td style="padding:18px 20px">'
+            f'style="background:{bg};border:1px solid {bd};border-radius:14px;border-collapse:separate">'
+            f'<tr><td style="padding:18px 20px">'
             f'{label(title, tc)}{body}</td></tr></table></td></tr>')
 
 
@@ -242,7 +243,7 @@ def build():
     o = []
     # cabecalho (igual ao template)
     o.append(
-        f'<tr><td style="background:{NAVY};padding:26px 32px">'
+        f'<tr><td style="background:{NAVY};padding:26px 32px;border-radius:16px 16px 0 0">'
         f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>'
         f'<td valign="bottom" style="font-family:{FONT};font-size:10.5px;letter-spacing:2.4px;color:#94A3B8">'
         f'<span style="font-size:15px;letter-spacing:0;color:#FFFFFF;font-weight:700">DOC</span>'
@@ -255,13 +256,13 @@ def build():
         f'</td></tr></table></td></tr>')
 
     # saude do projeto
-    c = STATUS[META["saude"]][0]
+    c, cbg, _ = STATUS[META["saude"]]
     o.append(
         f'<tr><td style="padding:24px 32px 18px 32px">'
-        f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>'
-        f'<td width="4" style="background:{c}"></td>'
-        f'<td style="padding:4px 0 4px 16px;font-family:{FONT}">'
-        f'<div style="font-size:10.5px;font-weight:700;letter-spacing:1.6px;color:{SUB}">SAÚDE DO PROJETO</div>'
+        f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" '
+        f'style="background:{cbg};border-radius:14px;border-collapse:separate"><tr>'
+        f'<td style="padding:16px 20px;font-family:{FONT}">'
+        f'<div style="font-size:10.5px;font-weight:700;letter-spacing:1.6px;color:{c}">SAÚDE DO PROJETO</div>'
         f'<div style="font-size:20px;font-weight:700;color:{c};margin:4px 0 4px 0">{META["saude"]}</div>'
         f'<div style="font-size:13px;line-height:1.5;color:{INK}">{META["saude_txt"]}</div>'
         f'</td></tr></table></td></tr>')
@@ -351,9 +352,9 @@ def build():
     o.append(box("Próximos marcos", body, "azul"))
 
     # legenda
-    leg = "".join(f'{st(k, 11)} {small(v[1], MUTE)}<br>' for k, v in STATUS.items())
+    leg = "".join(f'{st(k, 11)} {small(v[2], MUTE)}<br>' for k, v in STATUS.items())
     o.append(
-        f'<tr><td style="padding:4px 32px 0 32px;font-family:{FONT};font-size:11px;line-height:1.7;color:{MUTE}">'
+        f'<tr><td style="padding:4px 32px 0 32px;font-family:{FONT};font-size:11px;line-height:2.2;color:{MUTE}">'
         f'{leg}<br>A entrega herda o pior status das suas dependências. '
         f'* Data proposta pela DOC, a confirmar com a PremieRpet. '
         f'Nesta edição: ROI e break-even do piloto passam ao Business Case <i>ex ante</i> (30/10); a medição de '
@@ -373,7 +374,8 @@ def build():
         f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F1F5F9">'
         f'<tr><td align="center" style="padding:24px 8px">'
         f'<table role="presentation" width="{W}" cellpadding="0" cellspacing="0" '
-        f'style="width:{W}px;max-width:100%;background:#FFFFFF">'
+        f'style="width:{W}px;max-width:100%;background:#FFFFFF;border-radius:16px;overflow:hidden;'
+        f'border-collapse:separate">'
         + "".join(o) +
         '</table></td></tr></table></body></html>')
 
