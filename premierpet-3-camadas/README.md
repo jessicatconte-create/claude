@@ -7,7 +7,7 @@
 - logos PremieRpet | DOC Consulting no canto superior direito (versão branca na capa e no divisor);
 - títulos em Arial bold tinta `14171F`, subtítulos em itálico `888D97`, sem filete sob o título;
 - rodapé com fonte em `888D97` e "Página NN" à direita;
-- cabeçalhos de tabela no estilo da referência (texto cinza, sem faixa navy, filete `D1D5DB`);
+- tabelas sobre card branco, com cabeçalho no estilo da referência (texto cinza, sem faixa navy, filete `D1D5DB`);
 - família navy → rampa de azul royal da referência (`1A56DB` / `7BA0EA` / `C3D3F5`), inclusive
   nos gráficos em imagem; o laranja PremieRpet foi mantido como cor de destaque;
 - capa e divisor do Apêndice com o gradiente navy da referência;

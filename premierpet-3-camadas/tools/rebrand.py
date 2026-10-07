@@ -488,6 +488,7 @@ def process_content(i, root, rels):
                 out.append(t)
         return out
 
+    table_seeds = []
     hdr_candidates = [k for k in sps if fill_of(k) in (NAVY | ORANGE) and geom(k)[3] <= 0.80 and geom(k)[1] > 1.2 and white_text_targets(k)]
     rows = {}
     for k in hdr_candidates:
@@ -509,6 +510,7 @@ def process_content(i, root, rels):
                         r.set("b", "1")
         line = mk_sp("Linha cabeçalho", [x0, yb - 0.01, x1 - x0, 0.0104], fill=RULE)
         cells[-1].addnext(line)
+        table_seeds.append([x0, min(geom(c)[1] for c in cells), x1 - x0, yb - min(geom(c)[1] for c in cells)])
 
     # 9. white text sitting on mid-blue fills (becomes light blue) -> deep navy text
     for k in sps:
@@ -581,6 +583,86 @@ def process_content(i, root, rels):
             for r in tc.iter(q("a:rPr")):
                 if run_color(r) in WHITE_TXT:
                     set_run_color(r, NAVY_DEEP)
+
+    # 13. tables sitting on the grey background -> inside a white card (reference style)
+    for gf in sptree.findall("p:graphicFrame", NS):
+        if gf.find(".//a:tbl", NS) is not None:
+            table_seeds.append(geom(gf))
+    head_shapes = [k for k in (title,) if k is not None] + [k for k in on if id(k) in subtitle_ids]
+    top_limit = max([geom(k)[1] + geom(k)[3] for k in head_shapes] + [1.2])
+    skip_names = ("Logo", "Divisor logos", "Número da página")
+    elems = []
+    cards = []
+    for k in top_children(sptree):
+        g = geom(k)
+        if g is None or g[1] < 0 or g[0] >= 20:
+            continue
+        nm = k.find(".//p:cNvPr", NS).get("name")
+        if nm.startswith(skip_names) or k is title or id(k) in subtitle_ids or k in foot:
+            continue
+        if g[1] < top_limit - 0.05:
+            continue
+        pg = k.find("p:spPr/a:prstGeom", NS)
+        is_card = etree.QName(k).localname == "pic" or (pg is not None and pg.get("prst") == "roundRect" and g[2] >= 2.0 and g[3] >= 0.8)
+        if is_card or nm == "Card gráfico":
+            cards.append(k)
+        elems.append(k)
+    free = [k for k in elems if k not in cards and not any(center_in(geom(k), geom(c), 0) for c in cards)]
+
+    def overlap_x(a, b):
+        return a[0] < b[0] + b[2] - 0.01 and b[0] < a[0] + a[2] - 0.01
+
+    def overlap_y(a, b, tol=0.0):
+        return a[1] < b[1] + b[3] + tol and b[1] < a[1] + a[3] + tol
+
+    used = set()
+    foot_top = min([geom(k)[1] for k in foot] + [10.45])
+    for seed in table_seeds:
+        reg = list(seed)
+        members = []
+        changed = True
+        while changed:
+            changed = False
+            for k in free:
+                if id(k) in used or k in members:
+                    continue
+                g = geom(k)
+                inside_x = g[0] >= reg[0] - 0.12 and g[0] + g[2] <= reg[0] + reg[2] + 0.12
+                if inside_x and overlap_y(g, reg, 0.30) and (g[3] < 4.5 or etree.QName(k).localname == "graphicFrame"):
+                    members.append(k)
+                    nx0, ny0 = min(reg[0], g[0]), min(reg[1], g[1])
+                    nx1, ny1 = max(reg[0] + reg[2], g[0] + g[2]), max(reg[1] + reg[3], g[1] + g[3])
+                    reg = [nx0, ny0, nx1 - nx0, ny1 - ny0]
+                    changed = True
+        if not members:
+            continue
+        for k in members:
+            used.add(id(k))
+        others = [k for k in elems if k not in members]
+        pad = 0.22
+        left_obs = max([geom(k)[0] + geom(k)[2] for k in others if overlap_y(geom(k), reg) and geom(k)[0] + geom(k)[2] <= reg[0] + 0.05] + [LEFT - 10])
+        right_obs = min([geom(k)[0] for k in others if overlap_y(geom(k), reg) and geom(k)[0] >= reg[0] + reg[2] - 0.05] + [RIGHT + 10])
+        cx0 = max(reg[0] - pad, left_obs + 0.15, LEFT)
+        cx1 = min(reg[0] + reg[2] + pad, right_obs - 0.15, RIGHT)
+        above = [geom(k)[1] + geom(k)[3] for k in others if overlap_x(geom(k), [cx0, 0, cx1 - cx0, 1]) and geom(k)[1] + geom(k)[3] <= reg[1] + 0.05]
+        below = [geom(k)[1] for k in others if overlap_x(geom(k), [cx0, 0, cx1 - cx0, 1]) and geom(k)[1] >= reg[1] + reg[3] - 0.05]
+        cy0 = max(reg[1] - pad, max(above + [top_limit]) + 0.08)
+        cy1 = min(reg[1] + reg[3] + pad, min(below + [foot_top]) - 0.12)
+        cy1 = max(cy1, reg[1] + reg[3] + 0.06)
+        cy0 = min(cy0, reg[1] - 0.06)
+        inner = cx1 - cx0 - 2 * pad
+        if inner < reg[2] - 0.005:
+            sx = inner / reg[2]
+            nx0 = cx0 + pad
+            for k in members:
+                g = geom(k)
+                ng = [nx0 + (g[0] - reg[0]) * sx, g[1], g[2] * sx, g[3]]
+                set_geom(k, ng)
+                for gc in k.iter(q("a:gridCol")):
+                    gc.set("w", str(int(int(gc.get("w")) * sx)))
+        card = mk_sp("Card tabela", [cx0, cy0, cx1 - cx0, cy1 - cy0], fill="FFFFFF", line=CARD_LINE, radius=0.12)
+        first = min(members, key=lambda k: list(sptree).index(k))
+        first.addprevious(card)
 
     return subtitle_ids
 
