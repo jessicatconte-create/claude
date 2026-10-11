@@ -1,0 +1,17 @@
+{
+  "name": "motion-studio",
+  "private": true,
+  "type": "module",
+  "description": "Code-rendered motion design: seek(t) scenes, Playwright frame capture, ffmpeg encode.",
+  "scripts": {
+    "render": "node render.mjs",
+    "demo": "node render.mjs scenes/demo",
+    "demo:draft": "node render.mjs scenes/demo --draft",
+    "demo:sheet": "node render.mjs scenes/demo --sheet 12",
+    "demo:vertical": "node render.mjs scenes/demo --size 1080x1920",
+    "demo:square": "node render.mjs scenes/demo --size 1080x1080"
+  },
+  "devDependencies": {
+    "playwright": "1.56.1"
+  }
+}

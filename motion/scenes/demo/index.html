@@ -1,0 +1,287 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="icon" href="data:,">
+<title>demo — motion studio</title>
+<style>
+  html, body { margin: 0; background: #000; overflow: hidden; }
+  canvas { display: block; }
+  #scrub { position: fixed; left: 0; right: 0; bottom: 0; width: 100%; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script type="module">
+import { spring, springTo, track, range, clamp, lerp, easeInOut, easeOut, layout, hex, rgb, mix } from '../../lib/motion.js';
+import { SCENE, PALETTE as P, grid, seq } from './timeline.js';
+
+// ------------------------------------------------------------ stage
+const q = new URLSearchParams(location.search);
+const W = Number(q.get('w') || SCENE.width);
+const H = Number(q.get('h') || SCENE.height);
+const cv = document.getElementById('c');
+cv.width = W; cv.height = H;
+const ctx = cv.getContext('2d');
+const L = layout(W, H);
+const { u, cx, cy } = L;
+const SANS = '"Inter Display", Inter, "Helvetica Neue", Arial, sans-serif';
+const MONO = '"DejaVu Sans Mono", Menlo, monospace';
+const C = Object.fromEntries(Object.entries(P).map(([k, v]) => [k, hex(v)]));
+
+const font = (weight, size, fam = SANS) => (ctx.font = `${weight} ${size}px ${fam}`);
+function rrect(x, y, w, h, r) {
+  r = Math.max(0, Math.min(r, w / 2, h / 2));
+  ctx.beginPath();
+  ctx.roundRect(x, y, w, h, r);
+}
+function cursor(x, y, press) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(1 - 0.18 * press, 1 - 0.18 * press);
+  const s = 3.2 * u / 10;
+  ctx.beginPath();
+  ctx.moveTo(0, 0); ctx.lineTo(0, 17 * s); ctx.lineTo(4.5 * s, 13 * s); ctx.lineTo(7.5 * s, 20 * s);
+  ctx.lineTo(10 * s, 19 * s); ctx.lineTo(7 * s, 12 * s); ctx.lineTo(13 * s, 12 * s); ctx.closePath();
+  ctx.fillStyle = rgb(C.ink); ctx.fill();
+  ctx.lineWidth = 1.4 * s; ctx.strokeStyle = rgb(C.paper); ctx.stroke();
+  ctx.restore();
+}
+// Press is a quick 0 -> 1 -> 0 blip around each click time.
+const press = (t, clicks) => clicks.reduce((m, c) => Math.max(m, Math.exp(-Math.pow((t - c) / 0.06, 2))), 0);
+
+// ------------------------------------------------------------ shots
+function title(t) {
+  const word = 'MOTION';
+  const size = (L.portrait ? 19 : 22) * u;
+  font(800, size);
+  const widths = [...word].map((ch) => ctx.measureText(ch).width);
+  const total = widths.reduce((a, b) => a + b, 0) - (word.length - 1) * size * 0.04;
+  let x = cx - total / 2;
+  ctx.textBaseline = 'alphabetic';
+  [...word].forEach((ch, i) => {
+    const at = 0.25 + i * 0.125; // 8th notes, synced with the plucks
+    const p = spring(t - at, 'snappy');
+    const y = cy + size * 0.35 + (1 - p) * size * 0.9;
+    ctx.save();
+    ctx.beginPath(); ctx.rect(0, cy - size, W, size * 1.38); ctx.clip();
+    ctx.fillStyle = rgb(i === 1 ? C.accent : C.ink);
+    ctx.fillText(ch, x, y);
+    ctx.restore();
+    x += widths[i] - size * 0.04;
+  });
+  // Underline sweeps from the left on beat 3, label lands on beat 4.
+  const lw = springTo(t, grid.beat(2), 0, total, 'default');
+  ctx.fillStyle = rgb(C.ink);
+  ctx.fillRect(cx - total / 2, cy + size * 0.55, lw, Math.max(2, 0.6 * u));
+  const lp = spring(t - grid.beat(3), 'snappy');
+  font(500, 2.6 * u, MONO);
+  ctx.fillStyle = rgb(C.ink, lp);
+  ctx.textAlign = 'left';
+  ctx.fillText('studio · seek(t) · 120 bpm', cx - total / 2, cy + size * 0.55 + 5 * u + (1 - lp) * 2 * u);
+}
+
+function morph(t) {
+  // One shape, never cut: button -> loader -> player -> card. Each state change is
+  // a new spring added at its own beat (track), so motion never restarts.
+  const b = (n) => grid.beat(n);
+  const K = [[0, 'btn'], [b(1), 'loader'], [b(2), 'player'], [b(3), 'card']];
+  const S = {
+    btn: { w: 34 * u, h: 11 * u, r: 5.5 * u, c: C.ink },
+    loader: { w: 13 * u, h: 13 * u, r: 6.5 * u, c: C.accent },
+    player: { w: (L.portrait ? 80 : 70) * u, h: 12 * u, r: 3 * u, c: C.ink },
+    card: { w: 44 * u, h: 52 * u, r: 4 * u, c: C.blue },
+  };
+  const keys = (prop) => K.map(([at, s]) => [at, S[s][prop]]);
+  const w = track(t, keys('w'), 'snappy');
+  const h = track(t, keys('h'), 'snappy');
+  const r = track(t, keys('r'), 'snappy');
+  const col = [0, 1, 2].map((j) => track(t, K.map(([at, s]) => [at, S[s].c[j]]), 'default'));
+  // Entry from nothing.
+  const enter = spring(t - 0.05, 'snappy');
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(enter, enter);
+  rrect(-w / 2, -h / 2, w, h, r);
+  ctx.fillStyle = rgb(col); ctx.fill();
+
+  // Content per state, cross-faded by how close we are to each key.
+  const vis = (i) => {
+    const next = K[i + 1]?.[0] ?? Infinity;
+    const fadeIn = i === 0 ? 1 : range(t, K[i][0] + 0.12, K[i][0] + 0.25);
+    return clamp(fadeIn - range(t, next - 0.08, next));
+  };
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  // button label
+  ctx.fillStyle = rgb(C.paper, vis(0));
+  font(700, 3.6 * u); ctx.fillText('Render', 0, 0.2 * u);
+  // loader arc
+  if (t > K[1][0] && t < K[2][0]) {
+    const a = vis(1);
+    ctx.strokeStyle = rgb(C.paper, a); ctx.lineWidth = 1.2 * u; ctx.lineCap = 'round';
+    const rot = (t - K[1][0]) * 9;
+    ctx.beginPath(); ctx.arc(0, 0, 3.6 * u, rot, rot + 4.2); ctx.stroke();
+  }
+  // player: play glyph + progress
+  if (t > K[2][0] && t < K[3][0]) {
+    const a = vis(2);
+    ctx.fillStyle = rgb(C.paper, a);
+    const px = -w / 2 + 5 * u;
+    ctx.beginPath(); ctx.moveTo(px, -2 * u); ctx.lineTo(px + 3.2 * u, 0); ctx.lineTo(px, 2 * u); ctx.closePath(); ctx.fill();
+    const x0 = px + 7 * u, x1 = w / 2 - 5 * u;
+    ctx.fillStyle = rgb(C.paper, 0.25 * a); ctx.fillRect(x0, -0.35 * u, x1 - x0, 0.7 * u);
+    ctx.fillStyle = rgb(C.accent, a); ctx.fillRect(x0, -0.35 * u, (x1 - x0) * easeInOut(range(t, K[2][0] + 0.1, K[3][0])), 0.7 * u);
+  }
+  // card: lines of "content"
+  if (t > K[3][0]) {
+    const a = vis(3);
+    for (let i = 0; i < 4; i++) {
+      const p = spring(t - K[3][0] - 0.15 - i * 0.06, 'snappy');
+      ctx.fillStyle = rgb(C.paper, a * (i === 0 ? 1 : 0.55));
+      const lw = (i === 0 ? 26 : [32, 24, 29][i - 1]) * u * p;
+      rrect(-w / 2 + 5 * u, -h / 2 + (i === 0 ? 7 : 14 + i * 5) * u, lw, (i === 0 ? 3.6 : 1.8) * u, u);
+      ctx.fill();
+    }
+    ctx.beginPath(); ctx.arc(w / 2 - 9 * u, h / 2 - 9 * u, 4 * u * spring(t - K[3][0] - 0.35, 'playful'), 0, 7);
+    ctx.fillStyle = rgb(C.accent); ctx.fill();
+  }
+  ctx.restore();
+
+  // A cursor drives each change with a real click just before the beat.
+  const clicks = [K[1][0] - 0.06, K[3][0] - 0.06];
+  const cxk = [[0, cx + 30 * u], [0.12, cx + 6 * u], [K[2][0] + 0.2, cx + 26 * u], [K[3][0] - 0.35, cx + 2 * u], [K[3][0] + 0.4, cx + 30 * u]];
+  const cyk = [[0, cy + 30 * u], [0.12, cy + 2 * u], [K[2][0] + 0.2, cy + 20 * u], [K[3][0] - 0.35, cy + 4 * u], [K[3][0] + 0.4, cy + 34 * u]];
+  cursor(track(t, cxk, 'default'), track(t, cyk, 'default'), press(t, clicks));
+}
+
+function dotGrid(t) {
+  const cols = L.portrait ? 9 : 15;
+  const rows = L.portrait ? 15 : 8;
+  const gap = Math.min(W / (cols + 1), H / (rows + 1));
+  const pulse = grid.pulse(t, 5);
+  const beatIdx = grid.at(t).index;
+  for (let i = 0; i < cols; i++) {
+    for (let j = 0; j < rows; j++) {
+      const x = cx + (i - (cols - 1) / 2) * gap;
+      const y = cy + (j - (rows - 1) / 2) * gap;
+      const d = Math.hypot(i - (cols - 1) / 2, j - (rows - 1) / 2);
+      const appear = spring(t - d * 0.035, 'snappy');
+      const wave = Math.sin(d * 0.9 - t * 7) * 0.5 + 0.5;
+      const rad = gap * (0.1 + 0.18 * wave * (0.5 + pulse)) * appear;
+      const hot = (i + j + beatIdx) % 7 === 0;
+      ctx.beginPath(); ctx.arc(x, y, rad, 0, 7);
+      ctx.fillStyle = rgb(hot ? C.accent : C.ink, hot ? 1 : 0.85);
+      ctx.fill();
+    }
+  }
+}
+
+function chart(t) {
+  const vals = [32, 48, 41, 63, 57, 78, 94];
+  const n = vals.length;
+  const cw = (L.portrait ? 84 : 110) * u;
+  const ch = 52 * u;
+  const bw = cw / n * 0.62;
+  const x0 = cx - cw / 2, y0 = cy + ch / 2;
+  ctx.fillStyle = rgb(C.ink);
+  ctx.fillRect(x0, y0, cw * spring(t, 'default'), Math.max(2, 0.4 * u));
+  vals.forEach((v, i) => {
+    const p = spring(t - 0.15 - i * 0.11, i === n - 1 ? 'playful' : 'snappy');
+    const bh = (v / 100) * ch * p;
+    const x = x0 + (i + 0.19) * (cw / n);
+    rrect(x, y0 - bh, bw, bh, 0.8 * u);
+    ctx.fillStyle = rgb(i === n - 1 ? C.accent : C.ink, i === n - 1 ? 1 : 0.88);
+    ctx.fill();
+    if (i === n - 1) {
+      font(800, 7 * u); ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+      ctx.fillStyle = rgb(C.accent, clamp(p));
+      ctx.fillText(`+${Math.round(v * clamp(p))}%`, x + bw / 2, y0 - bh - 1.5 * u);
+    }
+  });
+  font(500, 2.6 * u, MONO); ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+  ctx.fillStyle = rgb(C.ink, spring(t - grid.beat(1), 'snappy'));
+  ctx.fillText('closed-form springs · no keyframes', x0, y0 + 3 * u);
+}
+
+function lockup(t) {
+  // Lands on the downbeat with the impact, holds, then clears so the last frame = first frame.
+  const inP = spring(t, 'heavy');
+  const outP = easeInOut(range(t, 1.45, 1.95));
+  const size = (L.portrait ? 15 : 16) * u;
+  font(800, size, MONO);
+  ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  ctx.save();
+  ctx.translate(cx, cy - 2 * u);
+  const sc = lerp(1.25, 1, inP) * (1 - 0.15 * outP);
+  ctx.scale(sc, sc);
+  const parts = [['seek(', C.ink], ['t', C.accent], [')', C.ink]];
+  const total = parts.reduce((a, [s]) => a + ctx.measureText(s).width, 0);
+  let x = -total / 2;
+  const alpha = clamp(inP * 1.4) * (1 - outP);
+  for (const [s, c] of parts) {
+    ctx.fillStyle = rgb(c, alpha);
+    ctx.fillText(s, x, 0);
+    x += ctx.measureText(s).width;
+  }
+  ctx.restore();
+  ctx.textAlign = 'center';
+  const sp = spring(t - grid.beat(1), 'snappy') * (1 - outP);
+  font(500, 2.8 * u, MONO);
+  ctx.fillStyle = rgb(C.ink, sp);
+  ctx.fillText('every frame is a function of time', cx, cy + size * 0.75 + (1 - sp) * 2 * u);
+}
+
+const SHOTS = { title, morph, grid: dotGrid, chart, lockup };
+
+// Accent wipe across each cut: covers 0.2s before to 0.2s after the bar line.
+function wipe(t) {
+  for (const s of seq.shots.slice(1)) {
+    const a = range(t, s.start - 0.22, s.start);
+    const b = range(t, s.start, s.start + 0.22);
+    if (a <= 0 || b >= 1) continue;
+    const x0 = easeOut(b) * W * 1.2 - W * 0.1;
+    const x1 = easeInOut(a) * W * 1.2 - W * 0.1;
+    ctx.fillStyle = rgb(C.accent);
+    ctx.beginPath();
+    ctx.moveTo(x0, 0); ctx.lineTo(x1 + 0.1 * W, 0); ctx.lineTo(x1, H); ctx.lineTo(x0 - 0.1 * W, H); ctx.closePath();
+    ctx.fill();
+  }
+}
+
+// ------------------------------------------------------------- seek
+function seek(t) {
+  t = clamp(t, 0, SCENE.duration - 1e-6);
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.globalAlpha = 1;
+  ctx.textAlign = 'left';
+  ctx.fillStyle = rgb(C.paper);
+  ctx.fillRect(0, 0, W, H);
+  const { shot, local } = seq.at(t);
+  ctx.save();
+  SHOTS[shot.name](local);
+  ctx.restore();
+  wipe(t);
+}
+
+window.SCENE = SCENE;
+window.seek = seek;
+window.ready = document.fonts.ready;
+seek(0);
+
+// Preview mode: open the page in a browser (no ?w) to play it / scrub with a slider.
+if (!q.has('w')) {
+  const fit = () => { const s = Math.min(innerWidth / W, (innerHeight - 24) / H); cv.style.width = W * s + 'px'; };
+  fit(); addEventListener('resize', fit);
+  const r = Object.assign(document.createElement('input'), { type: 'range', id: 'scrub', min: 0, max: SCENE.duration, step: 1 / SCENE.fps, value: 0 });
+  document.body.append(r);
+  let playing = true, t0 = performance.now();
+  r.oninput = () => { playing = false; seek(+r.value); };
+  cv.onclick = () => { playing = !playing; t0 = performance.now() - r.value * 1000; };
+  (function loop(now) {
+    if (playing) { const t = ((now - t0) / 1000) % SCENE.duration; r.value = t; seek(t); }
+    requestAnimationFrame(loop);
+  })(performance.now());
+}
+</script>
+</body>
+</html>
