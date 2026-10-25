@@ -647,6 +647,8 @@ h1, .sectionhead h2 { font-family: var(--serif); font-weight: 600; letter-spacin
 #tendtab td:nth-child(2), #tendtab th:nth-child(2) { text-align: left; }
 #tendtab td:last-child { white-space: nowrap; }
 figure > *, details > .tw { min-width: 0; }
+.sectionhead.subsec { border-top: 1px solid var(--grid); padding-top: 16px; margin-top: 8px; }
+.sectionhead.subsec h3 { margin: 0; font: 600 16px var(--serif); }
 </style>
 
 <div class="wrap">
@@ -822,11 +824,19 @@ figure > *, details > .tw { min-width: 0; }
 
   <figure id="modelos">
     <div class="sectionhead">
-      <h2>Projeções · vários modelos</h2>
+      <h2>Projeções · vários modelos e pesquisas</h2>
       <p>Cada modelo estima o resultado final a partir das urnas já apuradas, com métodos diferentes. Nenhum é oficial: o resultado que vale é o do TSE.</p>
     </div>
     <div class="tw"><table class="pt modt" id="modtab"></table></div>
     <figcaption>Os modelos externos são lidos das páginas públicas de cada autor a cada atualização deste painel (de 5 em 5 minutos). Faixa: intervalo em que o modelo espera o resultado final de Flávio, com o nível de confiança indicado. Mahlmeister não publica a chance de vitória no 2º turno; ela é calculada aqui supondo uma distribuição normal dentro da faixa de 95%.</figcaption>
+      <div class="sectionhead subsec">
+      <h3>Pesquisas do 2º turno · tendência</h3>
+      <p>Todas as pesquisas do 2º turno pela data de divulgação, em % dos votos válidos. Linhas: média móvel (a pesquisa mais recente de cada instituto nos últimos 7 dias).</p>
+    </div>
+    <p class="note" id="tendres"></p>
+    <svg class="g2c" id="tendsvg" role="img" aria-label="Evolução de Flávio e Lula nas pesquisas do 2º turno por data de divulgação"></svg>
+    <details class="how ptfold" open><summary>Pesquisas por data de divulgação</summary><div class="tw"><table class="pt" id="tendtab"></table></div></details>
+    <figcaption>* Data de divulgação estimada (dia seguinte ao fim do campo), quando a fonte não informa. Valores em % dos válidos como divulgados pelos institutos ou pelo Poder360; o total (com brancos, nulos e indecisos) aparece quando publicado. Sem pesquisas de 2º turno de Ipec e Paraná Pesquisas. Fontes: Folha/Datafolha, Globo/Quaest, Bloomberg/AtlasIntel, Poder360/PoderData, Metrópoles, CNN Brasil, Gazeta do Povo, Exame, O Povo, Money Times, Jornal do Comércio e a lista do <a href="https://www.poder360.com.br/poder-eleicoes-2026/saiba-como-estao-lula-e-flavio-nas-pesquisas-a-1-dia-da-eleicao/" target="_blank" rel="noopener">Poder360</a>.</figcaption>
   </figure>
 
   <figure id="mapa2">
@@ -890,17 +900,6 @@ figure > *, details > .tw { min-width: 0; }
     <div class="jogo" id="ext2tot"></div>
     <div class="tw"><table class="pt duf" id="ext2tab"></table></div>
     <figcaption id="ext2cap"></figcaption>
-  </figure>
-
-  <figure id="tend2">
-    <div class="sectionhead">
-      <h2>Pesquisas do 2º turno · tendência</h2>
-      <p>Todas as pesquisas do 2º turno pela data de divulgação, em % dos votos válidos. Linhas: média móvel (a pesquisa mais recente de cada instituto nos últimos 7 dias).</p>
-    </div>
-    <p class="note" id="tendres"></p>
-    <svg class="g2c" id="tendsvg" role="img" aria-label="Evolução de Flávio e Lula nas pesquisas do 2º turno por data de divulgação"></svg>
-    <details class="how ptfold" open><summary>Pesquisas por data de divulgação</summary><div class="tw"><table class="pt" id="tendtab"></table></div></details>
-    <figcaption>* Data de divulgação estimada (dia seguinte ao fim do campo), quando a fonte não informa. Valores em % dos válidos como divulgados pelos institutos ou pelo Poder360; o total (com brancos, nulos e indecisos) aparece quando publicado. Sem pesquisas de 2º turno de Ipec e Paraná Pesquisas. Fontes: Folha/Datafolha, Globo/Quaest, Bloomberg/AtlasIntel, Poder360/PoderData, Metrópoles, CNN Brasil, Gazeta do Povo, Exame, O Povo, Money Times, Jornal do Comércio e a lista do <a href="https://www.poder360.com.br/poder-eleicoes-2026/saiba-como-estao-lula-e-flavio-nas-pesquisas-a-1-dia-da-eleicao/" target="_blank" rel="noopener">Poder360</a>.</figcaption>
   </figure>
 
   <figure id="segundo">
@@ -2553,7 +2552,7 @@ const LAND = "M311.8,399.6L315.4,401.3L319.3,401.9L318.1,403.3L315.4,403.5L314.0
   const b2 = T.br && T.br.vv > 0 ? T.br : null;
   const f1 = v => v.toLocaleString("pt-BR", {minimumFractionDigits: 1, maximumFractionDigits: 1});
   const fech = Date.parse("2026-10-25T17:00:00-03:00");
-  const CURTO = {duelo: "Placar", graf2: "Evolução", modelos: "Projeções", mapa2: "Mapa", tend2: "Tendência", emjogo: "Votos em jogo", duf: "Estados", reg2: "Regiões", gov2: "Governadores",
+  const CURTO = {duelo: "Placar", graf2: "Evolução", modelos: "Projeções", mapa2: "Mapa", emjogo: "Votos em jogo", duf: "Estados", reg2: "Regiões", gov2: "Governadores",
     ext2: "Exterior", segundo: "Pesquisas", abstencao: "Abstenção", voto: "Seu voto",
     status: "Placar", porestado: "Estados", exterior: "Exterior", senado: "Senado", governo: "Governadores", outros: "Outros", pesquisas: "Pesquisas", fluxo: "2022 → 2026"};
   const aba = () => $("aba2").hidden ? $("aba1") : $("aba2");
