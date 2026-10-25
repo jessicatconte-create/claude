@@ -2082,19 +2082,21 @@ const f1n = v => v.toFixed(1).replace(".", ",");
   }
   function palco() {
     const ex = foco === "ZZ" ? dadosExterior() : null;
-    const B = ex ? ex.B : foco ? ESTADOS[foco] : B1, t2 = ex ? ex.t2 : foco ? vivoUF(foco) : b2;
+    // antes das 17h o TSE não divulga nada; o placar do Brasil soma os boletins de urna do exterior já noticiados
+    const pre = !foco && !b2 ? dadosExterior() : null, preT = pre && pre.t2;
+    const B = ex ? ex.B : foco ? ESTADOS[foco] : B1, t2 = ex ? ex.t2 : foco ? vivoUF(foco) : b2 || preT;
     const nome = ex ? "Exterior" : foco ? (NOMEUF2[foco] || foco) : "Brasil";
     const fv = t2 ? t2.fv : 0, lv = t2 ? t2.lv : 0, fp = t2 ? t2.flavio : 0, lp = t2 ? t2.lula : 0;
     // válidos esperados: projeção do 2º turno pelo andamento; antes disso, os válidos do 1º turno
-    const esperado = t2 && t2.pct > 0 ? t2.vv / (t2.pct / 100) : B.vv / ((B.pct || 100) / 100);
+    const esperado = t2 && t2.pct > 0 && !preT ? t2.vv / (t2.pct / 100) : B.vv / ((B.pct || 100) / 100);
     const wf = Math.min(100, 100 * fv / esperado), wl = Math.min(100 - wf, 100 * lv / esperado);
     const p1 = ent(B.fv, B.lv);
     const lado = (r, nm, pa, foto, cor, pc, vt, base) => `<div class="du-side${r}" style="--c:${cor}">
       <span class="ring du-ring" style="--p:${t2 ? Math.max(0, Math.min(100, pc)).toFixed(2) : 0}" title="${t2 ? f2(pc) + "%" : "aguardando"}"><img src="${foto}" alt=""></span><div class="nm">${nm}</div><div class="pa">${pa}</div>
-      ${t2 ? `<div class="pc">${f2(pc)}%</div><div class="vt">${vt.toLocaleString("pt-BR")} votos</div>`
+      ${t2 ? `<div class="pc">${f2(pc)}%</div><div class="vt">${vt.toLocaleString("pt-BR")} votos${preT ? " · só exterior, boletins de urna" : ""}</div>`
            : `<div class="pc espera">0,00%</div><div class="vt">0 votos · aguardando a apuração</div>`}</div>`;
     let virar = "";
-    if (t2 && t2.pct < 100 && !(ex && ex.parcial)) {
+    if (t2 && !preT && t2.pct < 100 && !(ex && ex.parcial)) {
       const resto = Math.max(0, esperado - t2.vv), d = Math.abs(fv - lv), atras = fv > lv ? "Lula" : "Flávio";
       const s = resto > 0 ? (resto + d) / (2 * resto) : 2;
       virar = `<div class="virar">${s > 1 ? `Pela estimativa, ${atras} não alcança mais${foco ? " aqui" : ""}: faltam ~${mi(resto)} votos válidos e a diferença é de ${mi(d)}.`
@@ -2105,7 +2107,7 @@ const f1n = v => v.toFixed(1).replace(".", ",");
     const meio = ex && ex.parcial && t2 ? `<div class="ey">Exterior · boletins de urna</div>
         <div class="clock">${ex.n} países</div>
         <div class="sub">Soma dos boletins noticiados até ${t2.hms}; cobre ${f1(t2.pct)}% dos votos válidos do exterior no 1º turno. Não é a totalização do TSE.</div>`
-      : t2 ? `<div class="ey">${nome} · 2º turno</div>
+      : t2 && !preT ? `<div class="ey">${nome} · 2º turno</div>
         <div class="clock">${f2(t2.pct)}%</div>
         <div class="sub">das seções totalizadas · TSE ${t2.hms || ""}<span id="du-idade"></span></div>${virar}${!foco && window.PROJ ? (() => { const P = window.PROJ, fl = P.med >= 50, ch = fl ? P.pf : 1 - P.pf;
           return `<div class="virar proj"><span class="k2">Projeção da noite</span><b style="color:${fl ? "var(--flavio-tx)" : "var(--lula)"}">${fl ? "Flávio" : "Lula"} ${f1(fl ? P.med : 100 - P.med)}%</b>
@@ -2113,7 +2115,8 @@ const f1n = v => v.toFixed(1).replace(".", ",");
             <details class="how"><summary>Como é calculada</summary><p>Cada estado termina com a parte de Flávio das urnas já apuradas, corrigida pelo quanto a ordem de chegada das urnas mudou o resultado no 2º turno de 2022 no mesmo estado e no mesmo ponto da apuração (em São Paulo, por exemplo, as primeiras urnas favoreciam Bolsonaro). Estados ainda sem voto seguem o 1º turno, deslocado pela mudança média já vista (${P.swing >= 0 ? "+" : "−"}${f1(Math.abs(P.swing))} ponto para Flávio). A faixa vem de 4.000 simulações com erro em cada estado, que diminui conforme a apuração avança, e um erro comum a todos. É uma estimativa estatística simples, não um resultado.</p></details></div>`; })() : ""}`
       : `<div class="ey">${nome} · 2º turno · 25 de outubro</div>
         <div class="clock" id="du-clock">–</div>
-        <div class="sub" id="du-clock-sub">As urnas fecham às 17h (Brasília) em todo o país; só então o TSE divulga os votos.</div>`;
+        <div class="sub" id="du-clock-sub">As urnas fecham às 17h (Brasília) em todo o país; só então o TSE divulga os votos.</div>${preT ? `
+        <div class="virar"><span class="k2" style="display:block">Já contando: exterior</span>Os números somam os boletins de urna de ${pre.n} países noticiados até ${preT.hms}, que cobrem ${f1(preT.pct)}% dos votos válidos do exterior no 1º turno. Não é a totalização do TSE; às 17h ela substitui esta soma.</div>` : ""}`;
     $("duelo").innerHTML = `<div class="du-top">
         ${lado("", "Flávio Bolsonaro", "PL · 22", RETRATOS.flavio, "var(--flavio)", fp, fv, p1)}
         <div class="du-mid">${topo}${meio}<div class="du-mapw" id="du-mapw"></div></div>
@@ -2135,7 +2138,7 @@ const f1n = v => v.toFixed(1).replace(".", ",");
         e.textContent = m < 1 ? " · agora há pouco" : m < 60 ? ` · há ${m} min` : ` · há ${Math.floor(m / 60)} h ${m % 60} min`; setTimeout(idade, 30000); };
       idade();
     }
-    if (!t2) {
+    if (!t2 || preT) {
       const tick = () => {
         const c = $("du-clock"); if (!c) return;
         const r = fech - Date.now();
@@ -2195,7 +2198,7 @@ const f1n = v => v.toFixed(1).replace(".", ",");
   }
 
   palco(); jogo(); duf(); cartao();
-  if (foco === "ZZ") addEventListener("DOMContentLoaded", palco);   // boletins e mapa-múndi vêm de scripts mais abaixo
+  if (foco === "ZZ" || !b2) addEventListener("DOMContentLoaded", palco);   // boletins do exterior e mapa-múndi vêm de scripts mais abaixo
 })();
 </script>
 
