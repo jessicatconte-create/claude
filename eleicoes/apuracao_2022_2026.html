@@ -756,7 +756,7 @@ h1, .sectionhead h2 { font-family: var(--serif); font-weight: 600; letter-spacin
       <p id="duf-sub">Flávio × Lula só entre os dois: no 1º turno e, quando a apuração começar, no 2º. Ordenado pelos votos dos outros candidatos em jogo em cada estado.</p>
     </div>
     <div class="tw"><table class="pt duf" id="duftab"></table></div>
-    <figcaption>Barra: parte do candidato do PL (azul; Jair Bolsonaro em 2022) e de Lula (vermelho) nos votos dados aos dois. "Em jogo": votos válidos do 1º turno que foram para os demais candidatos. Variação: quanto a parte de Flávio entre os dois mudou do 1º para o 2º turno, em pontos. vs 2022: parte de Flávio agora (2º turno quando houver, senão 1º) menos a de Bolsonaro no 2º turno de 2022; ▲ = o PL cresceu. 2022: boletins finais do TSE.</figcaption>
+    <figcaption>Barra: parte do candidato do PL (azul; Jair Bolsonaro em 2022) e de Lula (vermelho) nos votos dados aos dois. "Em jogo": votos válidos do 1º turno que foram para os demais candidatos. Mudança desde o 1º turno: quanto a parte de Flávio entre os dois mudou do 1º para o 2º turno de 2026, em pontos. Mudança desde 2022: parte de Flávio no 2º turno de 2026 menos a de Jair Bolsonaro no 2º turno de 2022; ▲ = o PL cresceu, ▼ = Lula cresceu. As duas colunas aparecem quando o TSE divulgar os votos do 2º turno. 2022: boletins finais do TSE.</figcaption>
   </figure>
 
   <figure id="reg2">
@@ -1844,9 +1844,9 @@ const f1n = v => v.toFixed(1).replace(".", ",");
       .sort((a, b) => b.out - a.out);
     const bar = p => p == null ? `<div class="mcabo" aria-hidden="true"></div>` : `<div class="mcabo" aria-hidden="true"><i class="f" style="width:${p}%"></i><i class="l" style="width:${100 - p}%"></i></div>`;
     const lab = p => p == null ? "" : `<div class="lab"><span style="color:var(--flavio-tx)">${f1(p)}%</span><span style="color:var(--lula)">${f1(100 - p)}%</span></div>`;
-    $("duftab").innerHTML = `<thead><tr><th>UF</th><th style="text-align:left">2022 · 2º turno</th><th style="text-align:left">2026 · 1º turno</th><th>Em jogo</th><th style="text-align:left">2026 · 2º turno</th><th>Variação</th><th>vs 2022</th></tr></thead><tbody>
+    $("duftab").innerHTML = `<thead><tr><th>UF</th><th style="text-align:left">2022 · 2º turno</th><th style="text-align:left">2026 · 1º turno</th><th>Em jogo</th><th style="text-align:left">2026 · 2º turno</th><th>Mudança desde o 1º turno</th><th>Mudança desde 2022</th></tr></thead><tbody>
       ${linhas.map(({uf, out, p1, t}) => { const p2 = t ? ent(t.fv, t.lv) : null, d = p2 == null ? null : p2 - p1;
-        const r22 = typeof T2_22 !== "undefined" && T2_22 && T2_22.uf[uf], p22 = r22 ? 100 * r22[2] / (r22[1] + r22[2]) : null, d22 = p22 == null ? null : (p2 == null ? p1 : p2) - p22;
+        const r22 = typeof T2_22 !== "undefined" && T2_22 && T2_22.uf[uf], p22 = r22 ? 100 * r22[2] / (r22[1] + r22[2]) : null, d22 = p22 == null || p2 == null ? null : p2 - p22;
         return `<tr><td><b>${uf}</b></td><td style="text-align:left">${bar(p22)}${lab(p22)}</td><td style="text-align:left">${bar(p1)}${lab(p1)}</td><td>${mi(out)}</td>
         <td style="text-align:left">${bar(p2)}${p2 == null ? `<div class="lab"><span>aguardando</span></div>` : lab(p2).replace("</div>", `<span>${f1(t.pct)}% apurado</span></div>`)}</td>
         <td>${d == null ? "–" : `<span style="color:${d >= 0 ? "var(--flavio-tx)" : "var(--lula)"}">${d >= 0 ? "Flávio +" : "Lula +"}${f1(Math.abs(d))}</span>`}</td>
