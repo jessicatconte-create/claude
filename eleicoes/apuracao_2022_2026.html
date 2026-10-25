@@ -1920,14 +1920,20 @@ const f1n = v => v.toFixed(1).replace(".", ",");
     const e = ESTADOS[uf], t = T.estados[uf], p1 = 100 * e.fv / (e.fv + e.lv);
     if (t && t.vv > 0 && t.st > 0) {
       const pct = 100 * t.st / t.ts, fp = 100 * t.fv / (t.fv + t.lv), b = (V[uf] || [])[Math.round(pct)] || 0;
-      return {uf, vivo: true, pct, p1, fp, hat: fp - b, sd: Math.max(0.3, 0.5 * Math.abs(b) + 2.5 * (1 - pct / 100)), tot: (t.fv + t.lv) / (pct / 100)};
+      return {uf, vivo: true, pct, p1, fp, obs: fp - b, sd: Math.max(0.3, 0.5 * Math.abs(b) + 2.5 * (1 - pct / 100)), tot: (t.fv + t.lv) / (pct / 100)};
     }
     return {uf, vivo: false, pct: 0, p1, tot: e.fv + e.lv};
   });
   // mudança média (2º − 1º turno) nos estados já apurados, ponderada pelos votos
   const vivos = ufs.filter(u => u.vivo), wsum = vivos.reduce((a, u) => a + u.tot * u.pct, 0) || 1;
-  const swing = vivos.reduce((a, u) => a + (u.hat - u.p1) * u.tot * u.pct, 0) / wsum;
-  ufs.forEach(u => { if (!u.vivo) { u.hat = u.p1 + swing; u.sd = 3; } });
+  const swingBruto = vivos.reduce((a, u) => a + (u.obs - u.p1) * u.tot * u.pct, 0) / wsum;
+  // com pouca urna apurada no país, a mudança média vale pouco: encolhe para zero (pesa metade com 3% do eleitorado apurado)
+  const cob = vivos.reduce((a, u) => a + u.tot * u.pct / 100, 0) / (ufs.reduce((a, u) => a + u.tot, 0) || 1);
+  const swing = swingBruto * cob / (cob + 0.03);
+  // em cada estado, as poucas primeiras urnas pesam pouco: mistura com o 1º turno deslocado (metade/metade com 2% apurado)
+  ufs.forEach(u => { const base = u.p1 + swing;
+    if (u.vivo) { const w = u.pct / (u.pct + 2); u.hat = w * u.obs + (1 - w) * base; u.sd = Math.max(u.sd, 3 * (1 - w)); }
+    else { u.hat = base; u.sd = 3; } });
   const ext = T.ext && T.ext.vv > 0 ? T.ext : null, X1 = (typeof EXTERIOR !== "undefined" && EXTERIOR && EXTERIOR.total) || null;
   const exh = ext ? {hat: 100 * ext.fv / (ext.fv + ext.lv), sd: 4 * (1 - (ext.pct || 0) / 100) + 0.5, tot: (ext.fv + ext.lv) / Math.max(0.05, (ext.pct || 0) / 100)}
     : X1 ? {hat: 100 * X1.fv / (X1.fv + X1.lv) + swing, sd: 6, tot: X1.fv + X1.lv} : null;
@@ -1971,12 +1977,13 @@ const f1n = v => v.toFixed(1).replace(".", ",");
   const bar = (o) => { if (!o.ok) return `<div class="mtr vazio"></div>`;
     const X = v => Math.max(0, Math.min(100, (60 - v) / 20 * 100));   // Flávio à esquerda
     return `<div class="mtr" aria-hidden="true"><span class="m50"></span><span class="mfx" style="left:${X(o.hi)}%;width:${X(o.lo) - X(o.hi)}%"></span><span class="mpt" style="left:${X(o.med)}%;background:${o.med >= 50 ? "var(--flavio-sm)" : "var(--lula)"}"></span></div>`; };
-  el.innerHTML = `<thead><tr><th>Modelo</th><th style="text-align:left">Resultado projetado <small>(Flávio 60% ← 50% → Lula 60%)</small></th><th>Projeção</th><th>Faixa</th><th>Chance de Flávio</th><th>Apurado</th></tr></thead><tbody>
+  el.innerHTML = `<thead><tr><th>Modelo</th><th style="text-align:left">Resultado projetado <small>(Flávio 60% ← 50% → Lula 60%)</small></th><th>Projeção</th><th>Faixa</th><th>Chance de vencer</th><th>Apurado</th></tr></thead><tbody>
     ${linhas.map(o => `<tr${o.ok ? "" : ' class="sem"'}><td><a href="${o.link}"${o.link.startsWith("http") ? ' target="_blank" rel="noopener"' : ""}><b>${o.nome}</b></a><span class="sub">${o.metodo}</span></td>
       <td style="text-align:left;min-width:160px">${bar(o)}</td>
-      <td>${o.ok ? `<span style="color:${o.med >= 50 ? "var(--flavio-tx)" : "var(--lula)"}">Flávio ${f1(o.med)}%</span><span class="sub">Lula ${f1(100 - o.med)}%</span>` : `<span class="sub">${o.espera}</span>`}</td>
-      <td>${o.ok ? `${f1(o.lo)}–${f1(o.hi)}<span class="sub">${o.faixa}</span>` : "–"}</td>
-      <td>${o.ok ? `<b>${fmt(o.chance)}</b><span class="sub">${o.chanceNota}</span>` : "–"}</td>
+      <td>${o.ok ? (o.med >= 50 ? `<b style="color:var(--flavio-tx)">Flávio ${f1(o.med)}%</b><span class="sub">Lula ${f1(100 - o.med)}%</span>`
+        : `<b style="color:var(--lula)">Lula ${f1(100 - o.med)}%</b><span class="sub">Flávio ${f1(o.med)}%</span>`) : `<span class="sub">${o.espera}</span>`}</td>
+      <td>${o.ok ? (o.med >= 50 ? `Flávio ${f1(o.lo)}–${f1(o.hi)}` : `Lula ${f1(100 - o.hi)}–${f1(100 - o.lo)}`) + `<span class="sub">${o.faixa}</span>` : "–"}</td>
+      <td>${o.ok ? (o.chance >= .5 ? `<b style="color:var(--flavio-tx)">Flávio ${fmt(o.chance)}</b>` : `<b style="color:var(--lula)">Lula ${fmt(1 - o.chance)}</b>`) + `<span class="sub">${o.chanceNota}</span>` : "–"}</td>
       <td>${o.pct != null && o.ok ? f1(o.pct) + "%" : "–"}</td></tr>`).join("")}</tbody>`;
   // o topo usa o primeiro modelo pronto, na ordem do histórico (Mahlmeister, ElectoMaps, este painel, pesquisas)
   window.MELHOR = linhas.find(o => o.ok && o.chance != null);
@@ -2160,7 +2167,7 @@ const f1n = v => v.toFixed(1).replace(".", ",");
         <div class="sub">das seções totalizadas · TSE ${t2.hms || ""}<span id="du-idade"></span></div>${virar}${!foco && window.PROJ ? (() => { const P = window.PROJ, fl = P.med >= 50, ch = fl ? P.pf : 1 - P.pf;
           return `<div class="virar proj"><span class="k2">Projeção da noite</span><b style="color:${fl ? "var(--flavio-tx)" : "var(--lula)"}">${fl ? "Flávio" : "Lula"} ${f1(fl ? P.med : 100 - P.med)}%</b>
             <span>faixa provável: Flávio ${f1(P.lo)}% a ${f1(P.hi)}% · ${ch > .995 ? "vitória de " + (fl ? "Flávio" : "Lula") + " praticamente certa" : `chance de ${fl ? "Flávio" : "Lula"} vencer: ${Math.round(100 * ch)}%`}</span>
-            <details class="how"><summary>Como é calculada</summary><p>Cada estado termina com a parte de Flávio das urnas já apuradas, corrigida pelo quanto a ordem de chegada das urnas mudou o resultado no 2º turno de 2022 no mesmo estado e no mesmo ponto da apuração (em São Paulo, por exemplo, as primeiras urnas favoreciam Bolsonaro). Estados ainda sem voto seguem o 1º turno, deslocado pela mudança média já vista (${P.swing >= 0 ? "+" : "−"}${f1(Math.abs(P.swing))} ponto para Flávio). A faixa vem de 4.000 simulações com erro em cada estado, que diminui conforme a apuração avança, e um erro comum a todos. É uma estimativa estatística simples, não um resultado.</p></details></div>`; })() : ""}`
+            <details class="how"><summary>Como é calculada</summary><p>Em palavras simples: <b>1.</b> Em cada estado, olhamos as urnas já apuradas. <b>2.</b> Corrigimos pela ordem de chegada: em 2022, as primeiras urnas de cada estado eram diferentes do resultado final (em São Paulo, favoreciam Bolsonaro), e descontamos essa diferença. <b>3.</b> Enquanto um estado tem poucas urnas apuradas, ele vale mais pelo resultado do 1º turno do que por essas poucas urnas; conforme a apuração avança, as urnas passam a mandar. <b>4.</b> Estados ainda sem voto usam o 1º turno, ajustado pela mudança média vista nos outros (agora: ${Math.abs(P.swing) < 0.05 ? "praticamente nenhuma" : `${f1(Math.abs(P.swing))} ponto ${P.swing >= 0 ? "a favor de Flávio" : "a favor de Lula"}`}). <b>5.</b> Somamos o Brasil e repetimos a conta 4.000 vezes, sorteando erros; a faixa mostra onde caem 90% dessas contas. No começo da noite ela é pouco confiável: prefira os modelos de Mahlmeister e ElectoMaps.</p></details></div>`; })() : ""}`
       : `<div class="ey">${nome} · 2º turno · 25 de outubro</div>
         <div class="clock" id="du-clock">–</div>
         <div class="sub" id="du-clock-sub">As urnas fecham às 17h (Brasília) em todo o país; só então o TSE divulga os votos.</div>${preT ? `
