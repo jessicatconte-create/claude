@@ -1709,7 +1709,7 @@ const f1n = v => v.toFixed(1).replace(".", ",");
   const b2l = typeof T2 !== "undefined" && T2 && T2.br && T2.br.vv > 0 ? T2.br : null;
   const fx = v => v.toLocaleString("pt-BR", {minimumFractionDigits: 2, maximumFractionDigits: 2});
   const lede2 = b2l ? `<b>${b2l.flavio >= b2l.lula ? "Flávio Bolsonaro" : "Lula"}</b> lidera o 2º turno por ${fx(Math.abs(b2l.flavio - b2l.lula))} pontos com ${fx(b2l.pct)}% apurado.`
-    : `Flávio chegou ao 2º turno ${fx(BR.flavio - BR.lula)} pontos à frente (${fx(BR.flavio)}% × ${fx(BR.lula)}%). As pesquisas finais indicam empate técnico. A votação vai até as 17h, e a apuração aparece aqui.`;
+    : `Lula × Flávio Bolsonaro. A votação vai até as 17h (Brasília) e a apuração do TSE aparece aqui em seguida. As pesquisas finais indicam empate técnico.`;
   function abrir(n, foco) {
     tabs.forEach(([t, p, ey], i) => {
       const on = i === n;
@@ -1751,13 +1751,13 @@ const f1n = v => v.toFixed(1).replace(".", ",");
     svg.setAttribute("viewBox", "0 0 613 639"); svg.setAttribute("class", "du-map"); svg.setAttribute("role", "img");
     svg.setAttribute("aria-label", "Mapa: quem lidera em cada estado; clique para ver o estado no placar");
     Object.keys(PATHS).forEach(uf => {
-      const t = vivoUF(uf), e = ESTADOS[uf], p = t ? ent(t.fv, t.lv) : e ? ent(e.fv, e.lv) : null;
+      const t = vivoUF(uf), p = t ? ent(t.fv, t.lv) : null;
       const path = document.createElementNS(NS, "path");
       path.setAttribute("d", PATHS[uf]); path.setAttribute("tabindex", 0); path.setAttribute("data-uf", uf);
       const cor = p == null ? "var(--nodata)" : p >= 50 ? "var(--flavio)" : "var(--lula)";
-      path.setAttribute("fill", t ? `color-mix(in srgb, ${cor} ${Math.round(35 + 65 * t.pct / 100)}%, var(--bg))` : `color-mix(in srgb, ${cor} 45%, var(--bg))`);
+      path.setAttribute("fill", t ? `color-mix(in srgb, ${cor} ${Math.round(35 + 65 * t.pct / 100)}%, var(--bg))` : "var(--land)");
       if (foco && foco !== uf) path.setAttribute("opacity", ".35");
-      const tt = document.createElementNS(NS, "title"); tt.textContent = `${NOMEUF2[uf] || uf}${p == null ? "" : ` · Flávio ${f1(p)}% × Lula ${f1(100 - p)}%${t ? "" : " (1º turno)"}`}`; path.appendChild(tt);
+      const tt = document.createElementNS(NS, "title"); tt.textContent = `${NOMEUF2[uf] || uf}${p == null ? " · aguardando a apuração" : ` · Flávio ${f1(p)}% × Lula ${f1(100 - p)}% · ${f1(t.pct)}% apurado`}`; path.appendChild(tt);
       const ir = () => { foco = foco === uf ? null : uf; palco(); };
       path.addEventListener("click", ir); path.addEventListener("keydown", ev => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); ir(); } });
       svg.appendChild(path);
@@ -1775,7 +1775,7 @@ const f1n = v => v.toFixed(1).replace(".", ",");
     const lado = (r, nm, pa, foto, cor, pc, vt, base) => `<div class="du-side${r}" style="--c:${cor}">
       <img src="${foto}" alt=""><div class="nm">${nm}</div><div class="pa">${pa}</div>
       ${t2 ? `<div class="pc">${f2(pc)}%</div><div class="vt">${vt.toLocaleString("pt-BR")} votos</div>`
-           : `<div class="pc espera">${f1(base)}%</div><div class="vt">no 1º turno, só entre os dois</div>`}</div>`;
+           : `<div class="pc espera">0,00%</div><div class="vt">0 votos · aguardando a apuração</div>`}</div>`;
     let virar = "";
     if (t2 && t2.pct < 100) {
       const resto = Math.max(0, esperado - t2.vv), d = Math.abs(fv - lv), atras = fv > lv ? "Lula" : "Flávio";
@@ -1801,7 +1801,7 @@ const f1n = v => v.toFixed(1).replace(".", ",");
           <i class="cf" style="width:${wf}%"></i><i class="cl" style="width:${wl}%"></i></div>
         <div class="cabo-lg"><span>${t2 ? mi(fv) + " votos" : ""}</span><span>Listrado: votos válidos ainda por apurar (estimativa)</span><span>${t2 ? mi(lv) + " votos" : ""}</span></div>
       </div>
-      <p class="du-note">${t2 ? `Ponto de partida em ${nome}, 1º turno só entre os dois: Flávio ${f1(p1)}% × Lula ${f1(100 - p1)}%.` : "Antes das 17h, os números são do 1º turno, em cinza."} Clique num estado no mapa para vê-lo no placar. Os lados não trocam de lugar quando a liderança vira.</p>`;
+      <p class="du-note">Clique num estado no mapa para vê-lo no placar. ${t2 ? "" : "O mapa se pinta conforme o TSE apura cada estado. "}Os lados não trocam de lugar quando a liderança vira.</p>`;
     $("du-mapw").appendChild(miniMapa());
     $("du-sel").addEventListener("change", e => { foco = e.target.value || null; palco(); });
     if ($("du-br")) $("du-br").addEventListener("click", () => { foco = null; palco(); });
@@ -1963,7 +1963,7 @@ const f1n = v => v.toFixed(1).replace(".", ",");
   const dados = uf => {
     const e = ESTADOS[uf], t = vivo(uf), r = R22[uf];
     const p1 = e ? ent(e.fv, e.lv) : null, p2 = t ? ent(t.fv, t.lv) : null, p22 = r ? 100 * r[2] / (r[1] + r[2]) : null;
-    return {uf, e, t, r, p1, p2, p22, cur: p2 != null ? p2 : p1};
+    return {uf, e, t, r, p1, p2, p22, cur: p2};
   };
   const mix = (cor, k) => `color-mix(in srgb, ${cor} ${Math.round(k)}%, var(--panel))`;
   const lado = v => v >= 0 ? "var(--flavio)" : "var(--lula)";
@@ -1975,7 +1975,7 @@ const f1n = v => v.toFixed(1).replace(".", ",");
     return d.cur == null ? null : d.cur - 50;
   }
   function cor(d) {
-    const v = valor(d); if (v == null) return "var(--nodata)";
+    const v = valor(d); if (v == null) return "var(--land)";
     if (modo === "resultado") return mix(lado(v), d.t ? 35 + 65 * d.t.pct / 100 : 100);
     return mix(lado(v), K[banda(Math.abs(v), modo === "margem" ? CM : CV)]);
   }
@@ -1987,7 +1987,7 @@ const f1n = v => v.toFixed(1).replace(".", ",");
   }
   function legenda() {
     const sub = $("m2-sub"), leg = $("m2-leg");
-    const fonte = temVoto ? "2º turno em apuração" : "o 2º turno ainda não começou: o mapa mostra o 1º turno só entre Flávio e Lula";
+    const fonte = temVoto ? "2º turno em apuração" : "a apuração começa às 17h e o mapa se pinta conforme o TSE divulga cada estado";
     const ramp = cortes => `<div class="ramp">${[...K].reverse().map(k => `<i style="background:${mix("var(--lula)", k)}"></i>`).join("")}${K.map(k => `<i style="background:${mix("var(--flavio)", k)}"></i>`).join("")}</div>`;
     if (modo === "resultado") {
       sub.textContent = `Quem lidera em cada estado; ${fonte}.` + (temVoto ? " Cor mais clara: menos urnas apuradas." : "");
@@ -1996,7 +1996,7 @@ const f1n = v => v.toFixed(1).replace(".", ",");
       sub.textContent = `Diferença entre os dois em cada estado; ${fonte}.`;
       leg.innerHTML = `${ramp(CM)}<div class="ends"><span>Lula +40</span><span>empate</span><span>Flávio +40</span></div><div>Faixas da diferença, em pontos: até 5, 10, 20, 30, 40 e mais.</div>`;
     } else {
-      sub.textContent = `Quanto a parte de Flávio entre os dois mudou ${base === "2022" ? "em relação a Jair Bolsonaro no 2º turno de 2022" : "em relação ao 1º turno de 2026"}; ${temVoto ? "2º turno em apuração" : base === "1t" ? "a variação aparece quando houver votos do 2º turno" : "por enquanto, 1º turno de 2026"}.`;
+      sub.textContent = `Quanto a parte de Flávio entre os dois mudou ${base === "2022" ? "em relação a Jair Bolsonaro no 2º turno de 2022" : "em relação ao 1º turno de 2026"}; ${temVoto ? "2º turno em apuração" : "aparece quando o TSE divulgar os primeiros votos, às 17h"}.`;
       leg.innerHTML = `${ramp(CV)}<div class="ends"><span>Lula cresceu</span><span>igual</span><span>PL cresceu</span></div><div>Faixas, em pontos: até 1, 2,5, 5, 7,5, 10 e mais.</div>`;
     }
     $("m2-base").style.display = modo === "variacao" ? "" : "none";
@@ -2004,8 +2004,7 @@ const f1n = v => v.toFixed(1).replace(".", ",");
   function detalhe(d) {
     const nome = (typeof NOMES !== "undefined" && NOMES[d.uf]) || d.uf, par = p => p == null ? "–" : `Flávio ${f1(p)}% × Lula ${f1(100 - p)}%`;
     $("m2-det").innerHTML = `<b>${nome}</b><br>
-      2º turno 2026: ${d.t ? `${par(d.p2)} · ${f1(d.t.pct)}% apurado` : "aguardando"}<br>
-      1º turno 2026: ${par(d.p1)}<br>
+      2º turno 2026: ${d.t ? `${par(d.p2)} · ${f1(d.t.pct)}% apurado` : "aguardando a apuração"}<br>
       2º turno 2022: ${d.p22 == null ? "–" : `Bolsonaro ${f1(d.p22)}% × Lula ${f1(100 - d.p22)}%`}`;
   }
   function desenhar() {
