@@ -49,7 +49,7 @@ def ler(j):
     lula, flavio = cands[LULA], cands[FLAVIO]
     return {
         "pct": num(j["s"]["pstn"]), "st": int(j["s"]["st"]), "ts": int(j["s"]["ts"]),
-        "hora": j["ht"][:5].replace(":", "h"), "hms": j["ht"], "data": j["dt"], "vv": int(j["v"]["vv"]), "tv": int(j["v"]["tv"]), "est": int(j["e"]["est"]), "comp": int(j["e"]["c"]), "abst": int(j["e"]["a"]), "vb": int(j["v"]["vb"]), "vn": int(j["v"]["tvn"]),
+        "hora": j["ht"][:5].replace(":", "h"), "hms": j["ht"], "data": j["dt"], "vv": int(j["v"]["vv"]), "tv": int(j["v"]["tv"]), "est": int(j["e"]["est"]), "te": int(j["e"].get("te", 0)), "comp": int(j["e"]["c"]), "abst": int(j["e"]["a"]), "vb": int(j["v"]["vb"]), "vn": int(j["v"]["tvn"]),
         "lula": num(lula["pvapn"]), "flavio": num(flavio["pvapn"]),
         "lv": int(lula["vap"]), "fv": int(flavio["vap"]),
     }
@@ -107,7 +107,7 @@ def cargo_por_uf(c, anterior=None):
 def somar(partes, nacional):
     """Total do Brasil somando as UFs e o exterior. O arquivo nacional do TSE às vezes fica parado
     enquanto os das UFs seguem atualizando; vale o que estiver mais adiantado."""
-    t = {k: sum(p.get(k, 0) for p in partes) for k in ("st", "ts", "vv", "tv", "lv", "fv", "est", "comp", "abst", "vb", "vn")}
+    t = {k: sum(p.get(k, 0) for p in partes) for k in ("st", "ts", "vv", "tv", "lv", "fv", "est", "te", "comp", "abst", "vb", "vn")}
     # alguns arquivos (exterior, UFs em outro fuso) trazem horário local: vale o mais recente que já passou em Brasília
     agora = datetime.now(timezone(timedelta(hours=-3)))
     quando = lambda p: datetime.strptime(p["data"] + " " + p["hms"], "%d/%m/%Y %H:%M:%S").replace(tzinfo=agora.tzinfo)

@@ -43,7 +43,7 @@ except OSError:
 try:  # 2º turno (monitor_2t.py)
     with open("dados_2t_2026.json") as f:
         t2 = json.load(f)
-    t2 = {"br": {c: t2["br"][c] for c in campos + ("hms", "data", "est", "comp", "abst", "vb", "vn", "eleito") if c in t2["br"]},
+    t2 = {"br": {c: t2["br"][c] for c in campos + ("hms", "data", "est", "te", "comp", "abst", "vb", "vn", "eleito") if c in t2["br"]},
           "estados": {k: {c: v[c] for c in campos if c in v} for k, v in t2["estados"].items()}, "serie": t2.get("serie", []), "gov": t2.get("gov"), "modelos": t2.get("modelos"),
           "ext": {c: t2["exterior"][c] for c in campos if c in t2["exterior"]} if t2.get("exterior") else None}
 except (OSError, ValueError, KeyError):
