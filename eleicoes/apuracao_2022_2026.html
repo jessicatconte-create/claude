@@ -2192,7 +2192,7 @@ const f1n = v => v.toFixed(1).replace(".", ",");
         <div class="sub">das seções totalizadas · TSE ${t2.hms || ""}<span id="du-idade"></span></div>${virar}${!foco && (window.MELHOR || window.PROJ) ? (() => {
           // o mesmo modelo do topo do card de projeções; sem nenhum externo pronto, a projeção deste painel. Lula sempre em destaque.
           const M = window.MELHOR, P = M ? {med: M.med, lo: M.lo, hi: M.hi, pf: M.chance} : window.PROJ, ch = 1 - P.pf;
-          return `<div class="virar proj"><span class="k2">Projeção da noite${M ? " · " + M.nome.split(" / ")[0] : " · este painel"}</span><b style="color:var(--lula)">Lula ${f1(100 - P.med)}%</b>
+          return `<div class="virar proj"><span class="k2">Projeção da noite</span><b style="color:var(--lula)">Lula ${f1(100 - P.med)}%</b>
             <b style="color:var(--flavio-tx);font-size:15px">Flávio ${f1(P.med)}%</b>
             <span>faixa provável para Lula: ${f1(100 - P.hi)}% a ${f1(100 - P.lo)}%</span>
             <span>${ch > .995 ? "vitória de Lula praticamente certa" : ch < .005 ? "derrota de Lula praticamente certa" : `chance de Lula vencer: ${Math.round(100 * ch)}%`}</span>
