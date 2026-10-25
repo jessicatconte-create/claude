@@ -5,7 +5,7 @@
 /* Layout: boletim de apuração. Cabeçalho, placar 2026 x 2022 no mesmo ponto, gráfico, tabela. */
 :root {
   --bg: #0a0a0a; --panel: #151515; --fg: #f5f5f5; --muted: #a3a3a3; --faint: #777777; --brand: #dc5a6a;
-  --grid: #2a2a2a; --rule: #3d3d3d; --lula: #ff3859; --flavio: #304091; --flavio-tx: #6880d7; --nodata: #1f1f1f; --s1: #1f3a2a; --s2: #2a5a3c; --s3: #3f8257; --s4: #62ab7a; --s5: #9bd3ac; color-scheme: dark;
+  --grid: #2a2a2a; --rule: #3d3d3d; --lula: #ff3859; --flavio: #304091; --flavio-tx: #6880d7; --flavio-sm: #4a5cc8; --st1: #1f1f1f; --st2: #2a2a2a; --land: #262626; --nodata: #1f1f1f; --s1: #1f3a2a; --s2: #2a5a3c; --s3: #3f8257; --s4: #62ab7a; --s5: #9bd3ac; color-scheme: dark;
   --serif: "Playfair Display", Georgia, "Times New Roman", serif;
   --display: "Libre Franklin", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "Libre Franklin", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -439,7 +439,7 @@ h1, .sectionhead h2 { font-family: var(--serif); font-weight: 600; letter-spacin
 .du-mid .sub { font-size: 13px; color: var(--muted); line-height: 1.5; max-width: 34ch; }
 .du-mid .virar { font-size: 13px; line-height: 1.5; border: 1px solid var(--rule); border-radius: 10px; padding: 8px 12px; max-width: 36ch; }
 .cabo { position: relative; height: 26px; border-radius: 4px; overflow: hidden;
-  background: repeating-linear-gradient(135deg, #1f1f1f 0 6px, #2a2a2a 6px 12px); }
+  background: repeating-linear-gradient(135deg, var(--st1) 0 6px, var(--st2) 6px 12px); }
 .cabo i { position: absolute; top: 0; bottom: 0; transition: width .6s ease; }
 .cabo .cf { left: 0; background: var(--flavio); }
 .cabo .cl { right: 0; background: var(--lula); }
@@ -455,9 +455,9 @@ h1, .sectionhead h2 { font-family: var(--serif); font-weight: 600; letter-spacin
 .jogo span { font-size: 12px; color: var(--muted); line-height: 1.45; }
 .jogo .k { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
 .duf td { vertical-align: middle; }
-.mcabo { display: flex; height: 10px; border-radius: 3px; overflow: hidden; min-width: 120px; background: repeating-linear-gradient(135deg, #1f1f1f 0 4px, #2a2a2a 4px 8px); position: relative; }
+.mcabo { display: flex; height: 10px; border-radius: 3px; overflow: hidden; min-width: 120px; background: repeating-linear-gradient(135deg, var(--st1) 0 4px, var(--st2) 4px 8px); position: relative; }
 .mcabo::after { content: ""; position: absolute; left: 50%; top: -2px; bottom: -2px; width: 1px; background: var(--fg); opacity: .7; }
-.mcabo .f { background: var(--flavio); } .mcabo .l { background: var(--lula); margin-left: auto; }
+.mcabo .f { background: var(--flavio-sm); } .mcabo .l { background: var(--lula); margin-left: auto; }
 .duf .lab { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-top: 3px; gap: 8px; }
 @media (max-width: 760px) {
   .du-top { grid-template-columns: 1fr 1fr; }
@@ -513,6 +513,49 @@ h1, .sectionhead h2 { font-family: var(--serif); font-weight: 600; letter-spacin
 .stx.fe { background: var(--grid); color: var(--fg); }
 .stx.vo { background: transparent; color: var(--muted); border: 1px solid var(--rule); }
 #ext2tab tr.sem td { color: var(--muted); }
+.du-mid .du-scope { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.du-scope select { background: var(--panel); color: var(--fg); border: 1px solid var(--rule); border-radius: 99px; font: 500 13px var(--display); padding: 6px 12px; }
+.du-mapw { width: 100%; display: flex; justify-content: center; }
+.du-map { width: 100%; max-width: 260px; height: auto; }
+.du-map path { stroke: var(--bg); stroke-width: 1.2; cursor: pointer; transition: opacity .15s; }
+.du-map path:hover, .du-map path:focus-visible { stroke: var(--fg); stroke-width: 2.5; outline: none; }
+.du-side .pc.espera { color: var(--muted); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media (max-width: 760px) { .du-map { max-width: 220px; } }
+
+.toolbar { position: sticky; top: var(--tabs-h, 58px); z-index: 4; background: var(--bg); display: flex; gap: 10px 16px; align-items: center; justify-content: space-between; flex-wrap: wrap; padding: 8px 0 10px; border-bottom: 1px solid var(--grid); margin-top: -22px; }
+.indice { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; min-width: 0; flex: 1 1 auto; }
+.indice::-webkit-scrollbar { display: none; }
+.indice a { color: var(--muted); text-decoration: none; font-size: 13px; padding: 5px 10px; border-radius: 99px; white-space: nowrap; border: 1px solid transparent; }
+.indice a:hover, .indice a:focus-visible { color: var(--fg); border-color: var(--rule); outline: none; }
+.tb-dir { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.selo { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.btn.sm { padding: 5px 12px; font-size: 12px; }
+.live.parado::before { animation: none; background: var(--muted); }
+#ext2tab:not(.tudo) tr.sem { display: none; }
+#ext2mais { margin: 10px 6px 0; }
+.ptfold { padding-inline: 6px; }
+.ptfold > summary { font-size: 13px; }
+:root[data-theme="light"] { --bg: #ffffff; --panel: #f5f5f3; --fg: #111827; --muted: #565d6b; --faint: #8a909c; --grid: #e5e7eb; --rule: #d1d5db; --nodata: #e2e2df;
+  --lula: #e0284a; --flavio: #304091; --flavio-tx: #304091; --flavio-sm: #304091; --st1: #ececea; --st2: #dcdcd8; --land: #e2e2df; color-scheme: light; }
+:root[data-theme="light"] .du-side img, :root[data-theme="light"] .eleito-arte .box2 { box-shadow: none; }
+@media (max-width: 760px) {
+  .jogo { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .jogo b { font-size: 20px; }
+  .g2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .g2 > div { padding: 10px; }
+  .toolbar { margin-top: -14px; }
+  .tb-dir .selo { flex-basis: 100%; }
+}
+.wrap > *, .tabpanel > * { min-width: 0; }
+.toolbar { min-width: 0; }
+.indice { flex: 1 1 320px; }
+@media (max-width: 760px) {
+  .status { grid-template-columns: 1fr; }
+  .status .abs { padding-left: 0; border-left: 0; }
+}
+@media (max-width: 520px) { .bar > * { min-width: 0; } .bar .y22 { font-size: 11px; white-space: normal; flex-wrap: wrap; } .bar .cnt, .bar .cnt * { white-space: normal; } .bar { overflow: hidden; } }
+@media (max-width: 760px) { .pe-grid { grid-template-columns: minmax(0, 1fr) !important; } }
 </style>
 
 <div class="wrap">
@@ -526,6 +569,10 @@ h1, .sectionhead h2 { font-family: var(--serif); font-weight: 600; letter-spacin
     <button type="button" role="tab" id="tab-t1" aria-controls="aba1" aria-selected="false">1º turno<small>4 de outubro</small></button>
     <button type="button" role="tab" id="tab-t2" aria-controls="aba2" aria-selected="true">2º turno<small>25 de outubro</small></button>
   </nav>
+  <div class="toolbar">
+    <nav class="indice" id="indice" aria-label="Nesta aba"></nav>
+    <div class="tb-dir"><span class="selo" id="selo"></span><button type="button" class="btn sm" id="copiar">Copiar link</button><button type="button" class="btn sm" id="tema" aria-pressed="false">Tema claro</button></div>
+  </div>
 
   <div class="tabpanel" id="aba1" role="tabpanel" aria-labelledby="tab-t1" hidden>
   <section class="status" id="status" aria-label="Andamento da apuração"></section>
@@ -695,10 +742,6 @@ h1, .sectionhead h2 { font-family: var(--serif); font-weight: 600; letter-spacin
     </div>
   </figure>
 
-  <section class="hero one" aria-label="Placar do 2º turno">
-    <div class="card now" id="now2"></div>
-  </section>
-
   <figure id="emjogo">
     <div class="sectionhead">
       <h2>Votos em jogo</h2>
@@ -715,6 +758,18 @@ h1, .sectionhead h2 { font-family: var(--serif); font-weight: 600; letter-spacin
     <div class="tw"><table class="pt duf" id="duftab"></table></div>
     <figcaption>Barra: parte do candidato do PL (azul; Jair Bolsonaro em 2022) e de Lula (vermelho) nos votos dados aos dois. "Em jogo": votos válidos do 1º turno que foram para os demais candidatos. Variação: quanto a parte de Flávio entre os dois mudou do 1º para o 2º turno, em pontos. vs 2022: parte de Flávio agora (2º turno quando houver, senão 1º) menos a de Bolsonaro no 2º turno de 2022; ▲ = o PL cresceu. 2022: boletins finais do TSE.</figcaption>
   </figure>
+
+  <figure id="reg2">
+    <div class="sectionhead">
+      <h2>Região a região</h2>
+      <p>Soma dos estados de cada região: Flávio × Lula só entre os dois, em 2022, no 1º turno e no 2º turno de 2026.</p>
+    </div>
+    <div class="tw"><table class="pt duf" id="regtab"></table></div>
+  </figure>
+
+  <section class="hero one" aria-label="Placar do 2º turno">
+    <div class="card now" id="now2"></div>
+  </section>
 
   <figure id="gov2">
     <div class="sectionhead">
@@ -742,7 +797,7 @@ h1, .sectionhead h2 { font-family: var(--serif); font-weight: 600; letter-spacin
     </div>
     <svg class="dots" id="dots2" role="img" aria-label="Diferença Flávio menos Lula em cada pesquisa do 2º turno"></svg>
     <div class="seg-top">
-      <div class="tw"><table class="pt" id="pt2"></table></div>
+      <details class="how ptfold"><summary>Ver as pesquisas em tabela</summary><div class="tw"><table class="pt" id="pt2"></table></div></details>
       <div class="box resumo" id="t2res"></div>
     </div>
     <details class="fold simfold"><summary><div class="sectionhead"><h2>Simulador do 2º turno</h2><p>Mexa nos votos dos outros candidatos e na abstenção para ver quem venceria.</p></div></summary><div class="box sim" id="sim"></div></details>
@@ -1193,9 +1248,9 @@ const f1n = v => v.toFixed(1).replace(".", ",");
     <tr class="ref"><td>Apuração agora<span class="sub">${fmt(a[0])}% apurado</span></td><td>${f1(a[2])}%</td><td>${f1(a[3])}%</td><td>${lead(a[3], a[2])}</td><td></td></tr>
     ${pf != null ? `<tr class="ref"><td>Projeção da apuração<span class="sub">estimativa simples</span></td><td>${f1(pl)}%</td><td>${f1(pf)}%</td><td>${lead(pf, pl)}</td><td>0</td></tr>` : ""}</tbody>`;
   document.getElementById("pt2").innerHTML = `
-    <thead><tr><th>Pesquisa</th><th>${thav("lula", "Lula")}</th><th>${thav("flavio", "Flávio")}</th><th>Vantagem</th></tr></thead><tbody>
-    ${P2.map(p => `<tr><td>${p.i}<span class="sub">${p.d}${p.nota ? " · " + p.nota : ""}${p.tend ? " · Flávio: " + p.tend : ""}</span></td><td>${f1(p.l)}%</td><td>${f1(p.f)}%</td><td>${lead(p.f, p.l)}</td></tr>`).join("")}
-    <tr class="ref"><td>Média das ${P2.length} pesquisas<span class="sub">simples, sem peso por amostra</span></td><td>${f1(P2.reduce((a, p) => a + p.l, 0) / P2.length)}%</td><td>${f1(P2.reduce((a, p) => a + p.f, 0) / P2.length)}%</td><td>${lead(P2.reduce((a, p) => a + p.f, 0) / P2.length, P2.reduce((a, p) => a + p.l, 0) / P2.length)}</td></tr></tbody>`;
+    <thead><tr><th>Pesquisa</th><th>${thav("flavio", "Flávio")}</th><th>${thav("lula", "Lula")}</th><th>Vantagem</th></tr></thead><tbody>
+    ${P2.map(p => `<tr><td>${p.i}<span class="sub">${p.d}${p.nota ? " · " + p.nota : ""}${p.tend ? " · Flávio: " + p.tend : ""}</span></td><td>${f1(p.f)}%</td><td>${f1(p.l)}%</td><td>${lead(p.f, p.l)}</td></tr>`).join("")}
+    <tr class="ref"><td>Média das ${P2.length} pesquisas<span class="sub">simples, sem peso por amostra</span></td><td>${f1(P2.reduce((a, p) => a + p.f, 0) / P2.length)}%</td><td>${f1(P2.reduce((a, p) => a + p.l, 0) / P2.length)}%</td><td>${lead(P2.reduce((a, p) => a + p.f, 0) / P2.length, P2.reduce((a, p) => a + p.l, 0) / P2.length)}</td></tr></tbody>`;
 
   // gráfico de pontos: vantagem Flávio − Lula
   const svgD = document.getElementById("dots");
@@ -1227,7 +1282,7 @@ const f1n = v => v.toFixed(1).replace(".", ",");
       if (eBest) mk("rect", {x: 4, y: y - rh / 2 + 2, width: Wd - 8, height: rh - 4, rx: 8, fill: "var(--s4)", opacity: .14});
       mk("text", {x: lab - 10, y: y + 4, "text-anchor": "end", style: p.media || eBest ? "fill:var(--fg);font-weight:500" : ""}).textContent = (eBest ? "★ " : "") + p.i + (p.d && Wd >= 520 ? ` · ${p.d}` : "");
       if (pf != null) mk("line", {x1: Xd(d), x2: Xd(pf - pl), y1: y, y2: y, stroke: "var(--faint)", "stroke-width": 1.5, "stroke-dasharray": "2 3"});
-      mk("circle", {cx: Xd(d), cy: y, r: p.media ? 7 : 5.5, fill: d >= 0 ? "var(--flavio)" : "var(--lula)", stroke: "var(--panel)", "stroke-width": 2});
+      mk("circle", {cx: Xd(d), cy: y, r: p.media ? 7 : 5.5, fill: d >= 0 ? "var(--flavio-sm)" : "var(--lula)", stroke: "var(--panel)", "stroke-width": 2});
     });
   }
   drawDots();
@@ -1664,7 +1719,7 @@ const f1n = v => v.toFixed(1).replace(".", ",");
     });
     if (foco) $(tabs[n][0]).focus();
     try { localStorage.setItem("aba", n); } catch (e) {}
-    history.replaceState(null, "", n ? "#2turno" : "#1turno");
+    if (!location.hash.startsWith(n ? "#2turno" : "#1turno")) history.replaceState(null, "", n ? "#2turno" : "#1turno");
   }
   tabs.forEach(([t], i) => {
     $(t).addEventListener("click", () => abrir(i));
@@ -1672,7 +1727,7 @@ const f1n = v => v.toFixed(1).replace(".", ",");
   });
   let ini = 1;
   try { const v = localStorage.getItem("aba"); if (v != null) ini = +v; } catch (e) {}
-  if (location.hash === "#1turno") ini = 0; else if (location.hash === "#2turno") ini = 1;
+  if (location.hash.startsWith("#1turno")) ini = 0; else if (location.hash.startsWith("#2turno")) ini = 1;
   abrir(ini);
 
   // ---------- números ----------
@@ -1686,55 +1741,85 @@ const f1n = v => v.toFixed(1).replace(".", ",");
   const fech = Date.parse("2026-10-25T17:00:00-03:00");
 
   // ---------- palco ----------
+  // recorte do palco: null = Brasil; ou a sigla de um estado (clique no mapa ou escolha na lista)
+  let foco = null;
+  try { const h = /uf=([A-Z]{2})/.exec(location.hash); if (h && ESTADOS[h[1]]) foco = h[1]; } catch (e) {}
+  const NOMEUF2 = typeof NOMES !== "undefined" ? NOMES : {};
+  const vivoUF = uf => { const t = T && T.estados && T.estados[uf]; return t && t.vv > 0 ? t : null; };
+  function miniMapa() {
+    const NS = "http://www.w3.org/2000/svg", svg = document.createElementNS(NS, "svg");
+    svg.setAttribute("viewBox", "0 0 613 639"); svg.setAttribute("class", "du-map"); svg.setAttribute("role", "img");
+    svg.setAttribute("aria-label", "Mapa: quem lidera em cada estado; clique para ver o estado no placar");
+    Object.keys(PATHS).forEach(uf => {
+      const t = vivoUF(uf), e = ESTADOS[uf], p = t ? ent(t.fv, t.lv) : e ? ent(e.fv, e.lv) : null;
+      const path = document.createElementNS(NS, "path");
+      path.setAttribute("d", PATHS[uf]); path.setAttribute("tabindex", 0); path.setAttribute("data-uf", uf);
+      const cor = p == null ? "var(--nodata)" : p >= 50 ? "var(--flavio)" : "var(--lula)";
+      path.setAttribute("fill", t ? `color-mix(in srgb, ${cor} ${Math.round(35 + 65 * t.pct / 100)}%, var(--bg))` : `color-mix(in srgb, ${cor} 45%, var(--bg))`);
+      if (foco && foco !== uf) path.setAttribute("opacity", ".35");
+      const tt = document.createElementNS(NS, "title"); tt.textContent = `${NOMEUF2[uf] || uf}${p == null ? "" : ` · Flávio ${f1(p)}% × Lula ${f1(100 - p)}%${t ? "" : " (1º turno)"}`}`; path.appendChild(tt);
+      const ir = () => { foco = foco === uf ? null : uf; palco(); };
+      path.addEventListener("click", ir); path.addEventListener("keydown", ev => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); ir(); } });
+      svg.appendChild(path);
+    });
+    return svg;
+  }
   function palco() {
-    const fv = b2 ? b2.fv : 0, lv = b2 ? b2.lv : 0;
-    const fp = b2 ? b2.flavio : 0, lp = b2 ? b2.lula : 0;
+    const B = foco ? ESTADOS[foco] : B1, t2 = foco ? vivoUF(foco) : b2;
+    const nome = foco ? (NOMEUF2[foco] || foco) : "Brasil";
+    const fv = t2 ? t2.fv : 0, lv = t2 ? t2.lv : 0, fp = t2 ? t2.flavio : 0, lp = t2 ? t2.lula : 0;
     // válidos esperados: projeção do 2º turno pelo andamento; antes disso, os válidos do 1º turno
-    const esperado = b2 && b2.pct > 0 ? b2.vv / (b2.pct / 100) : B1.vv / (B1.pct / 100);
+    const esperado = t2 && t2.pct > 0 ? t2.vv / (t2.pct / 100) : B.vv / ((B.pct || 100) / 100);
     const wf = Math.min(100, 100 * fv / esperado), wl = Math.min(100 - wf, 100 * lv / esperado);
-    const lado = (r, nome, pa, foto, cor, pc, vt) => `<div class="du-side${r}" style="--c:${cor}">
-      <img src="${foto}" alt=""><div class="nm">${nome}</div><div class="pa">${pa}</div>
-      <div class="pc">${b2 ? f2(pc) + "%" : "–"}</div><div class="vt">${b2 ? vt.toLocaleString("pt-BR") + " votos" : "aguardando a apuração"}</div></div>`;
-    // quanto quem está atrás precisa dos votos que faltam
+    const p1 = ent(B.fv, B.lv);
+    const lado = (r, nm, pa, foto, cor, pc, vt, base) => `<div class="du-side${r}" style="--c:${cor}">
+      <img src="${foto}" alt=""><div class="nm">${nm}</div><div class="pa">${pa}</div>
+      ${t2 ? `<div class="pc">${f2(pc)}%</div><div class="vt">${vt.toLocaleString("pt-BR")} votos</div>`
+           : `<div class="pc espera">${f1(base)}%</div><div class="vt">no 1º turno, só entre os dois</div>`}</div>`;
     let virar = "";
-    if (b2 && b2.pct < 100) {
-      const resto = Math.max(0, esperado - b2.vv), d = Math.abs(fv - lv), atras = fv > lv ? "Lula" : "Flávio";
+    if (t2 && t2.pct < 100) {
+      const resto = Math.max(0, esperado - t2.vv), d = Math.abs(fv - lv), atras = fv > lv ? "Lula" : "Flávio";
       const s = resto > 0 ? (resto + d) / (2 * resto) : 2;
-      virar = `<div class="virar">${s > 1 ? `Pela estimativa, ${atras} não alcança mais: faltam ~${mi(resto)} votos válidos e a diferença é de ${mi(d)}.`
-        : `Para virar, ${atras} precisa de <b>${f1(100 * s)}%</b> dos ~${mi(resto)} votos válidos que faltam.`}</div>`;
+      virar = `<div class="virar">${s > 1 ? `Pela estimativa, ${atras} não alcança mais${foco ? " aqui" : ""}: faltam ~${mi(resto)} votos válidos e a diferença é de ${mi(d)}.`
+        : `Para virar${foco ? " em " + nome : ""}, ${atras} precisa de <b>${f1(100 * s)}%</b> dos ~${mi(resto)} votos válidos que faltam.`}</div>`;
     }
-    const meio = b2 ? `<div class="ey">2º turno · domingo, 25 de outubro</div>
-        <div class="clock">${f2(b2.pct)}%</div>
-        <div class="sub">das seções totalizadas · TSE ${b2.hms || ""}<span id="du-idade"></span></div>${virar}`
-      : `<div class="ey">2º turno · domingo, 25 de outubro</div>
+    const opts = `<option value="">Brasil</option>` + Object.keys(ESTADOS).sort((a, b) => (NOMEUF2[a] || a).localeCompare(NOMEUF2[b] || b)).map(u => `<option value="${u}"${u === foco ? " selected" : ""}>${NOMEUF2[u] || u}</option>`).join("");
+    const topo = `<div class="du-scope"><label class="sr" for="du-sel">Ver no placar</label><select id="du-sel">${opts}</select>${foco ? `<button type="button" class="btn" id="du-br">← Brasil</button>` : ""}</div>`;
+    const meio = t2 ? `<div class="ey">${nome} · 2º turno</div>
+        <div class="clock">${f2(t2.pct)}%</div>
+        <div class="sub">das seções totalizadas · TSE ${t2.hms || ""}<span id="du-idade"></span></div>${virar}`
+      : `<div class="ey">${nome} · 2º turno · 25 de outubro</div>
         <div class="clock" id="du-clock">–</div>
         <div class="sub" id="du-clock-sub">As urnas fecham às 17h (Brasília) em todo o país; só então o TSE divulga os votos.</div>`;
-    const p1 = ent(B1.fv, B1.lv);
     $("duelo").innerHTML = `<div class="du-top">
-        ${lado("", "Flávio Bolsonaro", "PL · 22", FOTOS.flavio, "var(--flavio)", fp, fv)}
-        <div class="du-mid">${meio}</div>
-        ${lado(" r", "Lula", "PT · 13", FOTOS.lula, "var(--lula)", lp, lv)}
+        ${lado("", "Flávio Bolsonaro", "PL · 22", FOTOS.flavio, "var(--flavio)", fp, fv, p1)}
+        <div class="du-mid">${topo}${meio}<div class="du-mapw" id="du-mapw"></div></div>
+        ${lado(" r", "Lula", "PT · 13", FOTOS.lula, "var(--lula)", lp, lv, 100 - p1)}
       </div>
       <div class="cabo-wrap"><span class="meio" aria-hidden="true"></span>
-        <div class="cabo" role="img" aria-label="${b2 ? `Flávio ${f2(fp)}%, Lula ${f2(lp)}%, ${f2(b2.pct)}% apurado` : "Apuração ainda não começou"}">
+        <div class="cabo" role="img" aria-label="${t2 ? `${nome}: Flávio ${f2(fp)}%, Lula ${f2(lp)}%, ${f2(t2.pct)}% apurado` : "Apuração ainda não começou"}">
           <i class="cf" style="width:${wf}%"></i><i class="cl" style="width:${wl}%"></i></div>
-        <div class="cabo-lg"><span>${b2 ? mi(fv) + " votos" : ""}</span><span>Listrado: votos válidos ainda por apurar (estimativa)</span><span>${b2 ? mi(lv) + " votos" : ""}</span></div>
+        <div class="cabo-lg"><span>${t2 ? mi(fv) + " votos" : ""}</span><span>Listrado: votos válidos ainda por apurar (estimativa)</span><span>${t2 ? mi(lv) + " votos" : ""}</span></div>
       </div>
-      <p class="du-note">Ponto de partida, 1º turno só entre os dois: Flávio ${f1(p1)}% × Lula ${f1(100 - p1)}%. Os lados não trocam de lugar quando a liderança vira.</p>`;
-    if (b2 && b2.hms && b2.data) {   // há quanto tempo o TSE totalizou este boletim
-      const [d, mo, y] = b2.data.split("/"), quando = Date.parse(`${y}-${mo}-${d}T${b2.hms}-03:00`);
+      <p class="du-note">${t2 ? `Ponto de partida em ${nome}, 1º turno só entre os dois: Flávio ${f1(p1)}% × Lula ${f1(100 - p1)}%.` : "Antes das 17h, os números são do 1º turno, em cinza."} Clique num estado no mapa para vê-lo no placar. Os lados não trocam de lugar quando a liderança vira.</p>`;
+    $("du-mapw").appendChild(miniMapa());
+    $("du-sel").addEventListener("change", e => { foco = e.target.value || null; palco(); });
+    if ($("du-br")) $("du-br").addEventListener("click", () => { foco = null; palco(); });
+    try { history.replaceState(null, "", "#2turno" + (foco ? "&uf=" + foco : "")); } catch (e) {}
+    if (t2 && t2.hms && (t2.data || (b2 && b2.data))) {   // há quanto tempo o TSE totalizou este boletim
+      const [d, mo, y] = (t2.data || b2.data).split("/"), quando = Date.parse(`${y}-${mo}-${d}T${t2.hms}-03:00`);
       const idade = () => { const e = $("du-idade"); if (!e) return; const m = Math.max(0, Math.round((Date.now() - quando) / 6e4));
         e.textContent = m < 1 ? " · agora há pouco" : m < 60 ? ` · há ${m} min` : ` · há ${Math.floor(m / 60)} h ${m % 60} min`; setTimeout(idade, 30000); };
       idade();
     }
-    if (!b2) {
+    if (!t2) {
       const tick = () => {
         const c = $("du-clock"); if (!c) return;
         const r = fech - Date.now();
         if (r <= 0) { c.textContent = "Urnas fechadas"; $("du-clock-sub").textContent = "Aguardando os primeiros boletins do TSE."; return; }
         const h = Math.floor(r / 36e5), m = Math.floor(r % 36e5 / 6e4), s2 = Math.floor(r % 6e4 / 1e3);
         c.textContent = `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s2).padStart(2, "0")}`;
-        setTimeout(tick, 1000);
+        clearTimeout(window.__tick); window.__tick = setTimeout(tick, 1000);
       };
       tick();
     }
@@ -1808,6 +1893,7 @@ const f1n = v => v.toFixed(1).replace(".", ",");
     // Hong Kong e Índia: só no Jornal Razão (9h)
     "Hong Kong": [127, 133, "Jornal Razão, 9h"], "Índia": [25, 23, "Jornal Razão, 9h"],
   };
+  window.EXT_ATUAL = ATUAL;
   const PAISES = [{"p":"Costa do Marfim","tz":0,"ll":[-4.0,5.3],"c":[["Abidjã",0]]},{"p":"Emirados Árabes Unidos","tz":4,"ll":[54.4,24.5],"c":[["Abu Dhabi",4]]},{"p":"Nigéria","tz":1,"ll":[7.5,9.1],"c":[["Abuja",1],["Lagos",1]]},{"p":"Gana","tz":0,"ll":[-0.2,5.6],"c":[["Accra",0]]},{"p":"Etiópia","tz":3,"ll":[38.7,9.0],"c":[["Adis Abeba",3]]},{"p":"Países Baixos","tz":1,"ll":[4.9,52.4],"c":[["Amsterdã",1]]},{"p":"Jordânia","tz":3,"ll":[35.9,31.9],"c":[["Amã",3]]},{"p":"Turquia","tz":3,"ll":[32.9,39.9],"c":[["Ancara",3],["Istambul",3]]},{"p":"Argélia","tz":1,"ll":[3.1,36.8],"c":[["Argel",1]]},{"p":"Uruguai","tz":-3,"ll":[-56.2,-34.9],"c":[["Artigas",-3],["Chuy",-3],["Montevidéu",-3],["Rio Branco",-3],["Rivera",-3]]},{"p":"Paraguai","tz":-3,"ll":[-57.6,-25.3],"c":[["Assunção",-3],["Ciudad Del Este",-3],["Concepción",-3],["Encarnación",-3],["Pedro Juan Caballero",-3],["Salto Del Guairá",-3]]},{"p":"Cazaquistão","tz":5,"ll":[71.4,51.2],"c":[["Astana",5]]},{"p":"Grécia","tz":2,"ll":[23.7,38.0],"c":[["Atenas",2]]},{"p":"Estados Unidos","tz":-4,"ll":[-77.0,38.9],"c":[["Atlanta",-4],["Boston",-4],["Chicago",-5],["Hartford",-4],["Houston",-5],["Los Angeles",-7],["Miami",-4],["Nova York",-4],["Orlando",-4],["São Francisco",-7],["Washington",-4]]},{"p":"Iraque","tz":3,"ll":[44.4,33.3],"c":[["Bagdá",3]]},{"p":"Azerbaijão","tz":4,"ll":[49.9,40.4],"c":[["Baku",4]]},{"p":"Mali","tz":0,"ll":[-8.0,12.6],"c":[["Bamako",0]]},{"p":"Tailândia","tz":7,"ll":[100.5,13.75],"c":[["Bangkok",7]]},{"p":"Espanha","tz":1,"ll":[-3.7,40.4],"c":[["Barcelona",1],["Madri",1]]},{"p":"Bahrein","tz":3,"ll":[50.6,26.2],"c":[["Barein",3]]},{"p":"Líbano","tz":2,"ll":[35.5,33.9],"c":[["Beirute",2]]},{"p":"Sérvia","tz":1,"ll":[20.5,44.8],"c":[["Belgrado",1]]},{"p":"Belize","tz":-6,"ll":[-88.8,17.25],"c":[["Belmopan",-6]]},{"p":"Alemanha","tz":1,"ll":[13.4,52.5],"c":[["Berlim",1],["Frankfurt",1],["Munique",1]]},{"p":"Guiné-Bissau","tz":0,"ll":[-15.6,11.9],"c":[["Bissau",0]]},{"p":"Colômbia","tz":-5,"ll":[-74.1,4.7],"c":[["Bogotá",-5]]},{"p":"Eslováquia","tz":1,"ll":[17.1,48.1],"c":[["Bratislava",1]]},{"p":"Congo","tz":1,"ll":[15.3,-4.3],"c":[["Brazzaville",1]]},{"p":"Barbados","tz":-4,"ll":[-59.6,13.1],"c":[["Bridgetown",-4]]},{"p":"Bélgica","tz":1,"ll":[4.35,50.85],"c":[["Bruxelas",1]]},{"p":"Romênia","tz":2,"ll":[26.1,44.4],"c":[["Bucareste",2]]},{"p":"Hungria","tz":1,"ll":[19.0,47.5],"c":[["Budapeste",1]]},{"p":"Argentina","tz":-3,"ll":[-58.4,-34.6],"c":[["Buenos Aires",-3],["Córdoba",-3],["Mendoza",-3],["Paso Los Libres",-3],["Puerto Iguazú",-3]]},{"p":"Guiana Francesa","tz":-3,"ll":[-52.3,4.9],"c":[["Caiena",-3],["St Georges De Loyapock",-3]]},{"p":"Egito","tz":2,"ll":[31.2,30.0],"c":[["Cairo",2]]},{"p":"Austrália","tz":11,"ll":[151.2,-33.9],"c":[["Camberra",11],["Sydney",11]]},{"p":"China","tz":8,"ll":[116.4,39.9],"c":[["Cantão",8],["Pequim",8],["Xangai",8]]},{"p":"Venezuela","tz":-4,"ll":[-66.9,10.5],"c":[["Caracas",-4],["Ciudad Guayana",-4],["Santa Elena De Uairén",-4]]},{"p":"Santa Lúcia","tz":-4,"ll":[-61.0,14.0],"c":[["Castries",-4]]},{"p":"África do Sul","tz":2,"ll":[28.2,-25.7],"c":[["Cidade Do Cabo",2],["Pretória",2]]},{"p":"Bolívia","tz":-4,"ll":[-68.1,-16.5],"c":[["Cobija",-4],["Cochabamba",-4],["La Paz",-4],["Puerto Quijarro",-4],["Santa Cruz De La Sierra",-4]]},{"p":"Sri Lanka","tz":5.5,"ll":[79.9,6.9],"c":[["Colombo",5.5]]},{"p":"Guiné","tz":0,"ll":[-13.7,9.5],"c":[["Conacri",0]]},{"p":"Dinamarca","tz":1,"ll":[12.6,55.7],"c":[["Copenhague",1]]},{"p":"Benin","tz":1,"ll":[2.4,6.4],"c":[["Cotonou",1]]},{"p":"Senegal","tz":0,"ll":[-17.4,14.7],"c":[["Dacar",0]]},{"p":"Bangladesh","tz":6,"ll":[90.4,23.8],"c":[["Dacca",6]]},{"p":"Síria","tz":3,"ll":[36.3,33.5],"c":[["Damasco",3]]},{"p":"Tanzânia","tz":3,"ll":[39.3,-6.8],"c":[["Dar Es Salaam",3]]},{"p":"Catar","tz":3,"ll":[51.5,25.3],"c":[["Doha",3]]},{"p":"Irlanda","tz":0,"ll":[-6.3,53.3],"c":[["Dublin",0]]},{"p":"Timor-Leste","tz":9,"ll":[125.6,-8.6],"c":[["Díli",9]]},{"p":"Reino Unido","tz":0,"ll":[-0.1,51.5],"c":[["Edimburgo",0],["Londres",0]]},{"p":"Suécia","tz":1,"ll":[18.1,59.3],"c":[["Estocolmo",1]]},{"p":"Portugal","tz":0,"ll":[-9.1,38.7],"c":[["Faro",0],["Lisboa",0],["Porto",0]]},{"p":"Botsuana","tz":2,"ll":[25.9,-24.7],"c":[["Gaborone",2]]},{"p":"Suíça","tz":1,"ll":[7.45,46.9],"c":[["Genebra",1],["Zurique",1]]},{"p":"Guiana","tz":-4,"ll":[-58.2,6.8],"c":[["Georgetown",-4]]},{"p":"Guatemala","tz":-6,"ll":[-90.5,14.6],"c":[["Guatemala",-6]]},{"p":"Japão","tz":9,"ll":[138.5,36.2],"c":[["Hamamatsu",9],["Nagóia",9],["Tóquio",9]]},{"p":"Vietnã","tz":7,"ll":[105.8,21.0],"c":[["Hanói",7]]},{"p":"Zimbábue","tz":2,"ll":[31.0,-17.8],"c":[["Harare",2]]},{"p":"Cuba","tz":-4,"ll":[-82.4,23.1],"c":[["Havana",-4]]},{"p":"Finlândia","tz":2,"ll":[24.9,60.2],"c":[["Helsinque",2]]},{"p":"Hong Kong","tz":8,"ll":[114.2,22.3],"c":[["Hong Kong",8]]},{"p":"Camarões","tz":1,"ll":[11.5,3.9],"c":[["Iaundê",1]]},{"p":"Armênia","tz":4,"ll":[44.5,40.2],"c":[["Ierevan",4]]},{"p":"Peru","tz":-5,"ll":[-77.0,-12.0],"c":[["Iquitos",-5],["Lima",-5]]},{"p":"Paquistão","tz":5,"ll":[73.0,33.7],"c":[["Islamabade",5]]},{"p":"Indonésia","tz":7,"ll":[106.8,-6.2],"c":[["Jacarta",7]]},{"p":"Nepal","tz":5.75,"ll":[85.3,27.7],"c":[["Katmandu",5.75]]},{"p":"Ucrânia","tz":2,"ll":[30.5,50.45],"c":[["Kiev",2]]},{"p":"Jamaica","tz":-5,"ll":[-76.8,18.0],"c":[["Kingston-Jamaica",-5]]},{"p":"RD Congo","tz":1,"ll":[15.3,-4.4],"c":[["Kinshasa",1]]},{"p":"Kuwait","tz":3,"ll":[47.98,29.4],"c":[["Kuaite",3]]},{"p":"Malásia","tz":8,"ll":[101.7,3.1],"c":[["Kuala Lumpur",8]]},{"p":"Gabão","tz":1,"ll":[9.45,0.4],"c":[["Libreville",1]]},{"p":"Malawi","tz":2,"ll":[33.8,-13.97],"c":[["Lilongue",2]]},{"p":"Eslovênia","tz":1,"ll":[14.5,46.05],"c":[["Liubliana",1]]},{"p":"Togo","tz":0,"ll":[1.2,6.1],"c":[["Lomé",0]]},{"p":"Angola","tz":1,"ll":[13.2,-8.8],"c":[["Luanda",1]]},{"p":"Zâmbia","tz":2,"ll":[28.3,-15.4],"c":[["Lusaca",2]]},{"p":"Guiné Equatorial","tz":1,"ll":[8.8,3.75],"c":[["Malabo",1]]},{"p":"Filipinas","tz":8,"ll":[121.0,14.6],"c":[["Manila",8]]},{"p":"Nicarágua","tz":-6,"ll":[-86.3,12.1],"c":[["Manágua",-6]]},{"p":"Moçambique","tz":2,"ll":[32.6,-25.9],"c":[["Maputo",2]]},{"p":"França","tz":1,"ll":[2.35,48.85],"c":[["Marselha",1],["Paris",1]]},{"p":"Omã","tz":4,"ll":[58.4,23.6],"c":[["Mascate",4]]},{"p":"México","tz":-6,"ll":[-99.1,19.4],"c":[["Mexico",-6]]},{"p":"Itália","tz":1,"ll":[12.5,41.9],"c":[["Milão",1],["Roma",1]]},{"p":"Canadá","tz":-4,"ll":[-75.7,45.4],"c":[["Montreal",-4],["Ottawa",-4],["Toronto",-4],["Vancouver",-7]]},{"p":"Rússia","tz":3,"ll":[37.6,55.75],"c":[["Moscou",3]]},{"p":"Índia","tz":5.5,"ll":[77.2,28.6],"c":[["Mumbai",5.5],["Nova Delhi",5.5]]},{"p":"Quênia","tz":3,"ll":[36.8,-1.3],"c":[["Nairóbi",3]]},{"p":"Bahamas","tz":-4,"ll":[-77.35,25.05],"c":[["Nassau",-4]]},{"p":"Chipre","tz":2,"ll":[33.4,35.2],"c":[["Nicosia",2]]},{"p":"Noruega","tz":1,"ll":[10.75,59.9],"c":[["Oslo",1]]},{"p":"Panamá","tz":-5,"ll":[-79.5,8.98],"c":[["Panama",-5]]},{"p":"Suriname","tz":-3,"ll":[-55.2,5.85],"c":[["Paramaribo",-3]]},{"p":"Trinidad e Tobago","tz":-4,"ll":[-61.5,10.65],"c":[["Port Of Spain",-4]]},{"p":"Haiti","tz":-4,"ll":[-72.3,18.5],"c":[["Porto Príncipe",-4]]},{"p":"Tchéquia","tz":1,"ll":[14.4,50.1],"c":[["Praga",1]]},{"p":"Cabo Verde","tz":-1,"ll":[-23.5,14.9],"c":[["Praia",-1]]},{"p":"Coreia do Norte","tz":9,"ll":[125.75,39.0],"c":[["Pyongyang",9]]},{"p":"Equador","tz":-5,"ll":[-78.5,-0.2],"c":[["Quito",-5]]},{"p":"Marrocos","tz":1,"ll":[-6.8,34.0],"c":[["Rabat",1]]},{"p":"Palestina","tz":2,"ll":[35.2,31.9],"c":[["Ramallah",2]]},{"p":"Arábia Saudita","tz":3,"ll":[46.7,24.7],"c":[["Riade",3]]},{"p":"Antígua e Barbuda","tz":-4,"ll":[-61.85,17.1],"c":[["Saint Johns",-4]]},{"p":"Chile","tz":-3,"ll":[-70.7,-33.4],"c":[["Santiago",-3]]},{"p":"Bósnia","tz":1,"ll":[18.4,43.85],"c":[["Sarajevo",1]]},{"p":"Coreia do Sul","tz":9,"ll":[127.0,37.5],"c":[["Seul",9]]},{"p":"Singapura","tz":8,"ll":[103.8,1.35],"c":[["Singapura",8]]},{"p":"República Dominicana","tz":-4,"ll":[-69.9,18.5],"c":[["São Domingos",-4]]},{"p":"Costa Rica","tz":-6,"ll":[-84.1,9.9],"c":[["São José",-6]]},{"p":"El Salvador","tz":-6,"ll":[-89.2,13.7],"c":[["São Salvador",-6]]},{"p":"São Tomé e Príncipe","tz":0,"ll":[6.7,0.3],"c":[["São Tomé",0]]},{"p":"Bulgária","tz":2,"ll":[23.3,42.7],"c":[["Sófia",2]]},{"p":"Taiwan","tz":8,"ll":[121.5,25.0],"c":[["Taipé",8]]},{"p":"Estônia","tz":2,"ll":[24.75,59.4],"c":[["Talin",2]]},{"p":"Geórgia","tz":4,"ll":[44.8,41.7],"c":[["Tbilisi",4]]},{"p":"Irã","tz":3.5,"ll":[51.4,35.7],"c":[["Teerã",3.5]]},{"p":"Honduras","tz":-6,"ll":[-87.2,14.1],"c":[["Tegucigalpa",-6]]},{"p":"Israel","tz":2,"ll":[34.8,32.1],"c":[["Tel Aviv",2]]},{"p":"Albânia","tz":1,"ll":[19.8,41.3],"c":[["Tirana",1]]},{"p":"Líbia","tz":2,"ll":[13.2,32.9],"c":[["Trípoli",2]]},{"p":"Tunísia","tz":1,"ll":[10.2,36.8],"c":[["Tunis",1]]},{"p":"Burkina Faso","tz":0,"ll":[-1.5,12.4],"c":[["Uagadugu",0]]},{"p":"Polônia","tz":1,"ll":[21.0,52.2],"c":[["Varsóvia",1]]},{"p":"Áustria","tz":1,"ll":[16.4,48.2],"c":[["Viena",1]]},{"p":"Nova Zelândia","tz":13,"ll":[174.8,-41.3],"c":[["Wellington",13]]},{"p":"Namíbia","tz":2,"ll":[17.1,-22.6],"c":[["Windhoek",2]]},{"p":"Mianmar","tz":6.5,"ll":[96.2,16.8],"c":[["Yangon",6.5]]},{"p":"Croácia","tz":1,"ll":[16.0,45.8],"c":[["Zagreb",1]]}];
   window.PAISES = PAISES;
   const $ = id => document.getElementById(id);
@@ -1988,7 +2074,7 @@ const f1n = v => v.toFixed(1).replace(".", ",");
   const svg = document.getElementById("g2c"); if (!svg) return;
   const NS = "http://www.w3.org/2000/svg";
   const s26 = ((typeof T2 !== "undefined" && T2 && T2.serie) || []);
-  const s22 = (typeof S2_22 !== "undefined" && S2_22) || [];
+  const s22 = ((typeof S2_22 !== "undefined" && S2_22) || []).filter(p => p[0] >= 1);   // antes de 1% apurado, poucos boletins
   let eixo = "pct", escala = "zoom";
   const min = h => { const m = /(\d+)h(\d+)/.exec(h || ""); if (!m) return null; let v = +m[1] * 60 + +m[2]; if (v < 12 * 60) v += 1440; return v; };
   const fx = v => v.toLocaleString("pt-BR", {minimumFractionDigits: 2, maximumFractionDigits: 2});
@@ -2020,7 +2106,7 @@ const f1n = v => v.toFixed(1).replace(".", ",");
     };
     linha(s22, 2, "var(--lula)", true); linha(s22, 3, "var(--flavio-tx)", true);
     linha(s26, 2, "var(--lula)", false); linha(s26, 3, "var(--flavio-tx)", false);
-    if (!s26.length) mk("text", {x: (m.l + W - m.r) / 2, y: m.t + 34, "text-anchor": "middle", style: "fill:var(--fg);font-size:13px"}).textContent = "2026: a linha começa com o primeiro boletim do TSE, depois das 17h";
+    if (!s26.length) mk("text", {x: (m.l + W - m.r) / 2, y: H - m.b - 14, "text-anchor": "middle", style: "fill:var(--fg);font-size:13px"}).textContent = "2026: a linha começa com o primeiro boletim do TSE, depois das 17h";
     if (!s22.length) mk("text", {x: (m.l + W - m.r) / 2, y: m.t + 54, "text-anchor": "middle", style: "font-size:12px"}).textContent = "2022: reconstruindo dos boletins de urna";
   }
   document.querySelectorAll("[data-g2a]").forEach(b => b.addEventListener("click", () => { eixo = b.dataset.g2a; document.querySelectorAll("[data-g2a]").forEach(c => c.setAttribute("aria-pressed", c === b)); draw(); }));
@@ -2060,7 +2146,7 @@ const LAND = "M311.8,399.6L315.4,401.3L319.3,401.9L318.1,403.3L315.4,403.5L314.0
   const mix = (cor, k) => `color-mix(in srgb, ${cor} ${Math.round(k)}%, var(--panel))`;
   function draw() {
     const L = window.EXT2L || [];
-    svg.innerHTML = `<rect width="${W}" height="${H}" fill="var(--panel)"/><path d="${typeof LAND !== "undefined" ? LAND : ""}" fill="#262626" stroke="#333" stroke-width=".5"/>`;
+    svg.innerHTML = `<rect width="${W}" height="${H}" fill="var(--panel)"/><path d="${typeof LAND !== "undefined" ? LAND : ""}" fill="var(--land)" stroke="var(--rule)" stroke-width=".5"/>`;
     const mx = Math.max(1, ...L.map(x => x.l + x.f)), m = modo();
     // todos os países com seção: ponto vazado = ainda votando; cinza = urnas fechadas, sem boletim somado
     const agora = Date.now();
@@ -2141,7 +2227,7 @@ const LAND = "M311.8,399.6L315.4,401.3L319.3,401.9L318.1,403.3L315.4,403.5L314.0
       if (eB) mk("rect", {x: 4, y: y - rh / 2 + 2, width: W - 8, height: rh - 4, rx: 8, fill: "var(--s4)", opacity: .14});
       mk("text", {x: lab - 10, y: y + 4, "text-anchor": "end", style: p.media || eB ? "fill:var(--fg);font-weight:500" : ""}).textContent = (eB ? "★ " : "") + p.i + (p.d && W >= 520 ? ` · ${p.d.split(" · ")[0]}` : "");
       mk("line", {x1: X(d), x2: X(alvo != null ? alvo : p1), y1: y, y2: y, stroke: "var(--faint)", "stroke-width": 1.5, "stroke-dasharray": "2 3"});
-      mk("circle", {cx: X(d), cy: y, r: p.media ? 7 : 5.5, fill: d >= 0 ? "var(--flavio)" : "var(--lula)", stroke: "var(--panel)", "stroke-width": 2});
+      mk("circle", {cx: X(d), cy: y, r: p.media ? 7 : 5.5, fill: d >= 0 ? "var(--flavio-sm)" : "var(--lula)", stroke: "var(--panel)", "stroke-width": 2});
     });
   }
   // tabela com a coluna de erro quando houver apuração
@@ -2149,11 +2235,94 @@ const LAND = "M311.8,399.6L315.4,401.3L319.3,401.9L318.1,403.3L315.4,403.5L314.0
   if (t && ref != null) {
     const lead = (f, l) => `<span class="${f >= l ? "lead-f" : "lead-l"}">${f >= l ? "Flávio +" : "Lula +"}${f1(Math.abs(f - l))}</span>`;
     const th = (q, nome) => `<img class="thav" src="${FOTOS[q]}" alt="" style="--c:var(--${q})">${nome}`;
-    t.innerHTML = `<thead><tr><th>Pesquisa</th><th>${th("lula", "Lula")}</th><th>${th("flavio", "Flávio")}</th><th>Vantagem</th><th>Erro</th></tr></thead><tbody>
-      ${P2.map((p, k) => { const e = (p.f - p.l) - ref; return `<tr${k === best ? ' class="best"' : ""}><td>${p.i}${k === best ? '<span class="badge-best">mais próxima</span>' : ""}<span class="sub">${p.d}${p.nota ? " · " + p.nota : ""}</span></td><td>${f1(p.l)}%</td><td>${f1(p.f)}%</td><td>${lead(p.f, p.l)}</td><td>${e > 0 ? "+" : "−"}${f1(Math.abs(e))}</td></tr>`; }).join("")}
-      <tr class="ref"><td>Projeção da apuração<span class="sub">estimativa simples</span></td><td>${f1(100 * L / (F + L))}%</td><td>${f1(100 * F / (F + L))}%</td><td>${lead(F, L)}</td><td>0</td></tr></tbody>`;
+    t.innerHTML = `<thead><tr><th>Pesquisa</th><th>${th("flavio", "Flávio")}</th><th>${th("lula", "Lula")}</th><th>Vantagem</th><th>Erro</th></tr></thead><tbody>
+      ${P2.map((p, k) => { const e = (p.f - p.l) - ref; return `<tr${k === best ? ' class="best"' : ""}><td>${p.i}${k === best ? '<span class="badge-best">mais próxima</span>' : ""}<span class="sub">${p.d}${p.nota ? " · " + p.nota : ""}</span></td><td>${f1(p.f)}%</td><td>${f1(p.l)}%</td><td>${lead(p.f, p.l)}</td><td>${e > 0 ? "+" : "−"}${f1(Math.abs(e))}</td></tr>`; }).join("")}
+      <tr class="ref"><td>Projeção da apuração<span class="sub">estimativa simples</span></td><td>${f1(100 * F / (F + L))}%</td><td>${f1(100 * L / (F + L))}%</td><td>${lead(F, L)}</td><td>0</td></tr></tbody>`;
   }
   let tm; new ResizeObserver(() => { clearTimeout(tm); tm = setTimeout(draw, 120); }).observe(svg);
   draw();
+})();
+</script>
+<script>/* Barra embaixo das abas: índice da aba, selo de atualização, copiar link, tema; etiqueta ao vivo; regiões. */
+(() => {
+  const $ = id => document.getElementById(id);
+  const T = (typeof T2 !== "undefined" && T2) || {};
+  const b2 = T.br && T.br.vv > 0 ? T.br : null;
+  const f1 = v => v.toLocaleString("pt-BR", {minimumFractionDigits: 1, maximumFractionDigits: 1});
+  const fech = Date.parse("2026-10-25T17:00:00-03:00");
+  const CURTO = {duelo: "Placar", graf2: "Evolução", mapa2: "Mapa", emjogo: "Votos em jogo", duf: "Estados", reg2: "Regiões", gov2: "Governadores",
+    ext2: "Exterior", segundo: "Pesquisas", abstencao: "Abstenção", voto: "Seu voto",
+    status: "Placar", porestado: "Estados", exterior: "Exterior", senado: "Senado", governo: "Governadores", outros: "Outros", pesquisas: "Pesquisas", fluxo: "2022 → 2026"};
+  const aba = () => $("aba2").hidden ? $("aba1") : $("aba2");
+  function indice() {
+    const els = [...aba().querySelectorAll(":scope > [id], :scope > .solo > [id]")].filter(e => CURTO[e.id] && !(e.id === "status" && aba().id === "aba2"));
+    const vistos = new Set();
+    $("indice").innerHTML = els.filter(e => { const k = CURTO[e.id]; if (vistos.has(k)) return false; vistos.add(k); return true; })
+      .map(e => `<a href="#${e.id}" data-ir="${e.id}">${CURTO[e.id]}</a>`).join("");
+    $("indice").querySelectorAll("a").forEach(a => a.addEventListener("click", ev => {
+      ev.preventDefault(); const alvo = $(a.dataset.ir), d = alvo.closest("details.fold"); if (d) d.open = true;
+      const y = alvo.getBoundingClientRect().top + scrollY - (document.querySelector(".tabs").offsetHeight + document.querySelector(".toolbar").offsetHeight + 8);
+      scrollTo({top: y, behavior: "smooth"});
+    }));
+  }
+  function estado() {
+    const live = document.querySelector(".eyebrow .live"), selo = $("selo"), agora = Date.now();
+    if ($("aba2").hidden) {
+      live.textContent = "1º turno · resultado"; live.classList.add("parado");
+      selo.textContent = `TSE ${BR.hms || ""} · ${String(BR.pct.toFixed(2)).replace(".", ",")}% apurado`;
+    } else {
+      live.classList.remove("parado");
+      if (T.br && T.br.eleito) { live.textContent = `${T.br.eleito} eleito`; live.classList.add("parado"); }
+      else if (b2) live.textContent = "Apuração em andamento";
+      else if (agora < fech) live.textContent = "Votação em andamento · urnas fecham às 17h";
+      else live.textContent = "Urnas fechadas · aguardando o TSE";
+      selo.textContent = b2 ? `TSE ${b2.hms} · ${f1(b2.pct)}% apurado` : `Exterior: boletins até ${(window.EXT_ATUAL || "").replace(/^25\/10, /, "")}`;
+    }
+  }
+  const fixa = () => document.documentElement.style.setProperty("--tabs-h", document.querySelector(".tabs").offsetHeight + "px");
+  fixa(); addEventListener("resize", fixa);
+  const atualizar = () => { indice(); estado(); };
+  new MutationObserver(atualizar).observe($("aba2"), {attributes: true, attributeFilter: ["hidden"]});
+  atualizar(); setInterval(estado, 30000);
+
+  // copiar link (com a aba e o estado escolhido)
+  $("copiar").addEventListener("click", async () => {
+    const b = $("copiar");
+    try { await navigator.clipboard.writeText(location.href); b.textContent = "Link copiado"; }
+    catch (e) { b.textContent = "Copie da barra de endereço"; }
+    setTimeout(() => b.textContent = "Copiar link", 2000);
+  });
+  // tema claro / escuro
+  const raiz = document.documentElement;
+  const aplicar = t => { if (t === "light") raiz.dataset.theme = "light"; else delete raiz.dataset.theme;
+    $("tema").textContent = t === "light" ? "Tema escuro" : "Tema claro"; $("tema").setAttribute("aria-pressed", t === "light"); };
+  let tema = "dark"; try { tema = localStorage.getItem("tema") || "dark"; } catch (e) {}
+  aplicar(tema);
+  $("tema").addEventListener("click", () => { tema = tema === "light" ? "dark" : "light"; aplicar(tema); try { localStorage.setItem("tema", tema); } catch (e) {} });
+
+  // região a região
+  const REG = {Norte: ["AC", "AM", "AP", "PA", "RO", "RR", "TO"], Nordeste: ["AL", "BA", "CE", "MA", "PB", "PE", "PI", "RN", "SE"],
+    "Centro-Oeste": ["DF", "GO", "MS", "MT"], Sudeste: ["ES", "MG", "RJ", "SP"], Sul: ["PR", "RS", "SC"]};
+  const R22 = (typeof T2_22 !== "undefined" && T2_22 && T2_22.uf) || {};
+  const mi = v => v >= 1e6 ? f1(v / 1e6) + " mi" : Math.round(v / 1e3).toLocaleString("pt-BR") + " mil";
+  const bar = p => p == null ? `<div class="mcabo" aria-hidden="true"></div><div class="lab"><span>aguardando</span></div>` : `<div class="mcabo" aria-hidden="true"><i class="f" style="width:${p}%"></i><i class="l" style="width:${100 - p}%"></i></div><div class="lab"><span style="color:var(--flavio-tx)">${f1(p)}%</span><span style="color:var(--lula)">${f1(100 - p)}%</span></div>`;
+  const linhas = Object.entries(REG).map(([r, ufs]) => {
+    let f22 = 0, l22 = 0, f1v = 0, l1v = 0, out = 0, f2v = 0, l2v = 0, st = 0, ts = 0;
+    ufs.forEach(u => { const a = R22[u], e = ESTADOS[u], t = T.estados && T.estados[u];
+      if (a) { l22 += a[1]; f22 += a[2]; } if (e) { f1v += e.fv; l1v += e.lv; out += e.vv - e.fv - e.lv; }
+      if (t) { f2v += t.fv; l2v += t.lv; st += t.st; ts += t.ts; } });
+    return {r, p22: f22 + l22 ? 100 * f22 / (f22 + l22) : null, p1: 100 * f1v / (f1v + l1v), out, p2: f2v + l2v ? 100 * f2v / (f2v + l2v) : null, ap: ts ? 100 * st / ts : 0};
+  });
+  $("regtab").innerHTML = `<thead><tr><th>Região</th><th style="text-align:left">2022 · 2º turno</th><th style="text-align:left">2026 · 1º turno</th><th>Em jogo</th><th style="text-align:left">2026 · 2º turno</th></tr></thead><tbody>
+    ${linhas.map(x => `<tr><td><b>${x.r}</b></td><td style="text-align:left">${bar(x.p22)}</td><td style="text-align:left">${bar(x.p1)}</td><td>${mi(x.out)}</td><td style="text-align:left">${bar(x.p2)}${x.p2 != null ? `<div class="lab"><span>${f1(x.ap)}% apurado</span></div>` : ""}</td></tr>`).join("")}</tbody>`;
+
+  // exterior: países sem boletins ficam recolhidos
+  const tab = $("ext2tab");
+  if (tab && !$("ext2mais")) {
+    const b = document.createElement("button"); b.type = "button"; b.className = "btn"; b.id = "ext2mais";
+    const txt = () => { const n = tab.querySelectorAll("tr.sem").length; b.textContent = tab.classList.contains("tudo") ? "Mostrar só os países com boletins" : `Mostrar os outros ${n} países (urnas fechadas ou votando)`; };
+    b.addEventListener("click", () => { tab.classList.toggle("tudo"); txt(); });
+    tab.closest(".tw").after(b); txt(); setInterval(txt, 60000);
+  }
 })();
 </script>
