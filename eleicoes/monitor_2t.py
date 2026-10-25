@@ -121,7 +121,7 @@ def rodada():
     br = dict(br, eleito=eleito_br or ant.get("br", {}).get("eleito"))
     serie = ant.get("serie", [])
     if br["vv"] and (not serie or round(br["pct"], 2) > serie[-1][0]):
-        serie.append([round(br["pct"], 2), br["hora"], round(br["lula"], 2), round(br["flavio"], 2)])
+        serie.append([round(br["pct"], 2), br["hora"], round(br["lula"], 2), round(br["flavio"], 2), br["fv"] - br["lv"]])   # último: Flávio − Lula, em votos
     with open(SAIDA, "w") as f:
         json.dump({"br": br, "estados": estados, "exterior": exterior, "serie": serie,
                    "gov": governadores(ant.get("gov")), "modelos": modelos(ant.get("modelos"))}, f, ensure_ascii=False)
