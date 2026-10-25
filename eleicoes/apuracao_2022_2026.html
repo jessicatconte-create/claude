@@ -2303,7 +2303,7 @@ const LAND = "M311.8,399.6L315.4,401.3L319.3,401.9L318.1,403.3L315.4,403.5L314.0
       selo.textContent = `TSE ${BR.hms || ""} · ${String(BR.pct.toFixed(2)).replace(".", ",")}% apurado`;
     } else {
       live.classList.remove("parado");
-      if (T.br && T.br.eleito) { live.textContent = `${T.br.eleito} eleito`; live.classList.add("parado"); }
+      if (T.br && T.br.eleito) { live.textContent = `${/flavio/i.test(T.br.eleito) ? "Flávio Bolsonaro" : /lula/i.test(T.br.eleito) ? "Lula" : T.br.eleito} eleito presidente`; live.classList.add("parado"); }
       else if (b2) live.textContent = "Apuração em andamento";
       else if (agora < fech) live.textContent = "Votação em andamento · urnas fecham às 17h";
       else live.textContent = "Urnas fechadas · aguardando o TSE";
