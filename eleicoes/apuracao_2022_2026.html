@@ -681,6 +681,12 @@ figure > *, details > .tw { min-width: 0; }
 #tendtab .tdl { display: inline-block; vertical-align: middle; font-size: 11px; line-height: 1.5; min-width: 78px; margin-right: 6px; }
 #tendtab .tdl .dn2, #tendtab .tdl .up2 { margin-left: 0; }
 #tendtab .tdc { min-width: 180px; }
+#tendtab .cd { display: block; font-size: 9.5px; color: var(--muted); line-height: 1.3; }
+#tendtab th.grp { text-align: left; border-bottom: 1px solid var(--grid); font-weight: 600; }
+#tendtab .tdc { min-width: 150px; white-space: nowrap; }
+#tendtab .tdc .spk { display: block; margin-bottom: 2px; }
+#tendtab .tdc .tdl { display: block; margin: 0; min-width: 0; }
+#tendtab .tdc .tdl .dn2, #tendtab .tdc .tdl .up2 { margin-left: 0; }
 </style>
 
 <div class="wrap">
@@ -2792,15 +2798,15 @@ const LAND = "M311.8,399.6L315.4,401.3L319.3,401.9L318.1,403.3L315.4,403.5L314.0
   const pos = {}; insts.filter(i => ERRO1[i] != null).forEach((i, k, arr) => pos[i] = 1 + arr.filter(j => ERRO1[j] < ERRO1[i]).length);
   const celula = p => { if (!p) return `<td class="vz"></td>`;
     const sf = (dd) => p.delta == null ? "" : Math.abs(dd) < 0.05 ? ' <i class="eq">=</i>' : ` <i class="${dd > 0 ? "up" : "dn"}">${dd > 0 ? "▲" : "▼"}${f1(Math.abs(dd))}</i>`;
-    return `<td title="${p.i} · ${p.d}/10${p.est ? " (data estimada)" : ""} · campo ${p.campo}${p.tot ? " · total: Flávio " + p.tot.replace(" × ", " × Lula ") : ""}"><span class="cf">${f1(p.f)}${sf(p.delta)}</span><span class="cl">${f1(100 - p.f)}${sf(-p.delta)}</span>${p.est ? '<sup>*</sup>' : ""}</td>`; };
+    return `<td title="${p.i} · ${p.d}/10${p.est ? " (data estimada)" : ""} · campo ${p.campo}${p.tot ? " · total: Flávio " + p.tot.replace(" × ", " × Lula ") : ""}"><span class="cf">${f1(p.f)}${sf(p.delta)}</span><span class="cl">${f1(100 - p.f)}${sf(-p.delta)}</span><span class="cd">campo ${p.campo === "–" ? "não informado" : p.campo.replace("/10", "")}</span>${p.est ? '<span class="cd">divulgação estimada*</span>' : ""}</td>`; };
   const mini = i => { const ps = comVar.filter(p => p.i === i); if (ps.length < 2) return '<span class="sub">1 pesquisa</span>';
     const xs = d => 4 + (d - 8) / 16 * 72, ys = v => 24 - (v - 44) / 12 * 22, dd = ps[ps.length - 1].f - ps[0].f;
     const lin = (val, c) => `<polyline fill="none" stroke="${c}" stroke-width="1.2" stroke-linejoin="round" points="${ps.map(p => `${xs(p.d).toFixed(1)},${ys(val(p)).toFixed(1)}`).join(" ")}"/>${ps.map(p => `<circle cx="${xs(p.d).toFixed(1)}" cy="${ys(val(p)).toFixed(1)}" r="1.5" fill="${c}"/>`).join("")}`;
     const rot = (v, nome, c) => `<span class="tn" style="color:${c}">${nome}</span> <span class="${v < 0 ? "dn2" : "up2"}">${v < 0 ? "▼" : v > 0 ? "▲" : "="} ${f1(Math.abs(v))}</span>`;
-    return `<span class="tdl">${rot(dd, "Flávio", "var(--flavio-tx)")}<br>${rot(-dd, "Lula", "var(--lula)")}</span><svg width="80" height="28" viewBox="0 0 80 28" aria-hidden="true"><line x1="0" x2="80" y1="${ys(50)}" y2="${ys(50)}" stroke="var(--grid)" stroke-width=".8"/>${lin(p => p.f, "var(--flavio-tx)")}${lin(p => 100 - p.f, "var(--lula)")}</svg>`; };
-  tab.innerHTML = `<thead><tr><th class="fix">Instituto <span class="sub" style="display:inline">· do que mais acertou o 1º turno</span></th>${dias.map(d => `<th>${d}/10</th>`).join("")}<th class="tdc">Tendência (1ª → última)</th></tr></thead><tbody>
+    return `<svg class="spk" width="96" height="28" viewBox="0 0 80 28" aria-hidden="true"><line x1="0" x2="80" y1="${ys(50)}" y2="${ys(50)}" stroke="var(--grid)" stroke-width=".8"/>${lin(p => p.f, "var(--flavio-tx)")}${lin(p => 100 - p.f, "var(--lula)")}</svg><span class="tdl">${rot(dd, "Flávio", "var(--flavio-tx)")} · ${rot(-dd, "Lula", "var(--lula)")}</span>`; };
+  tab.innerHTML = `<thead><tr><th class="fix" rowspan="2">Instituto <span class="sub" style="display:inline">· do que mais acertou o 1º turno</span></th><th colspan="${dias.length}" class="grp">Data de divulgação <span class="sub" style="display:inline">· em cada célula, o período de campo (quando a pesquisa foi feita)</span></th><th class="tdc" rowspan="2">Tendência (1ª → última)</th></tr><tr>${dias.map(d => `<th>${d}/10</th>`).join("")}</tr></thead><tbody>
     ${insts.map(i => `<tr><td class="fix">${pos[i] ? `<span class="rk">${pos[i]}º</span>` : '<span class="rk vz">–</span>'}<b>${i}</b><span class="sub">${ERRO1[i] != null ? `erro no 1º turno: ${f1(ERRO1[i])} pt${NOTA1[i] ? " (" + NOTA1[i] + ")" : ""}` : "sem pesquisa final no 1º turno"}</span></td>${dias.map(d => celula(comVar.find(p => p.i === i && p.d === d))).join("")}<td class="tdc">${mini(i)}</td></tr>`).join("")}
-    <tr class="ref"><td class="fix"><b>Média móvel</b><span class="sub">últimos 7 dias</span></td>${media.map(([d, v, n]) => `<td><span class="cf">${f1(v)}</span><span class="cl">${f1(100 - v)}</span><span class="sub">${n} inst.</span></td>`).join("")}<td class="tdc"><span class="tdl"><span class="tn" style="color:var(--flavio-tx)">Flávio</span> <span class="${fim[1] < ini[1] ? "dn2" : "up2"}">${fim[1] < ini[1] ? "▼" : "▲"} ${f1(Math.abs(fim[1] - ini[1]))}</span><br><span class="tn" style="color:var(--lula)">Lula</span> <span class="${fim[1] > ini[1] ? "dn2" : "up2"}">${fim[1] > ini[1] ? "▼" : "▲"} ${f1(Math.abs(fim[1] - ini[1]))}</span></span></td></tr></tbody>`;
+    <tr class="ref"><td class="fix"><b>Média móvel</b><span class="sub">últimos 7 dias</span></td>${media.map(([d, v, n]) => `<td><span class="cf">${f1(v)}</span><span class="cl">${f1(100 - v)}</span><span class="sub">${n} inst.</span></td>`).join("")}<td class="tdc"><span class="tdl"><span class="tn" style="color:var(--flavio-tx)">Flávio</span> <span class="${fim[1] < ini[1] ? "dn2" : "up2"}">${fim[1] < ini[1] ? "▼" : "▲"} ${f1(Math.abs(fim[1] - ini[1]))}</span> · <span class="tn" style="color:var(--lula)">Lula</span> <span class="${fim[1] > ini[1] ? "dn2" : "up2"}">${fim[1] > ini[1] ? "▼" : "▲"} ${f1(Math.abs(fim[1] - ini[1]))}</span></span></td></tr></tbody>`;
   if (innerWidth < 760) tab.closest("details").open = false;   // no celular, a tabela começa fechada
   let t; new ResizeObserver(() => { clearTimeout(t); t = setTimeout(draw, 120); }).observe(svg); draw();
 })();
