@@ -29,6 +29,11 @@ try:  # 2º turno de 2022 por UF: [válidos, Lula, Bolsonaro]
         t2_22 = json.load(f)
 except OSError:
     t2_22 = None
+try:  # efeito da ordem de chegada das urnas em 2022, por UF (gerar_2022_vies.py)
+    with open("dados_2022_2t_vies.json") as f:
+        vies22 = json.load(f)
+except OSError:
+    vies22 = None
 try:  # andamento do 2º turno de 2022 (gerar_2022_2t_serie.py)
     with open("dados_2022_2t_serie.json") as f:
         s2_22 = json.load(f)
@@ -49,7 +54,7 @@ cands = uf.get("candidatos")
 sen = uf.get("senado")
 gov = uf.get("governador")
 js = lambda o: json.dumps(o, ensure_ascii=False, separators=(",", ":"))
-bloco = f"/*DADOS*/\nconst D26 = {js(d26)};\nconst ESTADOS = {js(estados)};\nconst BR = {js(br)};\nconst EXTERIOR = {js(ext)};\nconst R22 = {js(r22)};\nconst OUTROS = {js(outros)};\nconst CANDS = {js(cands)};\nconst SENADO = {js(sen)};\nconst GOV = {js(gov)};\nconst T2 = {js(t2)};\nconst T2_22 = {js(t2_22)};\nconst S2_22 = {js(s2_22)};\n/*FIM*/"
+bloco = f"/*DADOS*/\nconst D26 = {js(d26)};\nconst ESTADOS = {js(estados)};\nconst BR = {js(br)};\nconst EXTERIOR = {js(ext)};\nconst R22 = {js(r22)};\nconst OUTROS = {js(outros)};\nconst CANDS = {js(cands)};\nconst SENADO = {js(sen)};\nconst GOV = {js(gov)};\nconst T2 = {js(t2)};\nconst T2_22 = {js(t2_22)};\nconst S2_22 = {js(s2_22)};\nconst VIES22 = {js(vies22)};\n/*FIM*/"
 
 s = open(PAGINA).read()
 s = re.sub(r"/\*DADOS\*/.*?/\*FIM\*/", lambda _: bloco, s, count=1, flags=re.S)
