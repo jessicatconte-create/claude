@@ -778,6 +778,8 @@ body.reordenando, body.reordenando * { cursor: grabbing !important; user-select:
 .rt-t i:first-child { border-radius: 99px 0 0 99px; } .rt-t i:last-child { border-radius: 0 99px 99px 0; } .rt-t i:only-child { border-radius: 99px; }
 @media (max-width: 560px) { .rt-l { grid-template-columns: 70px 1fr 1fr; gap: 6px; font-size: 12px; } .rt-b { grid-template-columns: 1fr 58px; } }
 #placar22 > .card { border: 0; background: transparent; box-shadow: none; padding: 4px 6px 0; }
+.aviso { display: grid; gap: 4px; border: 1px solid color-mix(in srgb, #e8a33d 55%, var(--rule)); background: color-mix(in srgb, #e8a33d 10%, var(--panel)); border-radius: var(--radius); padding: 14px 18px; font-size: 14px; line-height: 1.5; }
+.aviso b { color: #e8a33d; font-size: 15px; } .aviso a { color: inherit; }
 </style>
 
 <div class="wrap">
@@ -933,6 +935,12 @@ body.reordenando, body.reordenando * { cursor: grabbing !important; user-select:
   </div>
 
   <div class="tabpanel" id="aba2" role="tabpanel" aria-labelledby="tab-t2">
+
+  <div class="aviso" id="aviso-prorr" role="status">
+    <b>Votação prorrogada até as 19h (Brasília)</b>
+    <span>O ministro Cristiano Zanin, do STF, mandou estender a votação por duas horas em todas as seções do país, após pedidos das duas campanhas (falta de transporte público na Bahia, chuva e alagamentos no Sul e em SP). O TSE pausou a divulgação com 0,25% das urnas apuradas; os números devem voltar depois das 19h. No Rio Grande do Sul, o TRE disse que não reabre seções já encerradas. Fontes: <a href="https://exame.com/brasil/tse-aprova-a-extensao-do-horario-de-votacao-do-2o-turno-para-as-19h/" target="_blank" rel="noopener">Exame</a>, <a href="https://www.bloomberglinea.com.br/brasil/ao-vivo-brasil-vota-no-2-turno-para-escolher-entre-lula-e-flavio-bolsonaro-como-presidente/" target="_blank" rel="noopener">Bloomberg Línea</a>.</span>
+  </div>
+  <script>(() => { const T = typeof T2 !== "undefined" && T2 && T2.br; if (T && T.hms && T.hms >= "19:00:00" && T.pct > 0.3) { const a = document.getElementById("aviso-prorr"); if (a) a.hidden = true; } })();</script>
 
   <section class="duelo" id="duelo" aria-label="Duelo do 2º turno"></section>
 
