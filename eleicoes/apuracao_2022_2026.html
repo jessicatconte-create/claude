@@ -556,6 +556,7 @@ h1, .sectionhead h2 { font-family: var(--serif); font-weight: 600; letter-spacin
 }
 @media (max-width: 520px) { .bar > * { min-width: 0; } .bar .y22 { font-size: 11px; white-space: normal; flex-wrap: wrap; } .bar .cnt, .bar .cnt * { white-space: normal; } .bar { overflow: hidden; } }
 @media (max-width: 760px) { .pe-grid { grid-template-columns: minmax(0, 1fr) !important; } }
+.du-map.mundo { max-width: 420px; }
 </style>
 
 <div class="wrap">
@@ -710,6 +711,8 @@ h1, .sectionhead h2 { font-family: var(--serif); font-weight: 600; letter-spacin
   </div>
 
   <div class="tabpanel" id="aba2" role="tabpanel" aria-labelledby="tab-t2">
+  <section class="status" id="status2" aria-label="Andamento da apuração do 2º turno"></section>
+
   <section class="duelo" id="duelo" aria-label="Duelo do 2º turno"></section>
 
   <figure id="graf2">
@@ -1745,7 +1748,7 @@ const f1n = v => v.toFixed(1).replace(".", ",");
   // ---------- palco ----------
   // recorte do palco: null = Brasil; ou a sigla de um estado (clique no mapa ou escolha na lista)
   let foco = null;
-  try { const h = /uf=([A-Z]{2})/.exec(location.hash); if (h && ESTADOS[h[1]]) foco = h[1]; } catch (e) {}
+  try { const h = /uf=([A-Z]{2})/.exec(location.hash); if (h && (ESTADOS[h[1]] || h[1] === "ZZ")) foco = h[1]; } catch (e) {}
   const NOMEUF2 = typeof NOMES !== "undefined" ? NOMES : {};
   const vivoUF = uf => { const t = T && T.estados && T.estados[uf]; return t && t.vv > 0 ? t : null; };
   function miniMapa() {
@@ -1766,9 +1769,32 @@ const f1n = v => v.toFixed(1).replace(".", ",");
     });
     return svg;
   }
+  function dadosExterior() {
+    const ofi = T && T.ext && T.ext.vv > 0 ? T.ext : null;
+    const B = (typeof EXTERIOR !== "undefined" && EXTERIOR && EXTERIOR.total) || {vv: 1, fv: 0, lv: 0, pct: 100};
+    if (ofi) return {B, t2: ofi, parcial: false};
+    const L = window.EXT2L || []; const fv = L.reduce((a, x) => a + x.f, 0), lv = L.reduce((a, x) => a + x.l, 0);
+    if (!fv && !lv) return {B, t2: null, parcial: true};
+    // pct: parte dos votos válidos do 1º turno no exterior que já está nos boletins somados
+    const v1 = L.reduce((a, x) => a + (x.v1 || 0), 0), vt = ((EXTERIOR && EXTERIOR.cidades) || []).reduce((a, c) => a + c.vv, 0) || B.vv, pct = vt ? 100 * v1 / vt : 0;
+    return {B, parcial: true, n: L.length, t2: {fv, lv, vv: fv + lv, flavio: 100 * fv / (fv + lv), lula: 100 * lv / (fv + lv), pct, hms: (window.EXT_ATUAL || "").replace(/^25\/10, /, "")}};
+  }
+  function mundoMini() {
+    const NS = "http://www.w3.org/2000/svg", svg = document.createElementNS(NS, "svg");
+    svg.setAttribute("viewBox", "0 0 1000 416"); svg.setAttribute("class", "du-map mundo"); svg.setAttribute("role", "img"); svg.setAttribute("aria-label", "Mapa do mundo com o voto no exterior");
+    svg.innerHTML = `<path d="${typeof LAND !== "undefined" ? LAND : ""}" fill="var(--land)" stroke="var(--rule)" stroke-width=".5"/>`;
+    const L = window.EXT2L || [], mx = Math.max(1, ...L.map(x => x.l + x.f));
+    [...L].sort((a, b) => (b.l + b.f) - (a.l + a.f)).forEach(x => { if (!x.ll) return;
+      const c = document.createElementNS(NS, "circle");
+      c.setAttribute("cx", (x.ll[0] + 180) / 360 * 1000); c.setAttribute("cy", (90 - x.ll[1]) / 180 * 500); c.setAttribute("r", 4 + 34 * Math.sqrt((x.l + x.f) / mx));
+      c.setAttribute("fill", x.f >= x.l ? "var(--flavio-sm)" : "var(--lula)"); c.setAttribute("stroke", "var(--bg)"); c.setAttribute("opacity", ".92");
+      const t = document.createElementNS(NS, "title"); t.textContent = `${x.p}: Flávio ${f1(x.pf)}% × Lula ${f1(100 - x.pf)}%`; c.appendChild(t); svg.appendChild(c); });
+    return svg;
+  }
   function palco() {
-    const B = foco ? ESTADOS[foco] : B1, t2 = foco ? vivoUF(foco) : b2;
-    const nome = foco ? (NOMEUF2[foco] || foco) : "Brasil";
+    const ex = foco === "ZZ" ? dadosExterior() : null;
+    const B = ex ? ex.B : foco ? ESTADOS[foco] : B1, t2 = ex ? ex.t2 : foco ? vivoUF(foco) : b2;
+    const nome = ex ? "Exterior" : foco ? (NOMEUF2[foco] || foco) : "Brasil";
     const fv = t2 ? t2.fv : 0, lv = t2 ? t2.lv : 0, fp = t2 ? t2.flavio : 0, lp = t2 ? t2.lula : 0;
     // válidos esperados: projeção do 2º turno pelo andamento; antes disso, os válidos do 1º turno
     const esperado = t2 && t2.pct > 0 ? t2.vv / (t2.pct / 100) : B.vv / ((B.pct || 100) / 100);
@@ -1779,15 +1805,18 @@ const f1n = v => v.toFixed(1).replace(".", ",");
       ${t2 ? `<div class="pc">${f2(pc)}%</div><div class="vt">${vt.toLocaleString("pt-BR")} votos</div>`
            : `<div class="pc espera">0,00%</div><div class="vt">0 votos · aguardando a apuração</div>`}</div>`;
     let virar = "";
-    if (t2 && t2.pct < 100) {
+    if (t2 && t2.pct < 100 && !(ex && ex.parcial)) {
       const resto = Math.max(0, esperado - t2.vv), d = Math.abs(fv - lv), atras = fv > lv ? "Lula" : "Flávio";
       const s = resto > 0 ? (resto + d) / (2 * resto) : 2;
       virar = `<div class="virar">${s > 1 ? `Pela estimativa, ${atras} não alcança mais${foco ? " aqui" : ""}: faltam ~${mi(resto)} votos válidos e a diferença é de ${mi(d)}.`
         : `Para virar${foco ? " em " + nome : ""}, ${atras} precisa de <b>${f1(100 * s)}%</b> dos ~${mi(resto)} votos válidos que faltam.`}</div>`;
     }
-    const opts = `<option value="">Brasil</option>` + Object.keys(ESTADOS).sort((a, b) => (NOMEUF2[a] || a).localeCompare(NOMEUF2[b] || b)).map(u => `<option value="${u}"${u === foco ? " selected" : ""}>${NOMEUF2[u] || u}</option>`).join("");
+    const opts = `<option value="">Brasil</option><option value="ZZ"${foco === "ZZ" ? " selected" : ""}>Exterior</option>` + Object.keys(ESTADOS).sort((a, b) => (NOMEUF2[a] || a).localeCompare(NOMEUF2[b] || b)).map(u => `<option value="${u}"${u === foco ? " selected" : ""}>${NOMEUF2[u] || u}</option>`).join("");
     const topo = `<div class="du-scope"><label class="sr" for="du-sel">Ver no placar</label><select id="du-sel">${opts}</select>${foco ? `<button type="button" class="btn" id="du-br">← Brasil</button>` : ""}</div>`;
-    const meio = t2 ? `<div class="ey">${nome} · 2º turno</div>
+    const meio = ex && ex.parcial && t2 ? `<div class="ey">Exterior · boletins de urna</div>
+        <div class="clock">${ex.n} países</div>
+        <div class="sub">Soma dos boletins noticiados até ${t2.hms}; cobre ${f1(t2.pct)}% dos votos válidos do exterior no 1º turno. Não é a totalização do TSE.</div>`
+      : t2 ? `<div class="ey">${nome} · 2º turno</div>
         <div class="clock">${f2(t2.pct)}%</div>
         <div class="sub">das seções totalizadas · TSE ${t2.hms || ""}<span id="du-idade"></span></div>${virar}`
       : `<div class="ey">${nome} · 2º turno · 25 de outubro</div>
@@ -1803,12 +1832,12 @@ const f1n = v => v.toFixed(1).replace(".", ",");
           <i class="cf" style="width:${wf}%"></i><i class="cl" style="width:${wl}%"></i></div>
         <div class="cabo-lg"><span>${t2 ? mi(fv) + " votos" : ""}</span><span>Listrado: votos válidos ainda por apurar (estimativa)</span><span>${t2 ? mi(lv) + " votos" : ""}</span></div>
       </div>
-      <p class="du-note">Clique num estado no mapa para vê-lo no placar. ${t2 ? "" : "O mapa se pinta conforme o TSE apura cada estado. "}Os lados não trocam de lugar quando a liderança vira.</p>`;
-    $("du-mapw").appendChild(miniMapa());
+      <p class="du-note">${ex ? "Círculos: países com boletins somados, do tamanho da votação. " : `Clique num estado no mapa para vê-lo no placar. ${t2 ? "" : "O mapa se pinta conforme o TSE apura cada estado. "}`}Os lados não trocam de lugar quando a liderança vira.</p>`;
+    $("du-mapw").appendChild(ex ? mundoMini() : miniMapa());
     $("du-sel").addEventListener("change", e => { foco = e.target.value || null; palco(); });
     if ($("du-br")) $("du-br").addEventListener("click", () => { foco = null; palco(); });
     try { history.replaceState(null, "", "#2turno" + (foco ? "&uf=" + foco : "")); } catch (e) {}
-    if (t2 && t2.hms && (t2.data || (b2 && b2.data))) {   // há quanto tempo o TSE totalizou este boletim
+    if (!ex && t2 && t2.hms && (t2.data || (b2 && b2.data))) {   // há quanto tempo o TSE totalizou este boletim
       const [d, mo, y] = (t2.data || b2.data).split("/"), quando = Date.parse(`${y}-${mo}-${d}T${t2.hms}-03:00`);
       const idade = () => { const e = $("du-idade"); if (!e) return; const m = Math.max(0, Math.round((Date.now() - quando) / 6e4));
         e.textContent = m < 1 ? " · agora há pouco" : m < 60 ? ` · há ${m} min` : ` · há ${Math.floor(m / 60)} h ${m % 60} min`; setTimeout(idade, 30000); };
@@ -1874,6 +1903,7 @@ const f1n = v => v.toFixed(1).replace(".", ",");
   }
 
   palco(); jogo(); duf(); cartao();
+  if (foco === "ZZ") addEventListener("DOMContentLoaded", palco);   // boletins e mapa-múndi vêm de scripts mais abaixo
 })();
 </script>
 
@@ -2325,5 +2355,35 @@ const LAND = "M311.8,399.6L315.4,401.3L319.3,401.9L318.1,403.3L315.4,403.5L314.0
     b.addEventListener("click", () => { tab.classList.toggle("tudo"); txt(); });
     tab.closest(".tw").after(b); txt(); setInterval(txt, 60000);
   }
+})();
+</script>
+<script>/* Faixa de andamento do 2º turno: % de seções, horário do TSE, abstenção, brancos e nulos (vs 2º turno de 2022 e 1º turno de 2026). */
+(() => {
+  const el = document.getElementById("status2"); if (!el) return;
+  const T = (typeof T2 !== "undefined" && T2) || {}, b = T.br && T.br.vv > 0 ? T.br : null;
+  const fmt = v => v.toFixed(2).replace(".", ","), n = v => v.toLocaleString("pt-BR");
+  // 2º turno de 2022 (TSE): comparecimento 124.252.796; brancos 1.769.678; nulos 3.930.765; abstenção 32.200.558 (20,59%)
+  const R22 = {abst: 20.59, br: 100 * 1769678 / 124252796, nu: 100 * 3930765 / 124252796};
+  const R1 = {abst: BR.abst / BR.est * 100, br: BR.vb / BR.tv * 100, nu: BR.vn / BR.tv * 100};
+  // virada de Lula em 2022, pela série reconstruída dos boletins
+  let vir = 68; const s22 = (typeof S2_22 !== "undefined" && S2_22) || [];
+  for (let i = 1; i < s22.length; i++) if (s22[i][2] > s22[i][3] && s22[i - 1][2] <= s22[i - 1][3]) vir = s22[i][0];
+  const kpi = (nome, v, ref22, ref1, base) => {
+    const d = v == null ? null : v - ref22;
+    return `<div class="kpi"><span>${nome}</span><b>${v == null ? "–" : fmt(v) + "%"}</b>
+      <span>${d == null ? "" : `<span class="${d > 0 ? "up" : "down"}">${d > 0 ? "▲" : "▼"} ${fmt(Math.abs(d))} p.p.</span> `}vs ${fmt(ref22)}% no 2º turno de 2022 · ${fmt(ref1)}% no 1º turno de 2026${base ? " · " + base : ""}</span></div>`;
+  };
+  el.innerHTML = `
+    <div class="big">${b ? fmt(b.pct) : "0,00"}%<small>das seções totalizadas</small></div>
+    <div class="barwrap"><div class="track"><div class="fill" style="width:${b ? b.pct : 0}%"></div>
+      <div class="mark" style="left:${vir}%"></div><span class="marklbl" style="left:${vir}%">virada de Lula em 2022 (≈${Math.round(vir)}%)</span></div></div>
+    <div class="meta"><span><span class="dot"></span>Última atualização do TSE</span><b>${b ? b.hms : "–"}</b>
+      <span>${b ? `${n(b.st)} de ${n(b.ts)} seções · ${n(b.tv)} votos` : `0 de ${n((T.br && T.br.ts) || 499248)} seções · divulgação a partir das 17h`}</span></div>
+    <div class="kpis">
+      ${kpi("Abstenção", b && b.est ? b.abst / b.est * 100 : null, R22.abst, R1.abst, b ? `${n(b.abst)} eleitores` : "")}
+      ${kpi("Votos em branco", b && b.tv ? b.vb / b.tv * 100 : null, R22.br, R1.br, b ? "dos votos" : "")}
+      ${kpi("Votos nulos", b && b.tv ? b.vn / b.tv * 100 : null, R22.nu, R1.nu, b ? "dos votos" : "")}
+      <div class="kpi"><span>Comparação</span><span style="line-height:1.45">${b ? "Nas seções já apuradas." : "Aguardando o primeiro boletim do TSE."} Seta: diferença para o 2º turno de 2022 (resultado final do TSE).</span></div>
+    </div>`;
 })();
 </script>
