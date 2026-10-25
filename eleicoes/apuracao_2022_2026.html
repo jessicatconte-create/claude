@@ -687,6 +687,15 @@ figure > *, details > .tw { min-width: 0; }
 #tendtab .tdc .spk { display: block; margin-bottom: 2px; }
 #tendtab .tdc .tdl { display: block; margin: 0; min-width: 0; }
 #tendtab .tdc .tdl .dn2, #tendtab .tdc .tdl .up2 { margin-left: 0; }
+/* cards recolhíveis: seta no cabeçalho esconde o conteúdo */
+figure.dobra > .cabeca { position: relative; padding-right: 44px; cursor: pointer; }
+.dobrar { position: absolute; right: 2px; top: 0; width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--rule); background: transparent;
+  color: var(--muted); font-size: 15px; line-height: 1; cursor: pointer; display: grid; place-items: center; transition: transform .2s, color .15s; }
+.dobrar:hover { color: var(--ink, inherit); border-color: var(--muted); }
+.dobrar:focus-visible { outline: 2px solid var(--flavio); outline-offset: 2px; }
+figure.dobra.fechado > .dobrar, figure.dobra.fechado .dobrar { transform: rotate(-90deg); }
+figure.dobra.fechado > :not(.cabeca) { display: none !important; }
+figure.dobra.fechado > .cabeca p { display: none; }
 </style>
 
 <div class="wrap">
@@ -713,7 +722,8 @@ figure > *, details > .tw { min-width: 0; }
     <div id="past" hidden></div>
   </section>
 
-  <figure>
+  <figure id="graf1">
+    <div class="sectionhead"><h2>Evolução da apuração</h2><p>Parte de cada candidato nos votos válidos conforme as seções foram totalizadas, em 2026 e em 2022.</p></div>
     <div class="legend" aria-hidden="true">
       <span><svg width="26" height="8"><line x1="0" y1="4" x2="26" y2="4" stroke="var(--lula)" stroke-width="3"/></svg>Lula 2026</span>
       <span><svg width="26" height="8"><line x1="0" y1="4" x2="26" y2="4" stroke="var(--flavio)" stroke-width="3"/></svg>Flávio Bolsonaro 2026</span>
@@ -848,6 +858,7 @@ figure > *, details > .tw { min-width: 0; }
   <section class="status st2k" id="status2k" aria-label="Abstenção, brancos e nulos no 2º turno"></section>
 
   <figure id="graf2">
+    <div class="sectionhead"><h2>Evolução da apuração</h2><p>Parte de cada candidato nos votos válidos conforme as seções são totalizadas, em 2026 e no 2º turno de 2022.</p></div>
     <div class="legend" aria-hidden="true">
       <span><svg width="26" height="8"><line x1="0" y1="4" x2="26" y2="4" stroke="var(--lula)" stroke-width="3"/></svg>Lula 2026</span>
       <span><svg width="26" height="8"><line x1="0" y1="4" x2="26" y2="4" stroke="var(--flavio-tx)" stroke-width="3"/></svg>Flávio Bolsonaro 2026</span>
@@ -2610,7 +2621,7 @@ const LAND = "M311.8,399.6L315.4,401.3L319.3,401.9L318.1,403.3L315.4,403.5L314.0
     $("indice").innerHTML = els.filter(e => { const k = CURTO[e.id]; if (vistos.has(k)) return false; vistos.add(k); return true; })
       .map(e => `<a href="#${e.id}" data-ir="${e.id}">${CURTO[e.id]}</a>`).join("");
     $("indice").querySelectorAll("a").forEach(a => a.addEventListener("click", ev => {
-      ev.preventDefault(); const alvo = $(a.dataset.ir), d = alvo.closest("details.fold"); if (d) d.open = true;
+      ev.preventDefault(); const alvo = $(a.dataset.ir), d = alvo.closest("details.fold"); if (d) d.open = true; if (alvo.abrir) alvo.abrir();
       const y = alvo.getBoundingClientRect().top + scrollY - (document.querySelector(".tabs").offsetHeight + document.querySelector(".toolbar").offsetHeight + 8);
       scrollTo({top: y, behavior: "smooth"});
     }));
@@ -2817,5 +2828,30 @@ const LAND = "M311.8,399.6L315.4,401.3L319.3,401.9L318.1,403.3L315.4,403.5L314.0
     <tr class="ref"><td class="fix"><b>Média móvel</b><span class="sub">últimos 7 dias</span></td>${media.map(([d, v, n]) => `<td><span class="cf">${f1(v)}</span><span class="cl">${f1(100 - v)}</span><span class="sub">${n} inst.</span></td>`).join("")}<td class="tdc"><span class="tdl"><span class="tn" style="color:var(--flavio-tx)">Flávio</span> <span class="${fim[1] < ini[1] ? "dn2" : "up2"}">${fim[1] < ini[1] ? "▼" : "▲"} ${f1(Math.abs(fim[1] - ini[1]))}</span> · <span class="tn" style="color:var(--lula)">Lula</span> <span class="${fim[1] > ini[1] ? "dn2" : "up2"}">${fim[1] > ini[1] ? "▼" : "▲"} ${f1(Math.abs(fim[1] - ini[1]))}</span></span></td></tr></tbody>`;
   if (innerWidth < 760) tab.closest("details").open = false;   // no celular, a tabela começa fechada
   let t; new ResizeObserver(() => { clearTimeout(t); t = setTimeout(draw, 120); }).observe(svg); draw();
+})();
+</script>
+<script>
+/* Cards recolhíveis: cada card com cabeçalho ganha uma seta que esconde o conteúdo; a escolha fica guardada neste navegador. */
+(() => {
+  let fechados = [];
+  try { fechados = JSON.parse(localStorage.getItem("cards-fechados") || "[]"); } catch (e) {}
+  const salvar = () => { try { localStorage.setItem("cards-fechados", JSON.stringify(fechados)); } catch (e) {} };
+  document.querySelectorAll(".tabpanel figure").forEach((fig, i) => {
+    const hd = fig.querySelector(":scope > .sectionhead"); if (!hd) return;
+    const chave = fig.id || "card" + i;
+    fig.classList.add("dobra"); hd.classList.add("cabeca");
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "dobrar"; b.textContent = "▾";
+    const h2 = hd.querySelector("h2");
+    const pôr = fechar => { fig.classList.toggle("fechado", fechar); b.setAttribute("aria-expanded", String(!fechar));
+      b.setAttribute("aria-label", (fechar ? "Mostrar " : "Ocultar ") + (h2 ? h2.textContent : "card")); };
+    pôr(fechados.includes(chave));
+    hd.appendChild(b);
+    hd.addEventListener("click", e => { if (e.target.closest("a, input, select, label") ) return;
+      const f = !fig.classList.contains("fechado"); pôr(f);
+      fechados = fechados.filter(k => k !== chave); if (f) fechados.push(chave); salvar();
+      if (!f) dispatchEvent(new Event("resize")); });   // gráficos que mediram 0 de largura se redesenham
+    fig.abrir = () => { if (fig.classList.contains("fechado")) hd.click(); };
+  });
 })();
 </script>
