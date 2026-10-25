@@ -868,7 +868,7 @@ figure > *, details > .tw { min-width: 0; }
       <p>Cada modelo estima o resultado final a partir das urnas já apuradas, com métodos diferentes. Nenhum é oficial: o resultado que vale é o do TSE.</p>
     </div>
     <div class="tw"><table class="pt modt" id="modtab"></table></div>
-    <figcaption>Os modelos externos são lidos das páginas públicas de cada autor a cada atualização deste painel (de 5 em 5 minutos). Faixa: intervalo em que o modelo espera o resultado final de Flávio, com o nível de confiança indicado. Mahlmeister não publica a chance de vitória no 2º turno; ela é calculada aqui supondo uma distribuição normal dentro da faixa de 95%.</figcaption>
+    <figcaption>Os modelos externos são lidos das páginas públicas de cada autor a cada atualização deste painel (de 3 em 3 minutos). Faixa: intervalo em que o modelo espera o resultado final de Flávio, com o nível de confiança indicado. Mahlmeister não publica a chance de vitória no 2º turno; ela é calculada aqui supondo uma distribuição normal dentro da faixa de 95%.</figcaption>
       <div class="sectionhead subsec">
       <h3>Pesquisas do 2º turno · tendência</h3>
       <p>Todas as pesquisas do 2º turno pela data de divulgação, em % dos votos válidos. Linhas: média móvel (a pesquisa mais recente de cada instituto nos últimos 7 dias).</p>
@@ -1907,7 +1907,7 @@ const f1n = v => v.toFixed(1).replace(".", ",");
   const ent = (f, l) => 100 * f / (f + l);
   const linhas = [];
   const add = (o) => linhas.push(o);
-  add({nome: "Rodrigo Mahlmeister / Estadão", link: "https://projecao.2026elections.workers.dev/", metodo: "Por seção eleitoral: compara cada seção apurada com o voto da mesma seção no 2º turno de 2022 e no 1º turno de 2026. No 1º turno, não se afastou mais de meio ponto do resultado a partir de 3% apurado.",
+  add({nome: "Rodrigo Mahlmeister / Estadão", link: "https://projecao.2026elections.workers.dev/", metodo: 'Por seção eleitoral. No começo da noite parte do 1º turno de 2026 de cada seção e mede como se dividiram os eleitores dos outros candidatos; depois passa aos poucos para a mudança em relação ao 2º turno de 2022 no mesmo local, aplicada às seções parecidas que faltam. Parte das pesquisas (Flávio 50,8% × Lula 49,2%), que perdem peso conforme os votos chegam. Aparece a partir de 1% das seções e é pouco confiável até 2,5%. No 1º turno de 2026, errou em média 0,2 ponto entre 2% e 10% apurado. <a href="https://github.com/rodrigomahlmeister/projecao-2026-metodo" target="_blank" rel="noopener" style="text-decoration:underline">Ver o método</a>',
     ok: mm.pronta && mm.flavio, med: mm.flavio && ent(mm.flavio.med, mm.lula.med), lo: mm.flavio && mm.flavio.lo, hi: mm.flavio && mm.flavio.hi, faixa: (mm.nivel || 95) + "%",
     chance: mm.pronta && mm.flavio ? Phi((ent(mm.flavio.med, mm.lula.med) - 50) / Math.max(0.05, (mm.flavio.hi - mm.flavio.lo) / 3.92)) : null, chanceNota: "calculada aqui a partir da faixa",
     pct: mm.pct, espera: "começa com 1% das seções", hist: 1});
@@ -1948,7 +1948,7 @@ const f1n = v => v.toFixed(1).replace(".", ",");
     fonte = `Projeção de ${Mx.nome}, o modelo com melhor histórico já disponível, com ${f1(Mx.pct || b.pct)}% apurado. Veja todos os modelos logo abaixo.`; var modelo = Mx.nome;
   } else if (P && b) {
     pf = P.pf; med = P.med; lo = P.lo; hi = P.hi;
-    fonte = `Projeção da noite com ${f1(b.pct)}% das seções apuradas · TSE ${b.hms}. Atualiza a cada boletim do TSE (de 5 em 5 minutos).`; var modelo = "Este painel (por estado)";
+    fonte = `Projeção da noite com ${f1(b.pct)}% das seções apuradas · TSE ${b.hms}. Atualiza a cada boletim do TSE (de 3 em 3 minutos).`; var modelo = "Este painel (por estado)";
   } else {
     // pesquisas finais: média simples em % dos válidos; erro típico de 2 pontos na parte de cada um
     const L = window.P2 || []; med = L.reduce((a, p) => a + p.f, 0) / (L.length || 1);
