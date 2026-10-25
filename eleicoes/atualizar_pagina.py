@@ -25,12 +25,20 @@ try:
 except OSError:
     r22 = None
 
+try:  # 2º turno (monitor_2t.py)
+    with open("dados_2t_2026.json") as f:
+        t2 = json.load(f)
+    t2 = {"br": {c: t2["br"][c] for c in campos + ("hms", "data", "est", "comp", "abst", "vb", "vn") if c in t2["br"]},
+          "estados": {k: {c: v[c] for c in campos if c in v} for k, v in t2["estados"].items()}, "serie": t2.get("serie", [])}
+except (OSError, ValueError, KeyError):
+    t2 = None
+
 outros = uf.get("outros")
 cands = uf.get("candidatos")
 sen = uf.get("senado")
 gov = uf.get("governador")
 js = lambda o: json.dumps(o, ensure_ascii=False, separators=(",", ":"))
-bloco = f"/*DADOS*/\nconst D26 = {js(d26)};\nconst ESTADOS = {js(estados)};\nconst BR = {js(br)};\nconst EXTERIOR = {js(ext)};\nconst R22 = {js(r22)};\nconst OUTROS = {js(outros)};\nconst CANDS = {js(cands)};\nconst SENADO = {js(sen)};\nconst GOV = {js(gov)};\n/*FIM*/"
+bloco = f"/*DADOS*/\nconst D26 = {js(d26)};\nconst ESTADOS = {js(estados)};\nconst BR = {js(br)};\nconst EXTERIOR = {js(ext)};\nconst R22 = {js(r22)};\nconst OUTROS = {js(outros)};\nconst CANDS = {js(cands)};\nconst SENADO = {js(sen)};\nconst GOV = {js(gov)};\nconst T2 = {js(t2)};\n/*FIM*/"
 
 s = open(PAGINA).read()
 s = re.sub(r"/\*DADOS\*/.*?/\*FIM\*/", lambda _: bloco, s, count=1, flags=re.S)

@@ -415,6 +415,57 @@ details.how p { margin: 0 0 6px; line-height: 1.5; }
 .vt-res { font-size: 14px; line-height: 1.5; margin: 0; }
 
 h1, .sectionhead h2 { font-family: var(--serif); font-weight: 600; letter-spacing: 0; }
+
+.tabs { display: flex; gap: 6px; border-bottom: 1px solid var(--rule); position: sticky; top: 0; z-index: 5; background: var(--bg); padding-top: 6px; }
+.tabs button { background: none; border: 0; border-bottom: 2px solid transparent; color: var(--muted); font: 600 15px var(--display); padding: 10px 16px 12px; cursor: pointer; display: grid; gap: 2px; text-align: left; margin-bottom: -1px; }
+.tabs button small { font-size: 11px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--faint); }
+.tabs button[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--fg); }
+.tabs button:focus-visible { outline: 2px solid var(--brand); outline-offset: -2px; }
+.tabpanel { display: grid; gap: 22px; }
+.tabpanel[hidden] { display: none; }
+.hero.one { grid-template-columns: 1fr; }
+.duelo { display: grid; gap: 18px; padding: 22px 0 8px; }
+.du-top { display: grid; grid-template-columns: 1fr minmax(220px, 1.1fr) 1fr; gap: 16px; align-items: center; }
+.du-side { display: grid; justify-items: start; gap: 6px; }
+.du-side.r { justify-items: end; text-align: right; }
+.du-side img { width: 132px; height: 132px; border-radius: 50%; object-fit: cover; border: 4px solid var(--c); background: var(--panel); }
+.du-side .nm { font: 600 clamp(20px, 2.4vw, 30px) var(--serif); line-height: 1.1; }
+.du-side .pa { font-size: 12px; color: var(--muted); letter-spacing: .04em; }
+.du-side .pc { font-size: clamp(36px, 5vw, 64px); font-weight: 600; line-height: 1; letter-spacing: -.03em; color: var(--c); color: oklch(from var(--c) max(l, .62) c h); font-variant-numeric: tabular-nums; }
+.du-side .vt { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.du-mid { display: grid; gap: 8px; justify-items: center; text-align: center; }
+.du-mid .ey { font: 600 11px var(--display); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.du-mid .clock { font-size: clamp(30px, 4vw, 48px); font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.du-mid .sub { font-size: 13px; color: var(--muted); line-height: 1.5; max-width: 34ch; }
+.du-mid .virar { font-size: 13px; line-height: 1.5; border: 1px solid var(--rule); border-radius: 10px; padding: 8px 12px; max-width: 36ch; }
+.cabo { position: relative; height: 26px; border-radius: 4px; overflow: hidden;
+  background: repeating-linear-gradient(135deg, #1f1f1f 0 6px, #2a2a2a 6px 12px); }
+.cabo i { position: absolute; top: 0; bottom: 0; transition: width .6s ease; }
+.cabo .cf { left: 0; background: var(--flavio); }
+.cabo .cl { right: 0; background: var(--lula); }
+.cabo-wrap { position: relative; padding-top: 18px; }
+.cabo-wrap .meio { position: absolute; left: 50%; top: 14px; height: 34px; width: 2px; background: var(--fg); transform: translateX(-1px); z-index: 1; }
+.cabo-wrap .meio::before { content: "50%"; position: absolute; top: -16px; left: 50%; transform: translateX(-50%); font: 600 11px var(--display); color: var(--fg); }
+.cabo-lg { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-top: 12px; gap: 12px; }
+.cabo-lg span:nth-child(2) { text-align: center; }
+.du-note { font-size: 13px; color: var(--muted); margin: 0; text-align: center; }
+.jogo { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; padding-inline: 6px; }
+.jogo div { border: 1px solid var(--grid); border-radius: 14px; padding: 12px 14px; display: grid; gap: 4px; }
+.jogo b { font-size: 24px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.jogo span { font-size: 12px; color: var(--muted); line-height: 1.45; }
+.jogo .k { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.duf td { vertical-align: middle; }
+.mcabo { display: flex; height: 10px; border-radius: 3px; overflow: hidden; min-width: 120px; background: repeating-linear-gradient(135deg, #1f1f1f 0 4px, #2a2a2a 4px 8px); position: relative; }
+.mcabo::after { content: ""; position: absolute; left: 50%; top: -2px; bottom: -2px; width: 1px; background: var(--fg); opacity: .7; }
+.mcabo .f { background: var(--flavio); } .mcabo .l { background: var(--lula); margin-left: auto; }
+.duf .lab { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-top: 3px; gap: 8px; }
+@media (max-width: 760px) {
+  .du-top { grid-template-columns: 1fr 1fr; }
+  .du-mid { grid-column: 1 / -1; grid-row: 2; }
+  .du-side img { width: 84px; height: 84px; }
+  .mcabo { min-width: 70px; }
+  .duf td, .duf th { padding-inline: 4px; }
+}
 </style>
 
 <div class="wrap">
@@ -424,11 +475,16 @@ h1, .sectionhead h2 { font-family: var(--serif); font-weight: 600; letter-spacin
     <p class="lede" id="lede">Percentual dos votos válidos conforme as seções são totalizadas pelo TSE.</p>
   </header>
 
+  <nav class="tabs" role="tablist" aria-label="Turno">
+    <button type="button" role="tab" id="tab-t1" aria-controls="aba1" aria-selected="false">1º turno<small>4 de outubro</small></button>
+    <button type="button" role="tab" id="tab-t2" aria-controls="aba2" aria-selected="true">2º turno<small>25 de outubro</small></button>
+  </nav>
+
+  <div class="tabpanel" id="aba1" role="tabpanel" aria-labelledby="tab-t1" hidden>
   <section class="status" id="status" aria-label="Andamento da apuração"></section>
 
   <section class="hero" aria-label="Placar">
     <div class="card now" id="now"></div>
-    <div class="card now" id="now2"></div>
     <div id="past" hidden></div>
   </section>
 
@@ -521,16 +577,7 @@ h1, .sectionhead h2 { font-family: var(--serif); font-weight: 600; letter-spacin
     <figcaption id="outcap">JSON oficial do TSE (eleição estadual). A situação vem do TSE quando o resultado é declarado; antes disso, é calculada: no Senado, se o candidato está entre as 2 vagas; na Câmara, se tem votos acima do quociente eleitoral estimado ou abaixo do mínimo de 10% dele. Deputados são eleitos pelo sistema proporcional: a vaga depende também dos votos do partido ou federação, não só da posição individual.</figcaption>
   </figure>
 
-  <figure id="abstencao">
-    <div class="sectionhead">
-      <h2>Abstenção · 2006–2026</h2>
-      <p>Eleitores que não votaram para presidente, em milhões, no 1º e no 2º turno.</p>
-    </div>
-    <div class="abs-leg"><span><i style="background:var(--a1)"></i>1º turno</span><span><i style="background:var(--a2)"></i>2º turno</span></div>
-    <svg class="absc" id="absc" role="img" aria-label="Abstenção em milhões de eleitores por eleição, 1º e 2º turno"></svg>
-    <details class="how"><summary>Ver em tabela</summary><div class="tw"><table class="pt" id="abstab"></table></div></details>
-    <figcaption>2026: TSE, 1º turno com apuração quase completa. 2006–2022: valores do TSE (arredondados ao milhão até 2018); confira no portal do TSE antes de citar.</figcaption>
-  </figure>
+  
 
   <figure id="pesquisas">
     <div class="sectionhead">
@@ -542,10 +589,60 @@ h1, .sectionhead h2 { font-family: var(--serif); font-weight: 600; letter-spacin
     <figcaption>Pesquisas em % dos votos válidos. Erro = diferença Flávio − Lula na pesquisa menos a mesma diferença na projeção da apuração. Fontes: Metrópoles, Diario de Pernambuco, CNN Brasil, Brasil de Fato, VTV News, configuração pública do projeto apuracao-2026 (Quaest eleitor provável).</figcaption>
   </figure>
 
-  <figure id="segundo">
+  
+
+  
+
+  <figure id="fluxo">
+    <div class="sectionhead">
+      <h2>Para onde foram os votos de 2022?</h2>
+      <p id="fluxo-sub">Mudança no percentual de cada lado entre o resultado final de 2022 e a apuração de 2026, por região e por estado.</p>
+    </div>
+    <div class="flow-grid">
+      <div style="display:grid;gap:16px;min-width:0">
+        <div class="tw"><table class="flow-reg" id="flowreg"></table></div>
+        <ul class="flow-notes" id="flownotes"></ul>
+      </div>
+      <div class="dv" id="flowuf"></div>
+    </div>
+    <figcaption>O voto é secreto: não dá para saber para quem cada eleitor de 2022 mudou. Os números mostram onde cada lado ganhou ou perdeu percentual; quando um cai e o outro sobe na mesma medida, isso sugere migração direta, mas é uma inferência a partir dos totais. "Outros" inclui todos os demais candidatos. 2022: resultado final (boletins de urna do TSE). 2026: apuração em andamento.</figcaption>
+  </figure>
+
+  <details>
+    <summary>Ver os dados em tabela</summary>
+    <div class="tables" id="tables"></div>
+  </details>
+
+  </div>
+
+  <div class="tabpanel" id="aba2" role="tabpanel" aria-labelledby="tab-t2">
+  <section class="duelo" id="duelo" aria-label="Duelo do 2º turno"></section>
+
+  <section class="hero one" aria-label="Placar do 2º turno">
+    <div class="card now" id="now2"></div>
+  </section>
+
+  <figure id="emjogo">
+    <div class="sectionhead">
+      <h2>Votos em jogo</h2>
+      <p>O ponto de partida: o que cada um teve no 1º turno e os votos que ficaram com os outros candidatos, em branco, nulos ou em casa.</p>
+    </div>
+    <div class="jogo" id="jogo"></div>
+  </figure>
+
+  <figure id="duf">
+    <div class="sectionhead">
+      <h2>Estado a estado</h2>
+      <p id="duf-sub">Flávio × Lula só entre os dois: no 1º turno e, quando a apuração começar, no 2º. Ordenado pelos votos dos outros candidatos em jogo em cada estado.</p>
+    </div>
+    <div class="tw"><table class="pt duf" id="duftab"></table></div>
+    <figcaption>Barra: parte de Flávio (azul) e de Lula (vermelho) nos votos dados aos dois. "Em jogo": votos válidos do 1º turno que foram para os demais candidatos. Variação: quanto a parte de Flávio entre os dois mudou do 1º para o 2º turno, em pontos.</figcaption>
+  </figure>
+
+<figure id="segundo">
     <div class="sectionhead">
       <h2>2º turno · pesquisas e projeção</h2>
-      <p>Últimas pesquisas de Lula × Flávio e duas formas de projetar o 2º turno a partir do que aconteceu no 1º.</p>
+      <p>As pesquisas finais de Lula × Flávio (divulgadas de 22 a 24/10) e duas formas de projetar o 2º turno a partir do que aconteceu no 1º.</p>
     </div>
     <div class="seg-top">
       <div class="tw"><table class="pt" id="pt2"></table></div>
@@ -553,7 +650,18 @@ h1, .sectionhead h2 { font-family: var(--serif); font-weight: 600; letter-spacin
     </div>
     <div class="box sim" id="sim"></div>
     <div class="t2" id="t2"></div>
-    <figcaption>Pesquisas de 2º turno em votos totais (incluem brancos, nulos e indecisos), exceto quando indicado. As projeções são cenários com hipóteses explícitas, não previsões.</figcaption>
+    <figcaption>Pesquisas em % dos votos válidos, como divulgadas pelos institutos; o total (com brancos, nulos e indecisos) aparece quando publicado. "Flávio:" mostra a evolução dele nos válidos nas rodadas do mesmo instituto desde 05/10. Fontes: Folha/Datafolha, Globo/Quaest, Bloomberg/AtlasIntel, Metrópoles, Gazeta do Povo, Exame, CNN Brasil e a lista do <a href="https://www.poder360.com.br/poder-eleicoes-2026/saiba-como-estao-lula-e-flavio-nas-pesquisas-a-1-dia-da-eleicao/" target="_blank" rel="noopener">Poder360</a> (24/10). As projeções são cenários com hipóteses explícitas, não previsões.</figcaption>
+  </figure>
+
+  <figure id="abstencao">
+    <div class="sectionhead">
+      <h2>Abstenção · 2006–2026</h2>
+      <p>Eleitores que não votaram para presidente, em milhões, no 1º e no 2º turno.</p>
+    </div>
+    <div class="abs-leg"><span><i style="background:var(--a1)"></i>1º turno</span><span><i style="background:var(--a2)"></i>2º turno</span></div>
+    <svg class="absc" id="absc" role="img" aria-label="Abstenção em milhões de eleitores por eleição, 1º e 2º turno"></svg>
+    <details class="how"><summary>Ver em tabela</summary><div class="tw"><table class="pt" id="abstab"></table></div></details>
+    <figcaption>2026: TSE, 1º turno com apuração quase completa. 2006–2022: valores do TSE (arredondados ao milhão até 2018); confira no portal do TSE antes de citar.</figcaption>
   </figure>
 
   <figure id="voto">
@@ -604,26 +712,7 @@ h1, .sectionhead h2 { font-family: var(--serif); font-weight: 600; letter-spacin
   el.addEventListener("change", conta); conta();
 })();
 </script>
-
-  <figure id="fluxo">
-    <div class="sectionhead">
-      <h2>Para onde foram os votos de 2022?</h2>
-      <p id="fluxo-sub">Mudança no percentual de cada lado entre o resultado final de 2022 e a apuração de 2026, por região e por estado.</p>
-    </div>
-    <div class="flow-grid">
-      <div style="display:grid;gap:16px;min-width:0">
-        <div class="tw"><table class="flow-reg" id="flowreg"></table></div>
-        <ul class="flow-notes" id="flownotes"></ul>
-      </div>
-      <div class="dv" id="flowuf"></div>
-    </div>
-    <figcaption>O voto é secreto: não dá para saber para quem cada eleitor de 2022 mudou. Os números mostram onde cada lado ganhou ou perdeu percentual; quando um cai e o outro sobe na mesma medida, isso sugere migração direta, mas é uma inferência a partir dos totais. "Outros" inclui todos os demais candidatos. 2022: resultado final (boletins de urna do TSE). 2026: apuração em andamento.</figcaption>
-  </figure>
-
-  <details>
-    <summary>Ver os dados em tabela</summary>
-    <div class="tables" id="tables"></div>
-  </details>
+  </div>
 
   <p class="sources">Fontes: parciais do TSE. 2022: publicadas ao vivo pela Bloomberg Línea (02/10/2022), resultado final do TSE. 2026: JSON oficial do TSE a partir de 31,90%; antes disso, painel do TSE (21,96% e 24,45%), boletim por região com 27,88% (nacional calculado pela soma das regiões, sem votos do exterior) e boletins citados por
     <a href="https://agendadopoder.com.br/flavio-bolsonaro-tem-5031-e-lula-4124-com-497-apurado/" target="_blank" rel="noopener">Agenda do Poder</a>,
@@ -972,12 +1061,21 @@ const f1n = v => v.toFixed(1).replace(".", ",");
     {i: "Futura", d: "03/10", l: 42.6, f: 44.8},
   ];
   // 2º turno
-  const P2 = [
-    {i: "Datafolha", d: "03/10", l: 47.0, f: 46.0},
-    {i: "Datafolha", d: "01/10", l: 48.0, f: 45.0},
-    {i: "AtlasIntel", d: "véspera", l: 47.6, f: 47.4},
-    {i: "Quaest", d: "véspera", l: 42.0, f: 44.0},
-    {i: "Real Time Big Data", d: "véspera", l: 46.0, f: 45.0, nota: "51% × 49% dos válidos"},
+  const P2 = [   // 2º turno, % dos votos válidos (Lula, Flávio); finais de 22 a 24/10
+    {i: "Datafolha", d: "23–24/10 · 4.050 entrevistas · ±2", l: 49, f: 51, nota: "total 47% × 48%", tend: "52 → 51 → 50 → 51"},
+    {i: "Quaest", d: "23–24/10 · 3.702 · ±2", l: 49, f: 51, nota: "total 45% × 46%", tend: "51 → 50,6 → 51"},
+    {i: "AtlasIntel/Bloomberg", d: "18–23/10 · 4.990 · ±1", l: 49.2, f: 50.8, nota: "total 48,4% × 49,9%", tend: "52,8 → 51,1 → 50,8"},
+    {i: "BTG/Nexus", d: "23–24/10 · 2.000 · ±2,2", l: 49.5, f: 50.5, tend: "52 → 50,3 → 50,5"},
+    {i: "Gerp", d: "22–24/10 · 2.400 · ±2", l: 48, f: 52, tend: "55 → 52"},
+    {i: "Veritá", d: "19–23/10 · 15.554 · ±1", l: 48.44, f: 51.56, nota: "total 46,5% × 49,4%"},
+    {i: "Vox Brasil", d: "20–22/10 · 2.100 · ±2,15", l: 50.6, f: 49.4, nota: "total 45,4% × 44,3%"},
+    {i: "CNT/MDA", d: "21–23/10 · 2.032 · ±2,2", l: 49.3, f: 50.7},
+    {i: "Instituto França", d: "21–23/10 · 1.537 · ±2,5", l: 48.6, f: 51.4},
+    {i: "Ipespe/Abrapel", d: "20–22/10 · 1.500 · ±2,6", l: 49.5, f: 50.5, tend: "52,7 → 51,2 → 50,5"},
+    {i: "PoderData/Aya", d: "19–21/10 · 4.000 · ±1,6", l: 49, f: 51, tend: "53 → 51 → 50 → 52 → 51"},
+    {i: "Real Time Big Data", d: "19–22/10 · 2.000 · ±2", l: 48, f: 52},
+    {i: "Alfa Inteligência", d: "18–22/10 · 2.700 · ±1,9", l: 48, f: 52},
+    {i: "Futura", d: "19–20/10 · 2.000 · ±2,2", l: 48.9, f: 51.1},
   ];
   let F = 0, L = 0, V = 0;
   for (const e of Object.values(ESTADOS)) { const k = e.ts / e.st; F += e.fv * k; L += e.lv * k; V += e.vv * k; }
@@ -995,7 +1093,8 @@ const f1n = v => v.toFixed(1).replace(".", ",");
     ${pf != null ? `<tr class="ref"><td>Projeção da apuração<span class="sub">estimativa simples</span></td><td>${f1(pl)}%</td><td>${f1(pf)}%</td><td>${lead(pf, pl)}</td><td>0</td></tr>` : ""}</tbody>`;
   document.getElementById("pt2").innerHTML = `
     <thead><tr><th>Pesquisa</th><th>${thav("lula", "Lula")}</th><th>${thav("flavio", "Flávio")}</th><th>Vantagem</th></tr></thead><tbody>
-    ${P2.map(p => `<tr><td>${p.i}<span class="sub">${p.d}${p.nota ? " · " + p.nota : ""}</span></td><td>${f1(p.l)}%</td><td>${f1(p.f)}%</td><td>${lead(p.f, p.l)}</td></tr>`).join("")}</tbody>`;
+    ${P2.map(p => `<tr><td>${p.i}<span class="sub">${p.d}${p.nota ? " · " + p.nota : ""}${p.tend ? " · Flávio: " + p.tend : ""}</span></td><td>${f1(p.l)}%</td><td>${f1(p.f)}%</td><td>${lead(p.f, p.l)}</td></tr>`).join("")}
+    <tr class="ref"><td>Média das ${P2.length} pesquisas<span class="sub">simples, sem peso por amostra</span></td><td>${f1(P2.reduce((a, p) => a + p.l, 0) / P2.length)}%</td><td>${f1(P2.reduce((a, p) => a + p.f, 0) / P2.length)}%</td><td>${lead(P2.reduce((a, p) => a + p.f, 0) / P2.length, P2.reduce((a, p) => a + p.l, 0) / P2.length)}</td></tr></tbody>`;
 
   // gráfico de pontos: vantagem Flávio − Lula
   const svgD = document.getElementById("dots");
@@ -1119,7 +1218,7 @@ const f1n = v => v.toFixed(1).replace(".", ",");
   const pf = F / V * 100, pl = L / V * 100, po = 100 - pf - pl, f1 = v => v.toFixed(1).replace(".", ",");
   // 1) pesquisas de 2º turno corrigidas pelo erro do mesmo instituto no 1º turno
   const ERRO1 = {"Datafolha": [45.0, 42.0], "AtlasIntel": [47.0, 44.1], "Quaest": [46.0, 45.0]};   // [Lula, Flávio] na véspera
-  const P2 = [["Datafolha", 47.0, 46.0], ["AtlasIntel", 47.6, 47.4], ["Quaest", 42.0, 44.0]];
+  const P2 = [["Datafolha", 47.0, 48.0], ["AtlasIntel", 48.4, 49.9], ["Quaest", 45.0, 46.0]];   // finais, votos totais (24/10)
   const rows = P2.map(([i, l, f]) => {
     const fv = f / (f + l) * 100;                                   // Flávio em % dos válidos na pesquisa
     const e = (ERRO1[i][1] - ERRO1[i][0]) - (pf - pl);              // erro do instituto na diferença Flávio − Lula
@@ -1244,7 +1343,7 @@ const f1n = v => v.toFixed(1).replace(".", ",");
       <div class="hint">Em todos os 7 segundos turnos, quem liderou o 1º turno venceu o 2º. Mas o 2º colocado costuma converter mais votos dos outros candidatos: de 51% a 70% (média de 59%, sem 2006, quando Alckmin perdeu votos entre os turnos). A conversão é a variação de cada um em % dos válidos dividida pelo que os outros tiveram no 1º turno; inclui mudanças de comparecimento. A abstenção costuma subir no 2º turno (exceto em 2022). Em 1994 e 1998, Fernando Henrique venceu no 1º turno. Diferenças em votos válidos, segundo o TSE; 2026 com ${fmt(a26[0])}% apurado.</div></div>`;
   }
   function resumo2() {
-    const P2r = [["Datafolha", 47.0, 46.0], ["AtlasIntel", 47.6, 47.4], ["Quaest", 42.0, 44.0], ["Real Time Big Data", 46.0, 45.0]];
+    const P2r = [["Datafolha", 49, 51], ["Quaest", 49, 51], ["AtlasIntel", 49.2, 50.8], ["BTG/Nexus", 49.5, 50.5], ["Gerp", 48, 52], ["Veritá", 48.44, 51.56], ["Vox Brasil", 50.6, 49.4], ["CNT/MDA", 49.3, 50.7], ["Instituto França", 48.6, 51.4], ["Ipespe/Abrapel", 49.5, 50.5], ["PoderData/Aya", 49, 51], ["Real Time Big Data", 48, 52], ["Alfa Inteligência", 48, 52], ["Futura", 48.9, 51.1]];   // válidos, finais
     const pm = P2r.reduce((a, [, l, f]) => a + f / (f + l) * 100, 0) / P2r.length;
     const cenarios = (() => { const tmp = document.createElement("div"); return null; })();
     const linha = (lb, sub, f) => `<div class="r"><span class="lb">${lb}${sub ? `<small>${sub}</small>` : ""}</span>
@@ -1252,12 +1351,12 @@ const f1n = v => v.toFixed(1).replace(".", ",");
       <span class="v ${Math.abs(f - 50) < .05 ? "" : f > 50 ? "lead-f" : "lead-l"}">${Math.abs(f - 50) < .05 ? "empate" : (f > 50 ? "F " : "L ") + f1(Math.max(f, 100 - f)) + "%"}</span></div>`;
     const R = window.__res || [];
     return `<h3>Resumo: Flávio × Lula no 2º turno</h3><div class="rz">
-      ${linha("Média das pesquisas", "antes do 1º turno, em votos válidos", pm)}
+      ${linha("Média das pesquisas finais", "14 institutos, 22 a 24/10, em votos válidos", pm)}
       <div class="sep"></div>
       ${R.length ? linha("Leitura de cenário · central", `faixa ${f1(R[0].f)}%–${f1(R[2].f)}% para Flávio`, R[1].f) + linha("Como no 2º turno de 2022", "31% dos outros para Lula", R[3].f) : ""}
       ${linha("Metade dos outros para cada", "divisão 50% / 50%", (pf + po / 2) / (pf + pl + po) * 100)}
       ${linha("Lula com todo o voto de Cury e Renan", "cenário mais favorável a Lula testado", window.__melhorLula || 50)}
-    </div><div class="hint">Barra azul: Flávio; vermelha: Lula; o traço marca 50%. Pesquisas antecedem o resultado do 1º turno e erraram a favor de Lula.</div>`;
+    </div><div class="hint">Barra azul: Flávio; vermelha: Lula; o traço marca 50%. No 1º turno, as pesquisas erraram a favor de Lula: Flávio teve mais votos do que elas indicavam.</div>`;
   }
   document.getElementById("t2").innerHTML = `
     ${cenarioBox()}
@@ -1440,5 +1539,144 @@ const f1n = v => v.toFixed(1).replace(".", ",");
     $("s_conv").value = c; $("s_nulo").value = nl; $("s_abs").value = a; $("s_novo").value = nv; calc();
   }));
   calc();
+})();
+</script>
+
+<script>
+/* Abas 1º / 2º turno e a tela do duelo do 2º turno (inspirada no ElectoMaps). */
+(() => {
+  const $ = id => document.getElementById(id);
+  // ---------- abas ----------
+  const tabs = [["tab-t1", "aba1", "1º turno · Presidente da República"], ["tab-t2", "aba2", "2º turno · Presidente da República"]];
+  const eyebrow = document.querySelector(".eyebrow span:last-child"), lede = $("lede");
+  const lede1 = lede ? lede.innerHTML : "";
+  const b2l = typeof T2 !== "undefined" && T2 && T2.br && T2.br.vv > 0 ? T2.br : null;
+  const fx = v => v.toLocaleString("pt-BR", {minimumFractionDigits: 2, maximumFractionDigits: 2});
+  const lede2 = b2l ? `<b>${b2l.flavio >= b2l.lula ? "Flávio Bolsonaro" : "Lula"}</b> lidera o 2º turno por ${fx(Math.abs(b2l.flavio - b2l.lula))} pontos com ${fx(b2l.pct)}% apurado.`
+    : `Flávio chegou ao 2º turno ${fx(BR.flavio - BR.lula)} pontos à frente (${fx(BR.flavio)}% × ${fx(BR.lula)}%). As pesquisas finais indicam empate técnico. A votação vai até as 17h, e a apuração aparece aqui.`;
+  function abrir(n, foco) {
+    tabs.forEach(([t, p, ey], i) => {
+      const on = i === n;
+      $(t).setAttribute("aria-selected", on); $(t).tabIndex = on ? 0 : -1; $(p).hidden = !on;
+      if (on && eyebrow) eyebrow.textContent = ey;
+      if (on && lede) lede.innerHTML = i ? lede2 : lede1;
+    });
+    if (foco) $(tabs[n][0]).focus();
+    try { localStorage.setItem("aba", n); } catch (e) {}
+    history.replaceState(null, "", n ? "#2turno" : "#1turno");
+  }
+  tabs.forEach(([t], i) => {
+    $(t).addEventListener("click", () => abrir(i));
+    $(t).addEventListener("keydown", e => { if (e.key === "ArrowRight" || e.key === "ArrowLeft") { e.preventDefault(); abrir(1 - i, true); } });
+  });
+  let ini = 1;
+  try { const v = localStorage.getItem("aba"); if (v != null) ini = +v; } catch (e) {}
+  if (location.hash === "#1turno") ini = 0; else if (location.hash === "#2turno") ini = 1;
+  abrir(ini);
+
+  // ---------- números ----------
+  const f1 = v => v.toLocaleString("pt-BR", {minimumFractionDigits: 1, maximumFractionDigits: 1});
+  const f2 = v => v.toLocaleString("pt-BR", {minimumFractionDigits: 2, maximumFractionDigits: 2});
+  const mi = v => v >= 1e6 ? f1(v / 1e6) + " mi" : v >= 1e4 ? Math.round(v / 1e3).toLocaleString("pt-BR") + " mil" : v.toLocaleString("pt-BR");
+  const T = (typeof T2 !== "undefined" && T2) || null;
+  const b2 = T && T.br && T.br.vv > 0 ? T.br : null;               // 2º turno com voto apurado
+  const B1 = BR;                                                   // 1º turno
+  const ent = (f, l) => f + l > 0 ? 100 * f / (f + l) : null;      // parte de Flávio entre os dois
+  const fech = Date.parse("2026-10-25T17:00:00-03:00");
+
+  // ---------- palco ----------
+  function palco() {
+    const fv = b2 ? b2.fv : 0, lv = b2 ? b2.lv : 0;
+    const fp = b2 ? b2.flavio : 0, lp = b2 ? b2.lula : 0;
+    // válidos esperados: projeção do 2º turno pelo andamento; antes disso, os válidos do 1º turno
+    const esperado = b2 && b2.pct > 0 ? b2.vv / (b2.pct / 100) : B1.vv / (B1.pct / 100);
+    const wf = Math.min(100, 100 * fv / esperado), wl = Math.min(100 - wf, 100 * lv / esperado);
+    const lado = (r, nome, pa, foto, cor, pc, vt) => `<div class="du-side${r}" style="--c:${cor}">
+      <img src="${foto}" alt=""><div class="nm">${nome}</div><div class="pa">${pa}</div>
+      <div class="pc">${b2 ? f2(pc) + "%" : "–"}</div><div class="vt">${b2 ? vt.toLocaleString("pt-BR") + " votos" : "aguardando a apuração"}</div></div>`;
+    // quanto quem está atrás precisa dos votos que faltam
+    let virar = "";
+    if (b2 && b2.pct < 100) {
+      const resto = Math.max(0, esperado - b2.vv), d = Math.abs(fv - lv), atras = fv > lv ? "Lula" : "Flávio";
+      const s = resto > 0 ? (resto + d) / (2 * resto) : 2;
+      virar = `<div class="virar">${s > 1 ? `Pela estimativa, ${atras} não alcança mais: faltam ~${mi(resto)} votos válidos e a diferença é de ${mi(d)}.`
+        : `Para virar, ${atras} precisa de <b>${f1(100 * s)}%</b> dos ~${mi(resto)} votos válidos que faltam.`}</div>`;
+    }
+    const meio = b2 ? `<div class="ey">2º turno · domingo, 25 de outubro</div>
+        <div class="clock">${f2(b2.pct)}%</div>
+        <div class="sub">das seções totalizadas · TSE ${b2.hms || ""}${b2.data ? " de " + b2.data : ""}</div>${virar}`
+      : `<div class="ey">2º turno · domingo, 25 de outubro</div>
+        <div class="clock" id="du-clock">–</div>
+        <div class="sub" id="du-clock-sub">As urnas fecham às 17h (Brasília) em todo o país; só então o TSE divulga os votos.</div>`;
+    const p1 = ent(B1.fv, B1.lv);
+    $("duelo").innerHTML = `<div class="du-top">
+        ${lado("", "Flávio Bolsonaro", "PL · 22", FOTOS.flavio, "var(--flavio)", fp, fv)}
+        <div class="du-mid">${meio}</div>
+        ${lado(" r", "Lula", "PT · 13", FOTOS.lula, "var(--lula)", lp, lv)}
+      </div>
+      <div class="cabo-wrap"><span class="meio" aria-hidden="true"></span>
+        <div class="cabo" role="img" aria-label="${b2 ? `Flávio ${f2(fp)}%, Lula ${f2(lp)}%, ${f2(b2.pct)}% apurado` : "Apuração ainda não começou"}">
+          <i class="cf" style="width:${wf}%"></i><i class="cl" style="width:${wl}%"></i></div>
+        <div class="cabo-lg"><span>${b2 ? mi(fv) + " votos" : ""}</span><span>Listrado: votos válidos ainda por apurar (estimativa)</span><span>${b2 ? mi(lv) + " votos" : ""}</span></div>
+      </div>
+      <p class="du-note">Ponto de partida, 1º turno só entre os dois: Flávio ${f1(p1)}% × Lula ${f1(100 - p1)}%. Os lados não trocam de lugar quando a liderança vira.</p>`;
+    if (!b2) {
+      const tick = () => {
+        const c = $("du-clock"); if (!c) return;
+        const r = fech - Date.now();
+        if (r <= 0) { c.textContent = "Urnas fechadas"; $("du-clock-sub").textContent = "Aguardando os primeiros boletins do TSE."; return; }
+        const h = Math.floor(r / 36e5), m = Math.floor(r % 36e5 / 6e4), s2 = Math.floor(r % 6e4 / 1e3);
+        c.textContent = `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s2).padStart(2, "0")}`;
+        setTimeout(tick, 1000);
+      };
+      tick();
+    }
+  }
+
+  // ---------- votos em jogo ----------
+  function jogo() {
+    const out = B1.vv - B1.fv - B1.lv, bn = B1.vb + B1.vn, ab = B1.abst;
+    const x = 100 * (B1.fv - B1.lv + out) / (2 * out);   // parte dos outros que Lula precisa, com o resto parado
+    $("jogo").innerHTML = `
+      <div><span class="k">Flávio no 1º turno</span><b style="color:var(--flavio-tx)">${mi(B1.fv)}</b><span>${f2(B1.flavio)}% dos válidos</span></div>
+      <div><span class="k">Lula no 1º turno</span><b style="color:var(--lula)">${mi(B1.lv)}</b><span>${f2(B1.lula)}% dos válidos · ${mi(B1.fv - B1.lv)} atrás</span></div>
+      <div><span class="k">Outros candidatos</span><b>${mi(out)}</b><span>Se ninguém mais mudar, Lula precisa de ${f1(x)}% desses votos para empatar.</span></div>
+      <div><span class="k">Brancos e nulos</span><b>${mi(bn)}</b><span>Quem anulou ou votou em branco no 1º turno.</span></div>
+      <div><span class="k">Abstenção</span><b>${mi(ab)}</b><span>Eleitores que não votaram no 1º turno; ${f1(100 * ab / (ab + B1.comp))}% do eleitorado.</span></div>`;
+  }
+
+  // ---------- estado a estado ----------
+  function duf() {
+    const e2 = (T && T.estados) || {};
+    const linhas = Object.entries(ESTADOS).map(([uf, e]) => ({uf, e, out: e.vv - e.fv - e.lv, p1: ent(e.fv, e.lv), t: e2[uf] && e2[uf].vv > 0 ? e2[uf] : null}))
+      .sort((a, b) => b.out - a.out);
+    const bar = p => p == null ? `<div class="mcabo" aria-hidden="true"></div>` : `<div class="mcabo" aria-hidden="true"><i class="f" style="width:${p}%"></i><i class="l" style="width:${100 - p}%"></i></div>`;
+    const lab = p => p == null ? "" : `<div class="lab"><span style="color:var(--flavio-tx)">${f1(p)}%</span><span style="color:var(--lula)">${f1(100 - p)}%</span></div>`;
+    $("duftab").innerHTML = `<thead><tr><th>UF</th><th style="text-align:left">1º turno</th><th>Em jogo</th><th style="text-align:left">2º turno</th><th>Variação</th></tr></thead><tbody>
+      ${linhas.map(({uf, out, p1, t}) => { const p2 = t ? ent(t.fv, t.lv) : null, d = p2 == null ? null : p2 - p1;
+        return `<tr><td><b>${uf}</b></td><td style="text-align:left">${bar(p1)}${lab(p1)}</td><td>${mi(out)}</td>
+        <td style="text-align:left">${bar(p2)}${p2 == null ? `<div class="lab"><span>aguardando</span></div>` : lab(p2).replace("</div>", `<span>${f1(t.pct)}% apurado</span></div>`)}</td>
+        <td>${d == null ? "–" : `<span style="color:${d >= 0 ? "var(--flavio-tx)" : "var(--lula)"}">${d >= 0 ? "Flávio +" : "Lula +"}${f1(Math.abs(d))}</span>`}</td></tr>`; }).join("")}</tbody>`;
+  }
+
+  // ---------- cartão 2026 × 2022 do 2º turno com o dado ao vivo ----------
+  function cartao() {
+    // o 2026 já está no palco; o cartão fica só com o 2º turno de 2022
+    const n2 = $("now2"); if (!n2) return;
+    const y = n2.querySelector(".y22");
+    if (y) { [...n2.children].forEach(c => { if (c !== y) c.remove(); }); y.style.borderTop = "0"; y.style.paddingTop = "0"; y.style.marginTop = "0"; }
+  }
+  function cartaoVivo() {
+    const n2 = $("now2"); if (!n2 || !b2 || !window.cand) return;
+    const d = b2.flavio - b2.lula, dv = Math.abs(b2.fv - b2.lv);
+    const hd = n2.querySelector(".hd"), duel = n2.querySelector(".duel"), split = n2.querySelector(".bigsplit"), foot = n2.querySelector(".foot");
+    if (!hd || !duel) return;
+    hd.innerHTML = `<h2>2º turno · 2026 · ${f2(b2.pct)}% apurado</h2><span class="gap" style="--c:${d >= 0 ? "var(--flavio)" : "var(--lula)"}">${d >= 0 ? "Flávio" : "Lula"} +${f2(Math.abs(d))} p.p. · ${dv.toLocaleString("pt-BR")} votos válidos</span>`;
+    duel.innerHTML = window.cand("", "Flávio Bolsonaro", "PL · 22", FOTOS.flavio, "var(--flavio)", b2.flavio, b2.fv) + window.cand("r", "Lula", "PT · 13", FOTOS.lula, "var(--lula)", b2.lula, b2.lv);
+    split.innerHTML = `<div style="width:${b2.flavio}%;background:var(--flavio)"></div><div style="flex:1;background:var(--lula)"></div>`;
+    foot.textContent = `TSE ${b2.hms || ""} · ${b2.st.toLocaleString("pt-BR")} de ${b2.ts.toLocaleString("pt-BR")} seções.`;
+  }
+
+  palco(); jogo(); duf(); cartao();
 })();
 </script>
