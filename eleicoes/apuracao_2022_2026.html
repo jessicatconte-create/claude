@@ -676,6 +676,8 @@ figure > *, details > .tw { min-width: 0; }
 #tendtab .rk.vz { background: var(--grid); color: var(--muted); }
 #tendtab tr:nth-child(-n+3) .rk { background: #e8c35a; }
 #tendtab .fix .sub { display: block; font-size: 10px; }
+.status.st2k { display: block; padding: 12px 20px; }
+.status.st2k .kpis { margin: 0; border-top: 0; padding-top: 0; }
 </style>
 
 <div class="wrap">
@@ -833,6 +835,8 @@ figure > *, details > .tw { min-width: 0; }
   <section class="status" id="status2" aria-label="Andamento da apuração do 2º turno"></section>
 
   <section class="duelo" id="duelo" aria-label="Duelo do 2º turno"></section>
+
+  <section class="status st2k" id="status2k" aria-label="Abstenção, brancos e nulos no 2º turno"></section>
 
   <figure id="graf2">
     <div class="legend" aria-hidden="true">
@@ -2676,8 +2680,8 @@ const LAND = "M311.8,399.6L315.4,401.3L319.3,401.9L318.1,403.3L315.4,403.5L314.0
     <div class="barwrap"><div class="track"><div class="fill" style="width:${b ? b.pct : 0}%"></div>
       <div class="mark" style="left:${vir}%"></div><span class="marklbl" style="left:${vir}%">virada de Lula em 2022 (≈${Math.round(vir)}%)</span></div></div>
     <div class="meta"><span><span class="dot"></span>Última atualização do TSE</span><b>${b ? b.hms : "–"}</b>
-      <span>${b ? `${n(b.st)} de ${n(b.ts)} seções · ${n(b.tv)} votos` : `0 de ${n((T.br && T.br.ts) || 499248)} seções · divulgação a partir das 17h`}</span></div>
-    <div class="kpis">
+      <span>${b ? `${n(b.st)} de ${n(b.ts)} seções · ${n(b.tv)} votos` : `0 de ${n((T.br && T.br.ts) || 499248)} seções · divulgação a partir das 17h`}</span></div>`;
+  const k2 = document.getElementById("status2k"); if (k2) k2.innerHTML = `<div class="kpis">
       ${kpi("Abstenção", b && b.est ? b.abst / b.est * 100 : null, R22.abst, R1.abst, b ? `${n(b.abst)} eleitores` : "")}
       ${kpi("Votos em branco", b && b.tv ? b.vb / b.tv * 100 : null, R22.br, R1.br, b ? "dos votos" : "")}
       ${kpi("Votos nulos", b && b.tv ? b.vn / b.tv * 100 : null, R22.nu, R1.nu, b ? "dos votos" : "")}
