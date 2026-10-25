@@ -24,12 +24,23 @@ try:
         r22 = json.load(f)
 except OSError:
     r22 = None
+try:  # 2º turno de 2022 por UF: [válidos, Lula, Bolsonaro]
+    with open("dados_2022_2t_uf.json") as f:
+        t2_22 = json.load(f)
+except OSError:
+    t2_22 = None
+try:  # andamento do 2º turno de 2022 (gerar_2022_2t_serie.py)
+    with open("dados_2022_2t_serie.json") as f:
+        s2_22 = json.load(f)
+except OSError:
+    s2_22 = None
 
 try:  # 2º turno (monitor_2t.py)
     with open("dados_2t_2026.json") as f:
         t2 = json.load(f)
-    t2 = {"br": {c: t2["br"][c] for c in campos + ("hms", "data", "est", "comp", "abst", "vb", "vn") if c in t2["br"]},
-          "estados": {k: {c: v[c] for c in campos if c in v} for k, v in t2["estados"].items()}, "serie": t2.get("serie", [])}
+    t2 = {"br": {c: t2["br"][c] for c in campos + ("hms", "data", "est", "comp", "abst", "vb", "vn", "eleito") if c in t2["br"]},
+          "estados": {k: {c: v[c] for c in campos if c in v} for k, v in t2["estados"].items()}, "serie": t2.get("serie", []), "gov": t2.get("gov"),
+          "ext": {c: t2["exterior"][c] for c in campos if c in t2["exterior"]} if t2.get("exterior") else None}
 except (OSError, ValueError, KeyError):
     t2 = None
 
@@ -38,7 +49,7 @@ cands = uf.get("candidatos")
 sen = uf.get("senado")
 gov = uf.get("governador")
 js = lambda o: json.dumps(o, ensure_ascii=False, separators=(",", ":"))
-bloco = f"/*DADOS*/\nconst D26 = {js(d26)};\nconst ESTADOS = {js(estados)};\nconst BR = {js(br)};\nconst EXTERIOR = {js(ext)};\nconst R22 = {js(r22)};\nconst OUTROS = {js(outros)};\nconst CANDS = {js(cands)};\nconst SENADO = {js(sen)};\nconst GOV = {js(gov)};\nconst T2 = {js(t2)};\n/*FIM*/"
+bloco = f"/*DADOS*/\nconst D26 = {js(d26)};\nconst ESTADOS = {js(estados)};\nconst BR = {js(br)};\nconst EXTERIOR = {js(ext)};\nconst R22 = {js(r22)};\nconst OUTROS = {js(outros)};\nconst CANDS = {js(cands)};\nconst SENADO = {js(sen)};\nconst GOV = {js(gov)};\nconst T2 = {js(t2)};\nconst T2_22 = {js(t2_22)};\nconst S2_22 = {js(s2_22)};\n/*FIM*/"
 
 s = open(PAGINA).read()
 s = re.sub(r"/\*DADOS\*/.*?/\*FIM\*/", lambda _: bloco, s, count=1, flags=re.S)
