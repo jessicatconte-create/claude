@@ -990,7 +990,7 @@ body.reordenando, body.reordenando * { cursor: grabbing !important; user-select:
       <h2>Apuração por estado · 2022 × 2026</h2>
       <p id="rt-sub">Quanto de cada estado já estava apurado em 2022 neste mesmo horário, ao lado de quanto está apurado agora.</p>
     </div>
-    <div class="seg" role="group" aria-label="Horário da comparação" id="rt-seg"><button type="button" data-rt="agora" aria-pressed="true">Agora</button><button type="button" data-rt="tse" aria-pressed="false">Horário do último boletim do TSE</button><button type="button" data-rt="pct" aria-pressed="false">Mesmo % apurado no Brasil</button></div>
+    <div class="seg" role="group" aria-label="Horário da comparação" id="rt-seg"><button type="button" data-rt="pct" aria-pressed="true">Mesmo % apurado no Brasil</button><button type="button" data-rt="agora" aria-pressed="false">Mesmo horário (agora)</button><button type="button" data-rt="tse" aria-pressed="false">Horário do último boletim do TSE</button></div>
     <div class="rt-leg"><span>Coluna da esquerda: 2º turno de 2022, no mesmo horário ou no mesmo % apurado · direita: 2026, agora</span><span><i style="background:var(--lula)"></i>Lula</span><span><i style="background:var(--flavio)"></i>Flávio (Jair Bolsonaro em 2022)</span><span>Comprimento = % apurado; cores = divisão dos votos nas urnas já apuradas</span></div>
     <div class="rt" id="rt"></div>
     <figcaption>2022: horário em que o TSE recebeu cada boletim de urna (horário de Brasília), reconstruído dos boletins do 2º turno; a apuração também começou às 17h. 2026: último boletim do TSE de cada estado. "Mesmo % apurado": o momento de 2022 em que o Brasil tinha o mesmo % de seções apuradas que tem agora (em 2022, sem o exterior). Estados ordenados pelo que já estava apurado em 2022.</figcaption>
@@ -2990,8 +2990,8 @@ const LAND = "M311.8,399.6L315.4,401.3L319.3,401.9L318.1,403.3L315.4,403.5L314.0
   const NOME = {AC: "Acre", AL: "Alagoas", AP: "Amapá", AM: "Amazonas", BA: "Bahia", CE: "Ceará", DF: "Distrito Federal", ES: "Espírito Santo", GO: "Goiás", MA: "Maranhão",
     MT: "Mato Grosso", MS: "Mato Grosso do Sul", MG: "Minas Gerais", PA: "Pará", PB: "Paraíba", PR: "Paraná", PE: "Pernambuco", PI: "Piauí", RJ: "Rio de Janeiro",
     RN: "Rio Grande do Norte", RS: "Rio Grande do Sul", RO: "Rondônia", RR: "Roraima", SC: "Santa Catarina", SP: "São Paulo", SE: "Sergipe", TO: "Tocantins"};
-  let modo = "agora";
-  try { modo = localStorage.getItem("rt-modo") || modo; } catch (e) {}
+  let modo = "pct";
+  try { modo = localStorage.getItem("rt-modo2") || modo; } catch (e) {}
   const minutoAgora = () => { const d = new Date(Date.now() - 3 * 36e5); let m = d.getUTCHours() * 60 + d.getUTCMinutes(); if (m < 12 * 60) m += 24 * 60; return m; };
   const minutoTSE = () => { const h = (T.br && T.br.hms) || ""; if (!h || h === "00:00:00") return null; const [a, b] = h.split(":").map(Number); return a * 60 + b; };
   const hm = m => `${String(Math.floor(m / 60) % 24).padStart(2, "0")}h${String(m % 60).padStart(2, "0")}`;
@@ -3019,7 +3019,7 @@ const LAND = "M311.8,399.6L315.4,401.3L319.3,401.9L318.1,403.3L315.4,403.5L314.0
       `Às <b>${hm(m)}</b> de 2022, <b>${f1(b22)}%</b> das seções do Brasil já estavam apuradas${top ? ` (à frente: ${top})` : ""}. Em 2026, <b>${f1(b26)}%</b>${T.br && T.br.hms && T.br.hms !== "00:00:00" ? ` (último boletim do TSE às ${T.br.hms.slice(0, 5).replace(":", "h")})` : ""}.`;
     el.innerHTML = `<div class="rt-l rt-h"><span></span><span>2022 · ${modo === "pct" ? f1(b22) + "% apurado · " : ""}${hm(m)}</span><span>2026 · agora</span></div>` + linha("Brasil", b22, b26, R.lula_br ? em(R.lula_br, m) : null, l26(T.br), " rt-br") + ufs.map(u => linha(NOME[u.uf] || u.uf, u.a22, u.a26, u.l22, u.l26)).join("");
   }
-  document.querySelectorAll("#rt-seg [data-rt]").forEach(b => b.addEventListener("click", () => { modo = b.dataset.rt; try { localStorage.setItem("rt-modo", modo); } catch (e) {} render(); }));
+  document.querySelectorAll("#rt-seg [data-rt]").forEach(b => b.addEventListener("click", () => { modo = b.dataset.rt; try { localStorage.setItem("rt-modo2", modo); } catch (e) {} render(); }));
   render(); setInterval(() => { if (modo === "agora") render(); }, 30000);
 })();
 </script>
