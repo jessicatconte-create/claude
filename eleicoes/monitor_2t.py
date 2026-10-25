@@ -57,6 +57,44 @@ def governadores(anterior):
     return out
 
 
+MODELOS = {
+    "electomaps": "https://electomaps.com.br/dados/6258-0001-proj.json",
+    "mahlmeister": "https://projecao.2026elections.workers.dev/dados/apuracao.json",
+}
+SQ = {"280002551544": "flavio", "280002542548": "lula"}
+
+
+def modelos(anterior):
+    """Projeções publicadas por outros: ElectoMaps (por município) e Rodrigo Mahlmeister/Estadão (por seção).
+    Guarda só o essencial, em pontos percentuais; quem não responder mantém o dado anterior."""
+    out = dict(anterior or {})
+    for nome, url in MODELOS.items():
+        try:
+            j = m.requests.get(url, timeout=20, headers={"User-Agent": "Mozilla/5.0"}).json()
+        except (m.requests.RequestException, ValueError):
+            continue
+        if nome == "electomaps":
+            r = {"pct": j.get("pct_apurado"), "gerado": j.get("gerado"), "pronta": bool(j.get("suficiente")), "motivo": j.get("motivo")}
+            for sq, k in SQ.items():
+                c = (j.get("cand") or {}).get(sq)
+                if c:
+                    r[k] = {"med": 100 * c["media"], "lo": 100 * c["p025"], "hi": 100 * c["p975"], "apurado": 100 * c["apurado"], "p": c.get("p_maioria")}
+            r["serie"] = [[p["pct"], 100 * p["c"][sq_f][0], 100 * p["c"][sq_f][1], 100 * p["c"][sq_f][2]]
+                          for p in j.get("serie", []) for sq_f in ["280002551544"] if p.get("c", {}).get(sq_f)]
+        else:
+            pts = j.get("pontos") or []
+            r = {"atualizado": j.get("atualizado"), "nivel": j.get("nivel_faixa"), "pronta": False, "pct": j.get("pct_eleitorado_apurado")}
+            com = [p for p in pts if p.get("projecao")]
+            if com:
+                u = com[-1]
+                r.update(pronta=True, pct=u.get("x"), t=u.get("t"),
+                         flavio={"med": u["projecao"]["PL"], "lo": u["faixa"]["PL"][0], "hi": u["faixa"]["PL"][1], "apurado": u["apurado"]["PL"]},
+                         lula={"med": u["projecao"]["PT"], "lo": u["faixa"]["PT"][0], "hi": u["faixa"]["PT"][1], "apurado": u["apurado"]["PT"]})
+                r["serie"] = [[p["x"], p["projecao"]["PL"], p["faixa"]["PL"][0], p["faixa"]["PL"][1]] for p in com]
+        out[nome] = r
+    return out
+
+
 def rodada():
     try:
         with open(SAIDA) as f:
@@ -86,7 +124,7 @@ def rodada():
         serie.append([round(br["pct"], 2), br["hora"], round(br["lula"], 2), round(br["flavio"], 2)])
     with open(SAIDA, "w") as f:
         json.dump({"br": br, "estados": estados, "exterior": exterior, "serie": serie,
-                   "gov": governadores(ant.get("gov"))}, f, ensure_ascii=False)
+                   "gov": governadores(ant.get("gov")), "modelos": modelos(ant.get("modelos"))}, f, ensure_ascii=False)
     print(f"2º turno {br['hora']}  {br['pct']:.2f}% apurado  Flávio {br['flavio']:.2f}%  Lula {br['lula']:.2f}%")
 
 
