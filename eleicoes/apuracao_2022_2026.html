@@ -2246,7 +2246,7 @@ const f1n = v => v.toFixed(1).replace(".", ",");
     const bar = p => p == null ? `<div class="mcabo" aria-hidden="true"></div>` : `<div class="mcabo" aria-hidden="true"><i class="f" style="width:${p}%"></i><i class="l" style="width:${100 - p}%"></i></div>`;
     const lab = p => p == null ? "" : `<div class="lab"><span style="color:var(--flavio-tx)">${f1(p)}%</span><span style="color:var(--lula)">${f1(100 - p)}%</span></div>`;
     // variação dos dois (em pontos dos votos dados aos dois): Lula numa linha, Flávio (ou Jair, em 2022) na outra
-    const sg = v => (v > 0.05 ? "+" : v < -0.05 ? "−" : "±") + f1(Math.abs(v));
+    const sg = v => (v > 0.05 ? "▲ +" : v < -0.05 ? "▼ −" : "= ") + f1(Math.abs(v));
     const var2 = (d, nf) => d == null ? "–" : `<span class="v2"><span style="color:var(--lula)">Lula ${sg(-d)}</span><span style="color:var(--flavio-tx)">${nf} ${sg(d)}</span></span>`;
     $("duftab").innerHTML = `<thead><tr><th>UF</th><th style="text-align:left">2022 · 2º turno</th><th style="text-align:left">2026 · 1º turno</th><th>Em jogo</th><th style="text-align:left">2026 · 2º turno</th><th>Mudança desde o 1º turno</th><th>Mudança desde 2022</th></tr></thead><tbody>
       ${linhas.map(({uf, out, p1, t}) => { const p2 = t ? ent(t.fv, t.lv) : null, d = p2 == null ? null : p2 - p1;
