@@ -562,6 +562,19 @@ h1, .sectionhead h2 { font-family: var(--serif); font-weight: 600; letter-spacin
 .virar.proj b { font-size: 20px; }
 .virar.proj span { font-size: 12px; color: var(--muted); }
 .virar.proj details { text-align: left; font-size: 12px; }
+.prob { background: var(--panel); border: 1px solid var(--rule); border-radius: var(--radius); padding: 14px 20px; display: grid; gap: 10px; }
+.prob .pb-hd { display: flex; justify-content: space-between; gap: 8px 16px; flex-wrap: wrap; align-items: baseline; }
+.prob .k2 { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.prob .pb-faixa { font-size: 12px; color: var(--muted); }
+.prob .pb-row { display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center; }
+.prob .pb-n { font-size: 15px; white-space: nowrap; }
+.prob .pb-n b { font-size: 30px; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.prob .pb-bar { position: relative; display: flex; height: 14px; border-radius: 99px; overflow: hidden; background: var(--grid); }
+.prob .pb-bar i { transition: width .6s ease; }
+.prob .pb-meio { position: absolute; left: 50%; top: -3px; bottom: -3px; width: 2px; background: var(--fg); opacity: .8; }
+.prob .pb-ft { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.prob .pb-ft details { display: inline; }
+@media (max-width: 760px) { .prob .pb-row { grid-template-columns: 1fr 1fr; } .prob .pb-bar { grid-column: 1 / -1; grid-row: 2; } .prob .pb-n.r { text-align: right; } .prob .pb-n b { font-size: 24px; } }
 </style>
 
 <div class="wrap">
@@ -716,6 +729,8 @@ h1, .sectionhead h2 { font-family: var(--serif); font-weight: 600; letter-spacin
   </div>
 
   <div class="tabpanel" id="aba2" role="tabpanel" aria-labelledby="tab-t2">
+  <section class="prob" id="prob2" aria-label="Probabilidade de vitória"></section>
+
   <section class="status" id="status2" aria-label="Andamento da apuração do 2º turno"></section>
 
   <section class="duelo" id="duelo" aria-label="Duelo do 2º turno"></section>
@@ -1748,6 +1763,31 @@ const f1n = v => v.toFixed(1).replace(".", ",");
   res.sort((a, b) => a - b);
   const q = x => res[Math.min(N - 1, Math.floor(x * N))];
   window.PROJ = {med: q(0.5), lo: q(0.05), hi: q(0.95), pf: res.filter(x => x > 50).length / N, swing, vivos: vivos.length};
+})();
+</script>
+<script>/* Probabilidade de vitória no topo da aba do 2º turno: antes da apuração, pelas pesquisas finais; depois, pela projeção da noite. */
+(() => {
+  const el = document.getElementById("prob2"); if (!el) return;
+  const f1 = v => v.toLocaleString("pt-BR", {minimumFractionDigits: 1, maximumFractionDigits: 1});
+  const Phi = z => { const t = 1 / (1 + 0.2316419 * Math.abs(z)), d = 0.3989423 * Math.exp(-z * z / 2);
+    const p = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274)))); return z > 0 ? 1 - p : p; };
+  const T = (typeof T2 !== "undefined" && T2) || {}, b = T.br && T.br.vv > 0 ? T.br : null, P = window.PROJ;
+  let pf, fonte, med, lo, hi;
+  if (P && b) {
+    pf = P.pf; med = P.med; lo = P.lo; hi = P.hi;
+    fonte = `Projeção da noite com ${f1(b.pct)}% das seções apuradas · TSE ${b.hms}. Atualiza a cada boletim do TSE (de 5 em 5 minutos).`;
+  } else {
+    // pesquisas finais: média simples em % dos válidos; erro típico de 2 pontos na parte de cada um
+    const L = window.P2 || []; med = L.reduce((a, p) => a + p.f, 0) / (L.length || 1);
+    const sd = 2; pf = Phi((med - 50) / sd); lo = med - 1.645 * sd; hi = med + 1.645 * sd;
+    fonte = `Antes da apuração: média das ${L.length} pesquisas finais (Flávio ${f1(med)}% dos válidos), com erro típico de 2 pontos. A partir das 17h, passa a usar a apuração do TSE.`;
+  }
+  const pl = 1 - pf, fmt = x => x > .995 ? "> 99%" : x < .005 ? "< 1%" : Math.round(100 * x) + "%";
+  el.innerHTML = `<div class="pb-hd"><span class="k2">Probabilidade de vitória</span><span class="pb-faixa">faixa provável para Flávio: ${f1(lo)}% a ${f1(hi)}% dos válidos</span></div>
+    <div class="pb-row"><span class="pb-n" style="color:var(--flavio-tx)">Flávio <b>${fmt(pf)}</b></span>
+      <div class="pb-bar" role="img" aria-label="Probabilidade: Flávio ${fmt(pf)}, Lula ${fmt(pl)}"><i style="width:${100 * pf}%;background:var(--flavio)"></i><i style="flex:1;background:var(--lula)"></i><span class="pb-meio"></span></div>
+      <span class="pb-n r" style="color:var(--lula)"><b>${fmt(pl)}</b> Lula</span></div>
+    <div class="pb-ft">${fonte} <details class="how"><summary>Quão confiável é?</summary><p>Testamos a projeção da noite na apuração do 1º turno de 2022: com a correção pela ordem de chegada das urnas, o resultado final ficou dentro da faixa provável em todos os 11 pontos testados (de 5% a 95% apurado), e o erro do valor central caiu à metade em relação a supor que cada estado termina como está. Mas a projeção ainda tendia a superestimar quem liderava no começo em cerca de 1 ponto até a metade da apuração, então números perto de 50% devem ser lidos com cautela. Antes da apuração, a probabilidade vem só das pesquisas: no 1º turno elas subestimaram Flávio em cerca de 2 pontos na parte dele.</p></details></div>`;
 })();
 </script>
 <script>
