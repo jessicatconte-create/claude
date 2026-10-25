@@ -984,13 +984,13 @@ body.reordenando, body.reordenando * { cursor: grabbing !important; user-select:
 
   <figure id="ritmo">
     <div class="sectionhead">
-      <h2>Apuração por estado · 2022 × 2026 no mesmo horário</h2>
+      <h2>Apuração por estado · 2022 × 2026</h2>
       <p id="rt-sub">Quanto de cada estado já estava apurado em 2022 neste mesmo horário, ao lado de quanto está apurado agora.</p>
     </div>
-    <div class="seg" role="group" aria-label="Horário da comparação" id="rt-seg"><button type="button" data-rt="agora" aria-pressed="true">Agora</button><button type="button" data-rt="tse" aria-pressed="false">Horário do último boletim do TSE</button></div>
-    <div class="rt-leg"><span><i class="a22"></i>2º turno de 2022, no mesmo horário</span><span><i class="a26"></i>2º turno de 2026, agora</span></div>
+    <div class="seg" role="group" aria-label="Horário da comparação" id="rt-seg"><button type="button" data-rt="agora" aria-pressed="true">Agora</button><button type="button" data-rt="tse" aria-pressed="false">Horário do último boletim do TSE</button><button type="button" data-rt="pct" aria-pressed="false">Mesmo % apurado no Brasil</button></div>
+    <div class="rt-leg"><span><i class="a22"></i>2º turno de 2022, no mesmo horário ou no mesmo % apurado</span><span><i class="a26"></i>2º turno de 2026, agora</span></div>
     <div class="rt" id="rt"></div>
-    <figcaption>2022: horário em que o TSE recebeu cada boletim de urna (horário de Brasília), reconstruído dos boletins do 2º turno; a apuração também começou às 17h. 2026: último boletim do TSE de cada estado. Estados ordenados pelo que já estava apurado em 2022.</figcaption>
+    <figcaption>2022: horário em que o TSE recebeu cada boletim de urna (horário de Brasília), reconstruído dos boletins do 2º turno; a apuração também começou às 17h. 2026: último boletim do TSE de cada estado. "Mesmo % apurado": o momento de 2022 em que o Brasil tinha o mesmo % de seções apuradas que tem agora (em 2022, sem o exterior). Estados ordenados pelo que já estava apurado em 2022.</figcaption>
   </figure>
 
   <figure id="emjogo">
@@ -2994,17 +2994,21 @@ const LAND = "M311.8,399.6L315.4,401.3L319.3,401.9L318.1,403.3L315.4,403.5L314.0
   const hm = m => `${String(Math.floor(m / 60) % 24).padStart(2, "0")}h${String(m % 60).padStart(2, "0")}`;
   const em = (serie, m) => { const i = Math.round((m - R.t0) / R.passo); return i < 0 ? 0 : serie[Math.min(serie.length - 1, i)]; };
   function render() {
-    const m = modo === "tse" && minutoTSE() != null ? minutoTSE() : minutoAgora();
+    const b26 = (T.br && T.br.pct) || 0;
+    // "mesmo % apurado": o momento de 2022 em que o Brasil tinha o mesmo % de seções apuradas que tem agora
+    const porPct = () => { const i = R.br.findIndex(v => v >= b26); return R.t0 + R.passo * (i < 0 ? R.br.length - 1 : i); };
+    const m = modo === "pct" ? porPct() : modo === "tse" && minutoTSE() != null ? minutoTSE() : minutoAgora();
     document.querySelectorAll("#rt-seg [data-rt]").forEach(b => b.setAttribute("aria-pressed", b.dataset.rt === modo));
     const linha = (nome, a22, a26, cls) => `<div class="rt-l${cls || ""}"><span class="rt-n">${nome}</span>
       <div class="rt-b"><div class="rt-t"><i class="a22" style="width:${a22}%"></i></div><b>${f1(a22)}%</b></div>
       <div class="rt-b"><div class="rt-t"><i class="a26" style="width:${a26}%"></i></div><b>${f1(a26)}%</b></div></div>`;
     const ufs = Object.keys(R.uf).map(uf => ({uf, a22: em(R.uf[uf], m), a26: ((T.estados || {})[uf] || {}).pct || 0})).sort((a, b) => b.a22 - a.a22 || b.a26 - a.a26 || a.uf.localeCompare(b.uf));
-    const b22 = em(R.br, m), b26 = (T.br && T.br.pct) || 0;
+    const b22 = em(R.br, m);
     const top = ufs.filter(u => u.a22 >= 1).slice(0, 5).map(u => `${u.uf} ${f1(u.a22)}%`).join(", ");
     document.getElementById("rt-sub").innerHTML = m < R.t0 ? "A apuração começa às 17h (Brasília)." :
+      modo === "pct" ? `Em 2022, o Brasil chegou a <b>${f1(b22)}%</b> apurado às <b>${hm(m)}</b>; o mais próximo dos <b>${f1(b26)}%</b> de agora. Assim estava cada estado nesse ponto da apuração${top ? ` (à frente: ${top})` : ""}.` :
       `Às <b>${hm(m)}</b> de 2022, <b>${f1(b22)}%</b> das seções do Brasil já estavam apuradas${top ? ` (à frente: ${top})` : ""}. Em 2026, <b>${f1(b26)}%</b>${T.br && T.br.hms && T.br.hms !== "00:00:00" ? ` (último boletim do TSE às ${T.br.hms.slice(0, 5).replace(":", "h")})` : ""}.`;
-    el.innerHTML = `<div class="rt-l rt-h"><span></span><span>2022 · ${hm(m)}</span><span>2026 · agora</span></div>` + linha("Brasil", b22, b26, " rt-br") + ufs.map(u => linha(NOME[u.uf] || u.uf, u.a22, u.a26)).join("");
+    el.innerHTML = `<div class="rt-l rt-h"><span></span><span>2022 · ${modo === "pct" ? f1(b22) + "% apurado · " : ""}${hm(m)}</span><span>2026 · agora</span></div>` + linha("Brasil", b22, b26, " rt-br") + ufs.map(u => linha(NOME[u.uf] || u.uf, u.a22, u.a26)).join("");
   }
   document.querySelectorAll("#rt-seg [data-rt]").forEach(b => b.addEventListener("click", () => { modo = b.dataset.rt; try { localStorage.setItem("rt-modo", modo); } catch (e) {} render(); }));
   render(); setInterval(() => { if (modo === "agora") render(); }, 30000);
