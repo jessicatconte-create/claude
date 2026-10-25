@@ -644,11 +644,28 @@ h1, .sectionhead h2 { font-family: var(--serif); font-weight: 600; letter-spacin
 .du-side .du-ring img { width: 100%; height: 100%; border-radius: 50%; border: 4px solid var(--bg); object-fit: cover; object-position: 50% 6%;
   background: radial-gradient(circle at 50% 38%, color-mix(in srgb, var(--c) 42%, var(--panel)) 0, var(--panel) 72%); -webkit-mask-image: none; mask-image: none; margin: 0; }
 @media (max-width: 760px) { .du-side .du-ring { --s: 112px; padding: 5px; } .du-side .du-ring img { border-width: 3px; } }
-#tendtab td:nth-child(2), #tendtab th:nth-child(2) { text-align: left; }
-#tendtab td:last-child { white-space: nowrap; }
 figure > *, details > .tw { min-width: 0; }
 .sectionhead.subsec { border-top: 1px solid var(--grid); padding-top: 16px; margin-top: 8px; }
 .sectionhead.subsec h3 { margin: 0; font: 600 16px var(--serif); }
+#tendtab { font-size: 12px; }
+#tendtab th, #tendtab td { text-align: center; padding: 6px 6px; white-space: nowrap; }
+#tendtab .fix { position: sticky; left: 0; background: var(--panel); text-align: left; z-index: 1; min-width: 130px; }
+#tendtab tr.ref .fix { background: var(--bg); }
+#tendtab td .cf, #tendtab td .cl { display: block; font-variant-numeric: tabular-nums; line-height: 1.25; }
+#tendtab td .cf { color: var(--flavio-tx); font-weight: 600; }
+#tendtab td .cl { color: var(--lula); }
+#tendtab td i { display: block; font-style: normal; font-size: 10px; color: var(--muted); }
+#tendtab td i.up { color: var(--flavio-tx); } #tendtab td i.dn { color: var(--lula); }
+#tendtab td.vz { background: repeating-linear-gradient(135deg, transparent 0 5px, color-mix(in srgb, var(--grid) 60%, transparent) 5px 6px); }
+#tendtab sup { color: var(--muted); }
+.tendw { position: relative; }
+.tendtip { position: absolute; z-index: 6; width: 300px; max-width: 86vw; background: var(--bg); border: 1px solid var(--rule); border-radius: 12px; padding: 10px 12px; box-shadow: 0 12px 32px rgba(0,0,0,.45); font-size: 12px; line-height: 1.45; pointer-events: none; }
+.tendtip .tt-hd { font-size: 13px; margin-bottom: 4px; }
+.tendtip .tt-md { color: var(--muted); padding-bottom: 6px; border-bottom: 1px solid var(--grid); margin-bottom: 4px; }
+.tendtip .tt-p { padding: 5px 0; border-bottom: 1px solid var(--grid); }
+.tendtip .tt-p:last-child { border-bottom: 0; }
+.tendtip .tt-l1 { display: flex; justify-content: space-between; gap: 8px; }
+.tendtip .tt-l2 { color: var(--muted); font-size: 11px; }
 </style>
 
 <div class="wrap">
@@ -834,9 +851,9 @@ figure > *, details > .tw { min-width: 0; }
       <p>Todas as pesquisas do 2º turno pela data de divulgação, em % dos votos válidos. Linhas: média móvel (a pesquisa mais recente de cada instituto nos últimos 7 dias).</p>
     </div>
     <p class="note" id="tendres"></p>
-    <svg class="g2c" id="tendsvg" role="img" aria-label="Evolução de Flávio e Lula nas pesquisas do 2º turno por data de divulgação"></svg>
-    <details class="how ptfold" open><summary>Pesquisas por data de divulgação</summary><div class="tw"><table class="pt" id="tendtab"></table></div></details>
-    <figcaption>* Data de divulgação estimada (dia seguinte ao fim do campo), quando a fonte não informa. Valores em % dos válidos como divulgados pelos institutos ou pelo Poder360; o total (com brancos, nulos e indecisos) aparece quando publicado. Sem pesquisas de 2º turno de Ipec e Paraná Pesquisas. Fontes: Folha/Datafolha, Globo/Quaest, Bloomberg/AtlasIntel, Poder360/PoderData, Metrópoles, CNN Brasil, Gazeta do Povo, Exame, O Povo, Money Times, Jornal do Comércio e a lista do <a href="https://www.poder360.com.br/poder-eleicoes-2026/saiba-como-estao-lula-e-flavio-nas-pesquisas-a-1-dia-da-eleicao/" target="_blank" rel="noopener">Poder360</a>.</figcaption>
+    <div class="tendw"><div class="tendtip" id="tendtip" hidden></div><svg class="g2c" id="tendsvg" role="img" aria-label="Evolução de Flávio e Lula nas pesquisas do 2º turno por data de divulgação"></svg></div>
+    <details class="how ptfold" open><summary>Pesquisas por instituto e data de divulgação</summary><div class="tw"><table class="pt" id="tendtab"></table></div></details>
+    <figcaption>Em cada célula: Flávio (azul) e Lula (vermelho) em % dos válidos; a seta mostra quanto Flávio subiu ▲ ou caiu ▼ desde a pesquisa anterior do mesmo instituto. Passe o mouse para ver o campo e o total. * Data de divulgação estimada (dia seguinte ao fim do campo), quando a fonte não informa. Valores em % dos válidos como divulgados pelos institutos ou pelo Poder360; o total (com brancos, nulos e indecisos) aparece quando publicado. Sem pesquisas de 2º turno de Ipec e Paraná Pesquisas. Fontes: Folha/Datafolha, Globo/Quaest, Bloomberg/AtlasIntel, Poder360/PoderData, Metrópoles, CNN Brasil, Gazeta do Povo, Exame, O Povo, Money Times, Jornal do Comércio e a lista do <a href="https://www.poder360.com.br/poder-eleicoes-2026/saiba-como-estao-lula-e-flavio-nas-pesquisas-a-1-dia-da-eleicao/" target="_blank" rel="noopener">Poder360</a>.</figcaption>
   </figure>
 
   <figure id="mapa2">
@@ -2703,20 +2720,41 @@ const LAND = "M311.8,399.6L315.4,401.3L319.3,401.9L318.1,403.3L315.4,403.5L314.0
       mk("text", {x: X(u[0]) + 8, y: Y(v) + 4, style: `fill:${c};font-weight:600`}).textContent = W < 600 ? `${f1(v)}%` : `${s > 0 ? "Flávio" : "Lula"} ${f1(v)}%`;
       mk("text", {x: X(i0[0]) - 4, y: Y(v0) + (s > 0 ? -8 : 16), "text-anchor": "start", style: `fill:${c};font-size:11px`}).textContent = f1(v0) + "%";
     });
+    // detalhe ao passar o mouse: a data mais próxima, com cada pesquisa divulgada nela
+    const guia = mk("line", {x1: 0, x2: 0, y1: m.t, y2: H - m.b, stroke: "var(--fg)", "stroke-dasharray": "2 3", opacity: 0});
+    const zona = mk("rect", {x: m.l - 10, y: m.t, width: W - m.l + 10, height: H - m.t - m.b, fill: "transparent", style: "cursor:crosshair"});
+    const tip = document.getElementById("tendtip");
+    const ant = {}; const comVar = [...P].sort((a, b) => a.d - b.d).map(p => { const a = ant[p.i]; ant[p.i] = p; return {...p, delta: a ? p.f - a.f : null}; });
+    const mostrar = ev => {
+      const r = svg.getBoundingClientRect(), mx = (ev.clientX - r.left) * W / r.width;
+      const d = dias.reduce((b, x) => Math.abs(X(x) - mx) < Math.abs(X(b) - mx) ? x : b, dias[0]);
+      guia.setAttribute("x1", X(d)); guia.setAttribute("x2", X(d)); guia.setAttribute("opacity", .6);
+      const md = media.find(x => x[0] === d), ps = comVar.filter(p => p.d === d);
+      const seta = p => p.delta == null ? "1ª do instituto" : Math.abs(p.delta) < 0.05 ? "igual à anterior" : `<span style="color:${p.delta > 0 ? "var(--flavio-tx)" : "var(--lula)"}">${p.delta > 0 ? "▲" : "▼"} Flávio ${f1(Math.abs(p.delta))} desde a anterior</span>`;
+      tip.innerHTML = `<div class="tt-hd"><b>${d}/10</b> · ${ps.length} pesquisa${ps.length > 1 ? "s" : ""} divulgada${ps.length > 1 ? "s" : ""}</div>
+        <div class="tt-md">Média móvel (${md[2]} institutos): <b style="color:var(--flavio-tx)">Flávio ${f1(md[1])}%</b> × <b style="color:var(--lula)">Lula ${f1(100 - md[1])}%</b></div>
+        ${ps.map(p => `<div class="tt-p"><div class="tt-l1"><b>${p.i}</b><span><b style="color:var(--flavio-tx)">${f1(p.f)}</b> × <b style="color:var(--lula)">${f1(100 - p.f)}</b></span></div>
+          <div class="tt-l2">${p.f >= 50 ? "Flávio" : "Lula"} +${f1(Math.abs(2 * p.f - 100))} · campo ${p.campo}${p.est ? " · data estimada" : ""}${p.tot ? ` · total: Flávio ${p.tot.replace(" × ", " × Lula ")}` : ""}</div>
+          <div class="tt-l2">${seta(p)}</div></div>`).join("")}`;
+      tip.hidden = false;
+      const fr = tip.parentElement.getBoundingClientRect(), tw = tip.offsetWidth, x = ev.clientX - fr.left, y = r.top - fr.top + 10;
+      tip.style.left = Math.max(4, Math.min(fr.width - tw - 4, x + 16 + tw > fr.width ? x - tw - 16 : x + 16)) + "px"; tip.style.top = y + "px";
+    };
+    zona.addEventListener("mousemove", mostrar); zona.addEventListener("click", mostrar);
+    zona.addEventListener("mouseleave", () => { tip.hidden = true; guia.setAttribute("opacity", 0); });
   }
   // resumo da tendência
   const ini = media[0], fim = media[media.length - 1], dF = fim[1] - ini[1];
   document.getElementById("tendres").innerHTML = `Na média das pesquisas, <b style="color:var(--flavio-tx)">Flávio ${dF < 0 ? "caiu" : "subiu"} de ${f1(ini[1])}% para ${f1(fim[1])}%</b> dos válidos entre 8 e 24 de outubro, e <b style="color:var(--lula)">Lula ${dF < 0 ? "subiu" : "caiu"} de ${f1(100 - ini[1])}% para ${f1(100 - fim[1])}%</b>: a vantagem de Flávio passou de ${f1(2 * ini[1] - 100)} para ${f1(2 * fim[1] - 100)} pontos. ${P.length} pesquisas de ${new Set(P.map(p => p.i)).size} institutos.`;
-  // tabela por data de divulgação, com a variação em relação à pesquisa anterior do mesmo instituto
+  // tabela: institutos nas linhas, datas de divulgação nas colunas; em cada célula, Flávio e Lula e a seta desde a anterior do instituto
   const ant = {}; const comVar = [...P].sort((a, b) => a.d - b.d).map(p => { const a = ant[p.i]; ant[p.i] = p; return {...p, delta: a ? p.f - a.f : null}; });
-  const porDia = {}; comVar.forEach(p => (porDia[p.d] = porDia[p.d] || []).push(p));
-  const seta = d => d == null ? '<span class="sub">primeira</span>' : Math.abs(d) < 0.05 ? '<span class="sub">= igual</span>' : `<span style="color:${d > 0 ? "var(--flavio-tx)" : "var(--lula)"}">${d > 0 ? "▲ Flávio" : "▼ Flávio"} ${f1(Math.abs(d))}</span>`;
-  tab.innerHTML = `<thead><tr><th>Divulgação</th><th>Instituto</th><th>Flávio</th><th>Lula</th><th>Vantagem</th><th>Desde a anterior do instituto</th></tr></thead><tbody>
-    ${Object.keys(porDia).map(Number).sort((a, b) => b - a).map(d => {
-      const md = media.find(x => x[0] === d);
-      return `<tr class="ref"><td colspan="6"><b>${d}/10</b> <span class="sub" style="display:inline">· média móvel: Flávio ${f1(md[1])}% × Lula ${f1(100 - md[1])}% (${md[2]} institutos nos últimos 7 dias)</span></td></tr>` +
-        porDia[d].map(p => `<tr><td>${d}/10${p.est ? "*" : ""}</td><td>${p.i}<span class="sub">campo ${p.campo}${p.tot ? " · total: Flávio " + p.tot.replace(" × ", " × Lula ") : ""}</span></td><td>${f1(p.f)}%</td><td>${f1(100 - p.f)}%</td>
-          <td><span class="${p.f >= 50 ? "lead-f" : "lead-l"}">${p.f >= 50 ? "Flávio +" : "Lula +"}${f1(Math.abs(2 * p.f - 100))}</span></td><td>${seta(p.delta)}</td></tr>`).join(""); }).join("")}</tbody>`;
+  const insts = [...new Set(P.map(p => p.i))].sort((a, b) => P.filter(p => p.i === b).length - P.filter(p => p.i === a).length || a.localeCompare(b));
+  const celula = p => { if (!p) return `<td class="vz"></td>`;
+    const s = p.delta == null ? "" : Math.abs(p.delta) < 0.05 ? '<i class="eq">=</i>' : `<i class="${p.delta > 0 ? "up" : "dn"}">${p.delta > 0 ? "▲" : "▼"}${f1(Math.abs(p.delta))}</i>`;
+    return `<td title="${p.i} · ${p.d}/10${p.est ? " (data estimada)" : ""} · campo ${p.campo}${p.tot ? " · total: Flávio " + p.tot.replace(" × ", " × Lula ") : ""}"><span class="cf">${f1(p.f)}</span><span class="cl">${f1(100 - p.f)}</span>${s}${p.est ? '<sup>*</sup>' : ""}</td>`; };
+  tab.innerHTML = `<thead><tr><th class="fix">Instituto</th>${dias.map(d => `<th>${d}/10</th>`).join("")}</tr></thead><tbody>
+    ${insts.map(i => `<tr><td class="fix"><b>${i}</b></td>${dias.map(d => celula(comVar.find(p => p.i === i && p.d === d))).join("")}</tr>`).join("")}
+    <tr class="ref"><td class="fix"><b>Média móvel</b><span class="sub">últimos 7 dias</span></td>${media.map(([d, v, n]) => `<td><span class="cf">${f1(v)}</span><span class="cl">${f1(100 - v)}</span><span class="sub">${n} inst.</span></td>`).join("")}</tr></tbody>`;
   if (innerWidth < 760) tab.closest("details").open = false;   // no celular, a tabela começa fechada
   let t; new ResizeObserver(() => { clearTimeout(t); t = setTimeout(draw, 120); }).observe(svg); draw();
 })();
