@@ -2584,6 +2584,10 @@ const f1n = v => v.toFixed(1).replace(".", ",");
       mk("path", {d: pv.map((q, k) => `${k ? "L" : "M"}${X(xv(q)).toFixed(1)},${Y(q[2]).toFixed(1)}`).join(""), fill: "none", stroke: "var(--a2)", "stroke-width": 2.5, "stroke-linejoin": "round"}, g);
       pv.forEach(q => { const c = mk("circle", {cx: X(xv(q)), cy: Y(q[2]), r: 3.5, fill: "var(--a2)", style: "cursor:help"}, g);
         mk("title", {}, c).textContent = `${q[1]} · ${fx(q[0])}% apurado\nPrevisão para Lula: ${fx(q[2])}% (faixa ${fx(q[3])}–${fx(q[4])}%)\nFlávio: ${fx(100 - q[2])}%\nModelo: ${q[5]}${q[6] != null && q[5] !== "Este painel" ? `\nModelo deste painel: Lula ${fx(q[6])}%` : ""}`; });
+      // rótulo do valor em cada ponto, pulando os que ficariam encavalados (mínimo de 30 px entre rótulos)
+      let ux = -1e9;
+      pv.forEach((q, k) => { const x = X(xv(q)); if (x - ux < 30 && k !== pv.length - 1) return; if (k === pv.length - 1 && x - ux < 30) return; ux = x;
+        mk("text", {x: Math.min(W - m.r - 12, Math.max(m.l + 14, x)), y: Y(q[2]) - 9, "text-anchor": "middle", style: "fill:var(--a2);font-size:10px;font-weight:600;paint-order:stroke;stroke:var(--panel);stroke-width:3px"}).textContent = q[2].toFixed(1).replace(".", ","); });
     }
     linha(s26, 2, "var(--lula)", false); linha(s26, 3, "var(--flavio-tx)", false);
     const P = PM, u = s26[s26.length - 1];
