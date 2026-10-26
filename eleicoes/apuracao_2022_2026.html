@@ -1110,7 +1110,7 @@ body.reordenando, body.reordenando * { cursor: grabbing !important; user-select:
     <div class="abs-leg"><span><i style="background:var(--a1)"></i>1º turno</span><span><i style="background:var(--a2)"></i>2º turno</span></div>
     <svg class="absc" id="absc" role="img" aria-label="Abstenção em milhões de eleitores por eleição, 1º e 2º turno"></svg>
     <details class="how"><summary>Ver em tabela</summary><div class="tw"><table class="pt" id="abstab"></table></div></details>
-    <figcaption>2026: TSE, 1º turno com apuração quase completa. 2006–2022: valores do TSE (arredondados ao milhão até 2018); confira no portal do TSE antes de citar.</figcaption>
+    <figcaption>2026: TSE, 1º e 2º turno com 100% das seções apuradas. 2006–2022: valores do TSE (arredondados ao milhão até 2018); confira no portal do TSE antes de citar.</figcaption>
   </figure>
   </div>
 
@@ -1854,7 +1854,8 @@ const f1n = v => v.toFixed(1).replace(".", ",");
 (function () {
   const A = [[2006, 21.09, 16.8, 23.91, 19.0], [2010, 24.61, 18.1, 29.20, 21.5], [2014, 27.70, 19.4, 30.14, 21.1],
              [2018, 29.94, 20.3, 31.37, 21.3], [2022, 32.77, 20.95, 32.20, 20.59]];
-  const a26 = BR && BR.abst ? [2026, BR.abst / 1e6, BR.abst / BR.est * 100, null, null] : [2026, 33.38, 21.07, null, null];
+  const b2 = typeof T2 !== "undefined" && T2.br && T2.br.abst && T2.br.pct >= 1 ? T2.br : null;
+  const a26 = BR && BR.abst ? [2026, BR.abst / 1e6, BR.abst / BR.est * 100, b2 ? b2.abst / 1e6 : null, b2 ? b2.abst / (b2.te || b2.est) * 100 : null] : [2026, 33.38, 21.07, null, null];
   const D = [...A, a26];
   const svgA = document.getElementById("absc");
   const f1 = v => v.toFixed(1).replace(".", ",");
