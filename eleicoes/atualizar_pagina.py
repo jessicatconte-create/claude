@@ -1,0 +1,67 @@
+"""Grava os dados de dados_2026.csv e dados_estados_2026.json dentro de apuracao_2022_2026.html
+(entre os marcadores /*DADOS*/ e /*FIM*/)."""
+import csv, json, re
+
+PAGINA = "apuracao_2022_2026.html"
+
+with open("dados_2026.csv") as f:
+    d26 = [[float(r["pct_secoes"]), r["hora"], float(r["lula"]), float(r["bolsonaro"])] for r in csv.DictReader(f)]
+with open("dados_estados_2026.json") as f:
+    uf = json.load(f)
+
+campos = ("pct", "hora", "st", "ts", "vv", "tv", "lula", "flavio", "lv", "fv")
+estados = {k: {c: v[c] for c in campos + ("abst", "vn") if c in v} for k, v in uf["estados"].items()}
+br = {c: uf["br"][c] for c in campos + ("hms", "data", "fonte", "est", "comp", "abst", "vb", "vn") if c in uf["br"]}
+try:
+    with open("dados_exterior_2026.json") as f:
+        ext = json.load(f)
+except OSError:
+    ext = None
+if ext and uf.get("exterior"):  # total do exterior mais recente, lido pelo monitor
+    ext["total"] = uf["exterior"]
+try:
+    with open("dados_2022_resumo.json") as f:
+        r22 = json.load(f)
+except OSError:
+    r22 = None
+try:  # 2º turno de 2022 por UF: [válidos, Lula, Bolsonaro]
+    with open("dados_2022_2t_uf.json") as f:
+        t2_22 = json.load(f)
+except OSError:
+    t2_22 = None
+try:  # efeito da ordem de chegada das urnas em 2022, por UF (gerar_2022_vies.py)
+    with open("dados_2022_2t_vies.json") as f:
+        vies22 = json.load(f)
+except OSError:
+    vies22 = None
+try:  # andamento do 2º turno de 2022 (gerar_2022_2t_serie.py)
+    with open("dados_2022_2t_serie.json") as f:
+        s2_22 = json.load(f)
+except OSError:
+    s2_22 = None
+
+try:  # 2º turno (monitor_2t.py)
+    with open("dados_2t_2026.json") as f:
+        t2 = json.load(f)
+    t2 = {"br": {c: t2["br"][c] for c in campos + ("hms", "data", "est", "te", "sni", "esni", "comp", "abst", "vb", "vn", "eleito") if c in t2["br"]},
+          "estados": {k: {c: v[c] for c in campos + ("hms", "data", "est", "te", "sni", "esni", "comp", "abst", "vb", "vn") if c in v} for k, v in t2["estados"].items()}, "serie": t2.get("serie", []), "gov": t2.get("gov"), "modelos": t2.get("modelos"),
+          "ext": {c: t2["exterior"][c] for c in campos + ("hms", "data", "est", "te", "sni", "esni", "comp", "abst", "vb", "vn") if c in t2["exterior"]} if t2.get("exterior") else None}
+except (OSError, ValueError, KeyError):
+    t2 = None
+
+outros = uf.get("outros")
+cands = uf.get("candidatos")
+sen = uf.get("senado")
+gov = uf.get("governador")
+try:
+    with open("dados_2022_2t_ritmo.json") as f:   # % apurado por estado ao longo da noite de 2022 (gerar_2022_ritmo.py)
+        ritmo22 = json.load(f)
+except (OSError, ValueError):
+    ritmo22 = None
+js = lambda o: json.dumps(o, ensure_ascii=False, separators=(",", ":"))
+bloco = f"/*DADOS*/\nconst D26 = {js(d26)};\nconst ESTADOS = {js(estados)};\nconst BR = {js(br)};\nconst EXTERIOR = {js(ext)};\nconst R22 = {js(r22)};\nconst OUTROS = {js(outros)};\nconst CANDS = {js(cands)};\nconst SENADO = {js(sen)};\nconst GOV = {js(gov)};\nconst T2 = {js(t2)};\nconst T2_22 = {js(t2_22)};\nconst S2_22 = {js(s2_22)};\nconst VIES22 = {js(vies22)};\nconst RITMO22 = {js(ritmo22)};\n/*FIM*/"
+
+s = open(PAGINA).read()
+s = re.sub(r"/\*DADOS\*/.*?/\*FIM\*/", lambda _: bloco, s, count=1, flags=re.S)
+open(PAGINA, "w").write(s)
+print(f"página atualizada: {d26[-1][0]:.2f}% apurado, {len(estados)} estados")
